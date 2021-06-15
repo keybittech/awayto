@@ -1,5 +1,5 @@
-// import { Context } from 'aws-lambda'
-// import { PoolClient } from 'pg'
+import { Context } from 'aws-lambda'
+import { PoolClient } from 'pg'
 import { IState } from '.'
 
 export type ApiModule = {
@@ -15,8 +15,8 @@ export type ApiModulet = {
 
 export type ApiProps = {
   event: ApiEvent;
-  // context: Context;
-  // client: PoolClient; 
+  context: Context;
+  client: PoolClient; 
 }
 
 export type ApiEvent = {

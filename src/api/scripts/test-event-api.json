@@ -1,0 +1,63 @@
+{
+    "event": {
+        "stage": "dev",
+        "sourceIp": "225.225.225.225",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36",
+        "apiKey": "",
+        "userSub": "4368cc9a-4b2a-44cb-9274-cf5afa20ea9f",
+        "userEmail": "",
+        "userAdmin": "",
+        "userInternal": "",
+        "userExternal": "",
+        "customerId": "",
+        "resource": "/{proxy+}",
+        "httpMethod": "PUT",
+        "body": {
+            "id": 1,
+            "firstName": "Joseph 22",
+            "lastName": "McCormick",
+            "email": "joe.c.mccormick@gmail.com",
+            "image": null
+        },
+        "headers": {
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Authorization": "....",
+            "CloudFront-Forwarded-Proto": "https",
+            "CloudFront-Is-Desktop-Viewer": "true",
+            "CloudFront-Is-Mobile-Viewer": "false",
+            "CloudFront-Is-SmartTV-Viewer": "false",
+            "CloudFront-Is-Tablet-Viewer": "false",
+            "CloudFront-Viewer-Country": "US",
+            "content-type": "application/json",
+            "Host": "xxxxxxxxx.execute-api.us-east-1.amazonaws.com",
+            "origin": "http://localhost:3000",
+            "Referer": "http://localhost:3000/",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36",
+            "Via": "2.0 f7e7b00c5c66a4e43041ba24c378d07a.cloudfront.net (CloudFront)",
+            "X-Amz-Cf-Id": "hash",
+            "X-Amzn-Trace-Id": "Root=hash",
+            "X-Forwarded-For": "225.225.225.225",
+            "X-Forwarded-Port": "443",
+            "X-Forwarded-Proto": "https"
+        },
+        "pathParameters": {
+            "proxy": "users"
+        },
+        "query": {}
+    },
+    "context": {
+        "callbackWaitsForEmptyEventLoop": true,
+        "functionVersion": "$LATEST",
+        "functionName": "<func name>",
+        "memoryLimitInMB": "128",
+        "logGroupName": "/aws/lambda/<func name>",
+        "logStreamName": "2020/09/23/[$LATEST]hash",
+        "invokedFunctionArn": "arn:aws:lambda:us-east-1:<aws acct#>:function:<func name>",
+        "awsRequestId": "hash"
+    }
+}
