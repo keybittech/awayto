@@ -1,8 +1,8 @@
 // Keep at top
 const path = require('path');
 const dotenv = require('dotenv');
-dotenv.config({ path: path.join(__dirname, `settings.application.env`) })
 dotenv.config({ path: path.join(__dirname, `settings.${process.env.NODE_ENV}.env`) })
+dotenv.config({ path: path.join(__dirname, `settings.application.env`) })
 
 const crypto = require('crypto');
 const fs = require('fs');
@@ -39,7 +39,6 @@ let oldHash;
 
 function checkWriteBuildFile(next) {
   try {
-
     const files = JSON.stringify({
       views: storeResource('.' + AWAYTO_WEBAPP_MODULES + '/**/views/*.tsx'),
       reducers: storeResource('.' + AWAYTO_WEBAPP_MODULES + '/**/reducers/*.ts')

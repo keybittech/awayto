@@ -6,8 +6,6 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { darkTheme, lightTheme, history, awaytodev } from 'awaytodev';
 import reportWebVitals from './reportWebVitals';
 
-console.log('========================', process.env)
-
 import './index.css';
 
 import App from './App'
