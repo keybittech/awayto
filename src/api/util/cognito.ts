@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk';
 import { AttributeType, ListUsersResponse, UserType, AdminCreateUserRequest, AdminUpdateUserAttributesRequest } from '@aws-sdk/client-cognito-identity-provider';
 
-import { IGroup, IRole, IUserProfile } from 'awaytodev';
+import { IGroup, IRole, IUserProfile } from 'awayto';
 
 const getProvider = () =>
   new AWS.CognitoIdentityServiceProvider({

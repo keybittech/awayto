@@ -6,7 +6,7 @@ import { Route, Redirect, withRouter, Switch } from 'react-router-dom';
 import { withStyles, AppBar, Backdrop, CircularProgress, Toolbar, Snackbar, Grid, FormControlLabel, Switch as Toggle } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
-import { ILoginActionTypes, IUtilActionTypes, act, CognitoUserPool, styles, useRedux, useDispatch, useComponents } from 'awaytodev';
+import { ILoginActionTypes, IUtilActionTypes, act, CognitoUserPool, styles, useRedux, useDispatch, useComponents } from 'awayto';
 
 import './App.css';
 

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { ApiResponseBody, CallApi, IActions, IActionTypes, ILoadedState, IUtilActionTypes } from '../types/index.d';
+import { ApiResponseBody, CallApi, IActionTypes, ILoadedState, IUtilActionTypes } from '../types/index.d';
 import { act } from '../actions';
 import { useDispatch } from './useDispatch';
 import { CognitoUserPool } from '../cognito';
@@ -60,7 +60,7 @@ export function useApi(): (actionType: IActionTypes, load?: boolean, body?: ILoa
     })
       .then(response => {
         console.log('This is what is resolved to useApi: ', response);
-        dispatch(act(actionType || API_SUCCESS, response, meta) as IActions);
+        dispatch(act(actionType || API_SUCCESS, response, meta));
         return response as T;
       })
       .catch(e => {

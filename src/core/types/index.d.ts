@@ -1,9 +1,9 @@
 import React, { ComponentType } from 'react';
 import { RouterState } from 'connected-react-router';
 import { RouteComponentProps } from 'react-router';
-import { Action, ReducersMapObject } from 'redux';
+import { Action, ReducersMapObject, Store } from 'redux';
 import { PersistState } from 'redux-persist';
-import { ThunkAction } from 'redux-thunk';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { IStyles } from '../style';
 import { CognitoUser } from '../cognito';
 
@@ -14,6 +14,8 @@ declare global {
     _persist: PersistState;
     router: RouterState<unknown>;
   }
+  
+  export type ISharedActions = ICommonModuleActions | IManageModuleActions | IProfileModuleActions;
 
   export type RouteProps = { [prop: string]: string }
   export type SafeRouteProps = Omit<RouteComponentProps<RouteProps>, "staticContext">;
@@ -31,26 +33,31 @@ declare global {
 
   export type TempComponent = IBaseComponent | string | undefined
   export type LazyComponentPromise = Promise<{ default: IBaseComponent }>
-
 }
 
 export type IEmpty = undefined | null | void;
 
-export type IState = ISharedState;
 export type ILoadedState = ISharedState[keyof ISharedState];
-export type IActions = ISharedActions[keyof typeof ISharedActions];
-export type IActionTypes = ISharedActionTypes[keyof ISharedActionTypes];
 
-export type IReducers = ReducersMapObject<IState, IActions>;
+// export type ISharedActionTypesType = typeof ISharedActions;
+// export type IActions = ISharedActions[keyof ISharedActionTypesType];
+
+
+export type IReducers = ReducersMapObject<ISharedState, ISharedActions>;
 export type ILoadedReducers = Partial<IReducers>;
 
+export type IActionTypes = ISharedActionTypes[keyof ISharedActionTypes];
 export type MetaAction<Type, Meta> = Action<Type> & {
   meta?: Meta;
 };
 export type PayloadAction<Type, Payload, Meta = void> = MetaAction<Type, Meta> & {
   readonly payload: Payload;
 };
-export type ThunkResult = ThunkAction<void, IState, unknown | undefined, IActions>
+
+export type ThunkResult = ThunkAction<void, ISharedState, unknown | undefined, ISharedActions>
+export type ThunkStore = Store<ISharedState, ISharedActions> & {
+  dispatch: ThunkDispatch<ISharedState, undefined, ISharedActions>;
+}
 
 export enum SiteRoles {
   ADMIN = "system:admin",

@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Button, Input, Grid, Typography, TextField, InputAdornment, FormControl } from '@material-ui/core';
 import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
 
-import { IGroup, IManageUsersActionTypes, IUtilActionTypes, SiteRoles, useApi, useRedux, useComponents } from 'awaytodev';
+import { IGroup, IManageUsersActionTypes, IUtilActionTypes, SiteRoles, useApi, useRedux, useComponents } from 'awayto';
 
 const { GET_MANAGE_USERS } = IManageUsersActionTypes;
 const { TEST_API } = IUtilActionTypes;

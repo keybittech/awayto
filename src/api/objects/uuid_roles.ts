@@ -1,4 +1,4 @@
-import { ApiModule, IUuidRoles } from 'awaytodev';
+import { ApiModule, IUuidRoles } from 'awayto';
 import { asyncForEach, buildUpdate } from '../util/db';
 
 const uuidRoles: ApiModule = {

@@ -1,4 +1,4 @@
-import { ApiModule, IUserProfile } from 'awaytodev';
+import { ApiModule, IUserProfile } from 'awayto';
 import { buildUpdate } from '../util/db';
 
 const users: ApiModule = {

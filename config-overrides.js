@@ -80,7 +80,7 @@ module.exports = {
 
     override(
       addWebpackAlias({
-        'awaytodev': path.resolve(__dirname, AWAYTO_CORE)
+        'awayto': path.resolve(__dirname, AWAYTO_CORE)
       })
     )
 

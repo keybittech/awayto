@@ -10,7 +10,7 @@ import TextField from '@material-ui/core/TextField'
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-import { act, IActions, ILoginActionTypes, cognitoSSRPLogin, useRedux, useDispatch, useComponents, IUtilActionTypes } from 'awaytodev';
+import { act, ILoginActionTypes, cognitoSSRPLogin, useRedux, useDispatch, useComponents, IUtilActionTypes } from 'awayto';
 
 const { RESET_PASSWORD, LOGIN_USER, AUTH_DENIAL } = ILoginActionTypes;
 const { SET_SNACK, START_LOADING, STOP_LOADING } = IUtilActionTypes;
@@ -30,12 +30,12 @@ export function Login (props: Props): JSX.Element {
     try {
       const ChallengeName = await cognitoSSRPLogin(username, password);
       if (ChallengeName)
-        dispatch(act(RESET_PASSWORD, { newPassRequired: true }) as IActions);
+        dispatch(act(RESET_PASSWORD, { newPassRequired: true }));
       else
-        dispatch(act(LOGIN_USER, { username }) as IActions);
+        dispatch(act(LOGIN_USER, { username }));
     } catch (error) {
       dispatch(act(SET_SNACK, { snackType: 'error', snackOn: `Error while submitting login form ${error as string}.` }))
-      dispatch(act(AUTH_DENIAL, { error: error as string }) as IActions);
+      dispatch(act(AUTH_DENIAL, { error: error as string }));
     } finally {
       dispatch(act(STOP_LOADING, { isLoading: false }));
     }

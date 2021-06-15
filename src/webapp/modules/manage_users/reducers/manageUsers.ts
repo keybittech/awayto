@@ -12,7 +12,7 @@ import {
   IPostManageUsersSubAction,
   IPostManageUsersAppAcctAction,
   IManageUsersActions
-} from 'awaytodev';
+} from 'awayto';
 
 const initialManageUsersState: IManageUsersState = {};
 

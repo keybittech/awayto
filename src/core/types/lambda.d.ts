@@ -1,6 +1,5 @@
 import { Context } from 'aws-lambda'
 import { PoolClient } from 'pg'
-import { IState } from '.'
 
 export type ApiModule = {
   [name: string]: ApiModulet;
@@ -21,7 +20,7 @@ export type ApiProps = {
 
 export type ApiEvent = {
   [name: string]: unknown;
-  body: Record<string, string | IState[] | Record<string, unknown>> | ISharedState[keyof ISharedState];
+  body: Record<string, string | ISharedState[] | Record<string, unknown>> | ISharedState[keyof ISharedState];
   userSub: string;
   query: Record<string, string>;
   pathParameters: Record<string, string>;

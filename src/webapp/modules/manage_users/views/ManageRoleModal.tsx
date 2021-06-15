@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, CardContent, Grid, Typography, TextField, CardActions, Button } from "@material-ui/core";
 
-import { createPayloadAction, IManageRolesActionTypes, IRole, IUtilActionTypes, useApi, useDispatch } from "awaytodev";
+import { act, IManageRolesActionTypes, IRole, IUtilActionTypes, useApi, useDispatch } from "awayto";
 import { useCallback } from "react";
 
 const { POST_MANAGE_ROLES, PUT_MANAGE_ROLES } = IManageRolesActionTypes;
@@ -17,12 +17,12 @@ export function ManageRoleModal ({
     name: '',
     ...editRole
   });
-
+  
   const handleSubmit = useCallback(() => {
     const { id, name } = role;
 
     if (!name) 
-      return dispatch(createPayloadAction(IUtilActionTypes.SET_SNACK, {snackType: 'error', snackOn: 'Groups must have a name.' }));
+      return dispatch(act(IUtilActionTypes.SET_SNACK, {snackType: 'error', snackOn: 'Groups must have a name.' }));
 
     void api(id ? POST_MANAGE_ROLES : PUT_MANAGE_ROLES, false, role);
 

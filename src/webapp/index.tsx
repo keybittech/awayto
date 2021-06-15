@@ -3,14 +3,14 @@ import MomentUtils from '@date-io/moment';
 import { CssBaseline, ThemeProvider } from '@material-ui/core';
 import { ConnectedRouter } from 'connected-react-router';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { darkTheme, lightTheme, history, awaytodev } from 'awaytodev';
+import { darkTheme, lightTheme, history, awayto } from 'awayto';
 import reportWebVitals from './reportWebVitals';
 
 import './index.css';
 
 import App from './App'
 
-awaytodev(
+awayto(
   <ThemeProvider theme={localStorage.getItem('kbt_theme') == 'light' ? { ...lightTheme } : { ...darkTheme }}>
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <CssBaseline />

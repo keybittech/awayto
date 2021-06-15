@@ -4,7 +4,7 @@ import { Button, Grid, IconButton, InputAdornment, TextField } from '@material-u
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, useDispatch, act, cognitoPoolSignUp } from 'awaytodev';
+import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, useDispatch, act, cognitoPoolSignUp } from 'awayto';
 
 const { SIGNUP_USER } = IUserProfileActionTypes;
 const { HAS_CODE } = IUtilActionTypes;

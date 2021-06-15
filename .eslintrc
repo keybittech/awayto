@@ -8,7 +8,7 @@
     "import/resolver": {
       "typescript": {},
       "alias": [
-        ["awaytodev", "./src/core/index.ts"]
+        ["awayto", "./src/core/index.ts"]
       ]
     }
   },

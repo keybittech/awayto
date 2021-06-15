@@ -3,7 +3,7 @@ import { Card, CardContent, Grid, Typography, TextField, CardActions, Button, Fo
 import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
-import { IGroup, IManageGroupsActionTypes, IManageRolesActionTypes, useDispatch, useApi, useRedux, createPayloadAction, IUtilActionTypes } from "awaytodev";
+import { IGroup, IManageGroupsActionTypes, IManageRolesActionTypes, useDispatch, useApi, useRedux, createPayloadAction, IUtilActionTypes } from "awayto";
 
 const { GET_MANAGE_ROLES } = IManageRolesActionTypes;
 const { CHECK_GROUP_NAME, PUT_MANAGE_GROUPS, POST_MANAGE_GROUPS } = IManageGroupsActionTypes;

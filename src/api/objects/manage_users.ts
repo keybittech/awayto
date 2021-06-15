@@ -1,5 +1,5 @@
 import { UserType, AttributeType } from '@aws-sdk/client-cognito-identity-provider';
-import { ApiModule, IUserProfile } from 'awaytodev';
+import { ApiModule, IUserProfile } from 'awayto';
 import { adminCreateUser, adminDisableUser, adminEnableUser, getUserInfo, parseGroupString, parseGroupArray, updateUserAttributesAdmin, listUsers, attachCognitoInfoToUser } from "../util/cognito";
 import { asyncForEach } from "../util/db";
 import usersApi from './users';

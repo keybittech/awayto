@@ -6,10 +6,8 @@ declare global {
     util: IUtilState,
     login: ILoginState
   }
-  export interface ISharedActions {
-    utilActions: IUtilActions;
-    loginActions: ILoginActions;
-  }
+  // ISharedActions
+  export type ICommonModuleActions = IUtilActions | ILoginActions;
   export interface ISharedActionTypes {
     util: IUtilActionTypes;
     login: ILoginActionTypes;
@@ -37,7 +35,6 @@ export type IUtil = {
 export type IUtilState = IUtil;
 
 export enum IUtilActionTypes {
-  REDUCERS_LOADED = "util/REDUCERS_LOADED",
   CLEAR_REDUX = "util/CLEAR_REDUX",
   OPEN_CONFIRM = "util/OPEN_CONFIRM",
   CLOSE_CONFIRM = "util/CLOSE_CONFIRM",
@@ -54,7 +51,6 @@ export enum IUtilActionTypes {
 export type IUtilLoadingActionPayload = { isLoading: boolean };
 export type IApiErrorActionPayload = { error: string }
 
-export type IReducersLoadedAction = PayloadAction<IUtilActionTypes.REDUCERS_LOADED, { reducersLoaded: boolean }>;
 export type IClearReduxAction = PayloadAction<IUtilActionTypes.CLEAR_REDUX, null>;
 export type IOpenConfirmAction = PayloadAction<IUtilActionTypes.OPEN_CONFIRM, { isConfirming: boolean, message: string, action: Promise<void> }>;
 export type ICloseConfirmAction = PayloadAction<IUtilActionTypes.CLOSE_CONFIRM, { isConfirming: boolean, message: string }>;
@@ -68,7 +64,6 @@ export type IApiSuccessAction = PayloadAction<IUtilActionTypes.API_SUCCESS, void
 export type IHasSignUpCodeAction = PayloadAction<IUtilActionTypes.HAS_CODE, IUtil>;
 
 export type IUtilActions = LocationChangeAction
-  | IReducersLoadedAction
   | IClearReduxAction
   | IOpenConfirmAction
   | ICloseConfirmAction

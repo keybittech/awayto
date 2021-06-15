@@ -8,7 +8,7 @@ import {
   IPutManageGroupsAction, 
   IDeleteManageGroupsAction,
   IManageGroupsActions
-} from 'awaytodev';
+} from 'awayto';
 
 const initialManageGroupsState: IManageGroupsState = {
   isValid: true

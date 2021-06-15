@@ -1,5 +1,5 @@
 import { ListUsersResponse } from '@aws-sdk/client-cognito-identity-provider';
-import { ApiModule, IUserProfile } from 'awaytodev';
+import { ApiModule, IUserProfile } from 'awayto';
 import { listUsers, parseGroupString } from '../util/cognito';
 
 const tests: ApiModule = {

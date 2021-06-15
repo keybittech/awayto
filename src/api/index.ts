@@ -18,7 +18,7 @@ import ManageGroups from './objects/manage_groups';
 import ManageUsers from './objects/manage_users';
 import auditRequest from './util/auditor';
 import authorize from './util/auth';
-import { ApiModulet } from 'awaytodev';
+import { ApiModulet } from 'awayto';
 
 const Objects = Object.assign({},
   Tests,

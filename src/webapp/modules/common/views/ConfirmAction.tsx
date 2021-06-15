@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Card, CardContent, CardActions, CardActionArea, Typography, Grid, Dialog } from '@material-ui/core';
 
-import { useRedux, useDispatch, IUtilActionTypes, act } from 'awaytodev';
+import { useRedux, useDispatch, IUtilActionTypes, act } from 'awayto';
 
 export function ConfirmAction (): JSX.Element {
 

@@ -3,7 +3,7 @@ import {
   IUtilActionTypes,
   IUtilState,
   IUtilActions
-} from 'awaytodev';
+} from 'awayto';
 
 const initialUtilState = {
   snackOn: '',

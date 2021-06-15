@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IGroup, IRole, SiteRoles, getUserPool } from 'awaytodev';
+import { IGroup, IRole, SiteRoles, getUserPool } from 'awayto';
 
 export function Secure ({
   contentGroupRoles = SiteRoles.ADMIN,

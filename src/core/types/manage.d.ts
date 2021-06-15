@@ -7,12 +7,8 @@ declare global {
     manageRoles: IManageRolesState;
     manageGroups: IManageGroupsState;
   }
-  export interface ISharedActions {
-    manageActions: IManageActions;
-    manageUsersActions: IManageUsersActions;
-    manageRolesActions: IManageRolesActions;
-    manageGroupsActions: IManageGroupsActions;
-  }
+  // ISharedActions
+  export type IManageModuleActions = IManageActions | IManageUsersActions | IManageRolesActions | IManageGroupsActions;
   export interface ISharedActionTypes {
     manage: IManageActionTypes;
     manageUsers: IManageUsersActionTypes;

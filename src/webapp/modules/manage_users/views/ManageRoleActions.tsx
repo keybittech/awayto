@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import DataTable, { IDataTableColumn } from 'react-data-table-component';
 import { Checkbox } from '@material-ui/core';
 
-import { IManageRolesActionTypes, useApi, useRedux } from 'awaytodev';
+import { IManageRolesActionTypes, useApi, useRedux } from 'awayto';
 
 const { GET_MANAGE_ROLES } = IManageRolesActionTypes;
 

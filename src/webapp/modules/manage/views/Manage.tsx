@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Card, CardActions, CardContent, Grid, Typography } from '@material-ui/core';
-import { SiteRoles, useComponents } from 'awaytodev';
+import { SiteRoles, useComponents } from 'awayto';
 
 export function Manage(props: Props): JSX.Element {
   const { ManageUsers, ManageGroups, ManageRoles, ManageRoleActions, Secure } = useComponents();

@@ -1,4 +1,4 @@
-import { ApiProps } from 'awaytodev';
+import { ApiProps } from 'awayto';
 
 export default async function auditRequest(props: ApiProps): Promise<void> {
 

@@ -5,9 +5,8 @@ declare global {
   export interface ISharedState { 
     profile: IUserProfileState
   }
-  export interface ISharedActions {
-    profileActions: IUserProfileActions;
-  }
+  // ISharedActions
+  export type IProfileModuleActions = IUserProfileActions | IUuidGroupsActions | IUuidRolesActions;
   export interface ISharedActionTypes {
     userProfile: IUserProfileActionTypes;
     uuidGroups: IUuidGroupsActionTypes;

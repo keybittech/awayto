@@ -8,7 +8,7 @@ import {
   IPutManageRolesAction, 
   IDeleteManageRolesAction, 
   IManageRolesActions
-} from 'awaytodev';
+} from 'awayto';
 
 const initialManageRolesState: IManageRolesState = {};
 

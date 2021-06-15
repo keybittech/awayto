@@ -1,4 +1,4 @@
-import { ApiModule, IUuidGroups } from 'awaytodev';
+import { ApiModule, IUuidGroups } from 'awayto';
 import { buildUpdate } from '../util/db';
 
 const uuidGroups: ApiModule = {

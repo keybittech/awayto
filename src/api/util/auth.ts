@@ -1,4 +1,4 @@
-import { ApiRequestAuthorizer } from 'awaytodev';
+import { ApiRequestAuthorizer } from 'awayto';
 
 export default function authorize(params: ApiRequestAuthorizer): boolean {
   const { contentGroups, contentRoles } = params;

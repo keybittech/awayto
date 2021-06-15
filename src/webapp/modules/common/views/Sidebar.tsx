@@ -8,7 +8,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import AppsIcon from '@material-ui/icons/Apps';
 
-import { createPayloadAction, useDispatch, IUtilActionTypes } from 'awaytodev';
+import { createPayloadAction, useDispatch, IUtilActionTypes } from 'awayto';
 
 export function Sidebar (props: Props): JSX.Element {
   const { classes = {}, history = {} as History } = props;

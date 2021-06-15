@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import { Dialog, IconButton, Button, CircularProgress, Checkbox } from '@material-ui/core';
 import CreateIcon from '@material-ui/icons/Create';
 
-import { IGroup, IManageGroupsActionTypes, useRedux, useApi } from 'awaytodev';
+import { IGroup, IManageGroupsActionTypes, useRedux, useApi } from 'awayto';
 
 import ManageGroupModal from './ManageGroupModal';
 

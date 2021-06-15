@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { DialogContent, Grid, Typography, TextField, DialogActions, Button, FormHelperText, FormControl, CircularProgress, InputLabel, Input, InputAdornment, Select, MenuItem, DialogTitle } from "@material-ui/core";
 
-import { IGroup, IUserProfile, IManageUsersActionTypes, IChangeEvent, IManageGroupsActionTypes, useApi, createPayloadAction, IUtilActionTypes, useDispatch, useRedux } from "awaytodev";
+import { IGroup, IUserProfile, IManageUsersActionTypes, IChangeEvent, IManageGroupsActionTypes, useApi, createPayloadAction, IUtilActionTypes, useDispatch, useRedux } from "awayto";
 
 const { PUT_MANAGE_USERS, POST_MANAGE_USERS, GET_MANAGE_USERS_BY_ID, POST_MANAGE_USERS_SUB, POST_MANAGE_USERS_APP_ACCT } = IManageUsersActionTypes;
 const { GET_MANAGE_GROUPS } = IManageGroupsActionTypes;

@@ -4,7 +4,7 @@ import { Grid, Typography, Button, TextField, Avatar, CardActionArea, FormContro
 
 import PersonIcon from '@material-ui/icons/Person';
 
-import { DropFile, IUserProfile, IUserProfileActionTypes, useRedux, useDispatch, IUtilActionTypes, useApi, act, useComponents } from 'awaytodev';
+import { DropFile, IUserProfile, IUserProfileActionTypes, useRedux, useDispatch, IUtilActionTypes, useApi, act, useComponents } from 'awayto';
 
 const { SET_SNACK, SET_THEME } = IUtilActionTypes;
 const { GET_USER_PROFILE } = IUserProfileActionTypes;

@@ -1,4 +1,4 @@
-import { ApiModule, IRole } from 'awaytodev';
+import { ApiModule, IRole } from 'awayto';
 import { buildUpdate } from '../util/db';
 
 const manageRoles: ApiModule = {

@@ -3,7 +3,7 @@ import {
   ILoginState,
   ILoginActions,
   ILoginActionTypes,
-} from 'awaytodev';
+} from 'awayto';
 
 const initialLoginState: ILoginState = {
   username: ''

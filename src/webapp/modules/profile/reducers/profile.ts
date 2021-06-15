@@ -3,7 +3,7 @@ import {
   IUserProfileState, 
   IUserProfileActionTypes, 
   IUserProfileActions
-} from 'awaytodev';
+} from 'awayto';
 
 const initialUserProfileState: IUserProfileState = {};
 

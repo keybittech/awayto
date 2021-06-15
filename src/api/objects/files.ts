@@ -2,7 +2,7 @@ import uuid4 from 'uuid/v4';
 
 import { buildUpdate } from '../util/db';
 
-import { ApiModule, IFile } from 'awaytodev';
+import { ApiModule, IFile } from 'awayto';
 
 const files: ApiModule = {
 
