@@ -1,0 +1,134 @@
+import Icon from './img/keybit-name-inverted-half-white-xp.png';
+
+import { History } from 'history';
+import React, { useEffect } from 'react';
+import { Route, Redirect, withRouter, Switch } from 'react-router-dom';
+import { withStyles, AppBar, Backdrop, CircularProgress, Toolbar, Snackbar, Grid, FormControlLabel, Switch as Toggle } from '@material-ui/core';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+
+import { ILoginActionTypes, IUtilActionTypes, act, CognitoUserPool, styles, useRedux, useDispatch, useComponents } from 'awaytodev';
+
+import './App.css';
+
+function Alert(props: AlertProps): JSX.Element {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+const {
+  REACT_APP_COGNITO_USER_POOL_ID: UserPoolId,
+  REACT_APP_COGNITO_CLIENT_ID: ClientId
+} = process.env;
+
+const { AUTH_DENIAL, AUTH_SUCCESS } = ILoginActionTypes;
+const { SET_SNACK, SET_THEME } = IUtilActionTypes;
+
+const App = (props: Props): JSX.Element => {
+  const { classes = {}, history = {} as History<unknown> } = props;
+  const { Sidebar, ConfirmAction, Home, Profile, ChangeNewPassword, Login, Manage, SignUp, CompleteSignUp } = useComponents();
+  
+  const dispatch = useDispatch();
+  const login = useRedux(state => state.login);
+  const util = useRedux(state => state.util);
+  const {snackOn, snackType, isLoading, loadingMessage, theme, hasSignUpCode } = util;
+
+  const hideSnack = (): void => {
+    dispatch(act(SET_SNACK, { snackOn: '' }));
+  }
+
+
+  useEffect(() => {
+    const bootstrapped = true;
+
+    if (!UserPoolId || !ClientId)
+      throw new Error('Configuration error: userPoolId missing during callApi.');
+
+    const pool = new CognitoUserPool({ UserPoolId, ClientId });
+    const cognitoUser = pool.getCurrentUser();
+
+    if (!cognitoUser)
+      dispatch(act(AUTH_DENIAL, { bootstrapped }));
+    else
+      dispatch(act(AUTH_SUCCESS, { bootstrapped, username: cognitoUser.getUsername() }))
+
+  }, []);
+
+  return <>
+    {login.bootstrapped ? <>
+      {!!login.username ?
+        <div className={classes.root}>
+          <AppBar position="fixed" className={classes.appBar}>
+            <Toolbar />
+          </AppBar>
+          <Sidebar {...props} />
+          <main className={classes.content}>
+            <div className={classes.toolbar} />
+            <Switch>
+              {login.newPassRequired && <Redirect to="/" />}
+              {history.location.pathname === '/' && <Redirect to="/home" />}
+              <Route exact path="/home" component={Home} />
+              <Route exact path="/profile" component={Profile} />
+              <Route exact path="/manage/:component" component={Manage} />
+            </Switch>
+          </main>
+        </div> :
+        <main>
+          <Grid container alignItems="center" direction="column">
+            <Grid item>
+              <Grid container className={classes.loginWrap} alignItems="center" direction="column" spacing={4}>
+
+                <Grid item>
+                  <Grid container alignItems="center" direction="column">
+                    <img src={Icon} alt="keybit tech logo" className={classes.appLogo} />
+                    {/* <Typography className={classes.siteTitle}>KeyBit Tech</Typography> */}
+                  </Grid>
+                </Grid>
+                <Grid item xs>
+                  <Switch>
+                    {!['/', '/signup'].includes(history.location.pathname) && <Redirect to="/" />}
+                    {console.log('I want to load a login')}
+                    <Route exact path="/" component={login.newPassRequired ? ChangeNewPassword : Login} />
+                    <Route exact path="/signup" component={hasSignUpCode ? CompleteSignUp : SignUp} />
+                  </Switch>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <div style={{ position: 'fixed', bottom: 0, right: 0 }}>
+            <FormControlLabel
+              value="darkmode"
+              control={
+                <Toggle
+                  onClick={() => { dispatch(act(SET_THEME, { theme: theme === 'dark' ? 'light' : 'dark' })) }}
+                  checked={theme === 'dark'}
+                  color="primary"
+                />
+              }
+              label="Dark Mode"
+              labelPlacement="end"
+            />
+          </div>
+        </main>
+      }
+      {!!snackOn && <Snackbar open={!!snackOn} autoHideDuration={6000} onClose={hideSnack}>
+        <Alert onClose={hideSnack} severity={snackType || "info"}>
+          {snackOn}
+        </Alert>
+      </Snackbar>}
+      {React.createElement(ConfirmAction,props)}
+      <Backdrop className={classes.backdrop} open={!!isLoading} >
+        <Grid container direction="column" alignItems="center">
+          <CircularProgress color="inherit" />
+          {loadingMessage ?? ''}
+        </Grid>
+      </Backdrop>
+    </> :
+      <Backdrop className={classes.backdrop} open={true} >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    }
+  </>
+
+}
+
+export default withStyles(styles)(withRouter(App));

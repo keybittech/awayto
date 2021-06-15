@@ -1,0 +1,9 @@
+node_modules
+bundle.js
+package-lock.json
+npm-debug.log
+build
+.eslintcache
+doc
+settings.dev*.env
+settings.prod*.env
