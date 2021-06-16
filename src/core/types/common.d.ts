@@ -2,12 +2,22 @@ import { LocationChangeAction } from 'connected-react-router';
 import { PayloadAction } from '.';
 
 declare global {
+  /**
+   * @category Awayto
+   */
   export interface ISharedState {
     util: IUtilState,
     login: ILoginState
   }
-  // ISharedActions
+
+  /**
+   * @category Awayto
+   */
   export type ICommonModuleActions = IUtilActions | ILoginActions;
+
+  /**
+   * @category Awayto
+   */
   export interface ISharedActionTypes {
     util: IUtilActionTypes;
     login: ILoginActionTypes;
@@ -17,6 +27,9 @@ declare global {
   }
 }
 
+/**
+ * @category Util
+ */
 export type IUtil = {
   action(): Promise<void>;
   isConfirming: boolean;
@@ -32,8 +45,16 @@ export type IUtil = {
   test: { objectUrl: string };
 }
 
+
+/**
+ * @category Util
+ */
 export type IUtilState = IUtil;
 
+
+/**
+ * @category Util
+ */
 export enum IUtilActionTypes {
   CLEAR_REDUX = "util/CLEAR_REDUX",
   OPEN_CONFIRM = "util/OPEN_CONFIRM",
@@ -48,21 +69,74 @@ export enum IUtilActionTypes {
   API_SUCCESS = "util/API_SUCCESS"
 }
 
+
+/**
+ * @category Util
+ */
 export type IUtilLoadingActionPayload = { isLoading: boolean };
+/**
+ * @category Util
+ */
 export type IApiErrorActionPayload = { error: string }
 
+/**
+ * @category Util
+ */
 export type IClearReduxAction = PayloadAction<IUtilActionTypes.CLEAR_REDUX, null>;
+
+/**
+ * @category Util
+ */
 export type IOpenConfirmAction = PayloadAction<IUtilActionTypes.OPEN_CONFIRM, { isConfirming: boolean, message: string, action: Promise<void> }>;
+
+/**
+ * @category Util
+ */
 export type ICloseConfirmAction = PayloadAction<IUtilActionTypes.CLOSE_CONFIRM, { isConfirming: boolean, message: string }>;
+
+/**
+ * @category Util
+ */
 export type IStartLoadingAction = PayloadAction<IUtilActionTypes.START_LOADING, IUtilLoadingActionPayload>;
+
+/**
+ * @category Util
+ */
 export type IStopLoadingAction = PayloadAction<IUtilActionTypes.STOP_LOADING, IUtilLoadingActionPayload>;
+
+/**
+ * @category Util
+ */
 export type ISetThemeAction = PayloadAction<IUtilActionTypes.SET_THEME, { theme: string }>;
+
+/**
+ * @category Util
+ */
 export type ISetSnackAction = PayloadAction<IUtilActionTypes.SET_SNACK, { snackType: string, snackOn: string }>;
+
+/**
+ * @category Util
+ */
 export type ITestApiAction = PayloadAction<IUtilActionTypes.TEST_API, { test: { objectUrl?: Record<string, string> | string } }>;
+
+/**
+ * @category Util
+ */
 export type IApiErrorAction = PayloadAction<IUtilActionTypes.API_ERROR, IApiErrorActionPayload>;
+
+/**
+ * @category Util
+ */
 export type IApiSuccessAction = PayloadAction<IUtilActionTypes.API_SUCCESS, void>;
+
+/**
+ * @category Util
+ */
 export type IHasSignUpCodeAction = PayloadAction<IUtilActionTypes.HAS_CODE, IUtil>;
 
+/**
+ * @category Util
+ */
 export type IUtilActions = LocationChangeAction
   | IClearReduxAction
   | IOpenConfirmAction
@@ -76,6 +150,9 @@ export type IUtilActions = LocationChangeAction
   | IHasSignUpCodeAction;
 
 
+/**
+ * @category Login
+ */
 export type ILogin = {
   bootstrapped: boolean;
   error: Error | string;
@@ -83,8 +160,15 @@ export type ILogin = {
   username: string;
 }
 
+/**
+ * @category Login
+ */
+
 export type ILoginState = Partial<ILogin>;
 
+/**
+ * @category Login
+ */
 export enum ILoginActionTypes {
   LOGIN_USER = "login/LOGIN_USER",
   LOGOUT_USER = "login/LOGOUT_USER",
@@ -95,14 +179,44 @@ export enum ILoginActionTypes {
   FORCE_PASS_CHANGE_SUCCESS = "login/FORCE_PASS_CHANGE_SUCCESS"
 }
 
+/**
+ * @category Login
+ */
 export type ILoginUserAction = PayloadAction<ILoginActionTypes.LOGIN_USER, ILoginState>;
+
+/**
+ * @category Login
+ */
 export type ILogoutUserAction = PayloadAction<ILoginActionTypes.LOGOUT_USER, ILoginState>;
+
+/**
+ * @category Login
+ */
 export type IAuthUserAction = PayloadAction<ILoginActionTypes.AUTH_USER, ILoginState>;
+
+/**
+ * @category Login
+ */
 export type IAuthUserSuccessAction = PayloadAction<ILoginActionTypes.AUTH_SUCCESS, ILoginState>;
+
+/**
+ * @category Login
+ */
 export type IAuthDenialAction = PayloadAction<ILoginActionTypes.AUTH_DENIAL, ILoginState>;
+
+/**
+ * @category Login
+ */
 export type IResetPasswordAction = PayloadAction<ILoginActionTypes.RESET_PASSWORD, ILoginState>;
+
+/**
+ * @category Login
+ */
 export type IForcePassChangeAction = PayloadAction<ILoginActionTypes.FORCE_PASS_CHANGE_SUCCESS, ILoginState>;
 
+/**
+ * @category Login
+ */
 export type ILoginActions = ILoginUserAction
   | ILogoutUserAction
   | IAuthUserAction
@@ -112,40 +226,73 @@ export type ILoginActions = ILoginUserAction
   | IForcePassChangeAction;
 
 
+/**
+ * @category Notes
+ */
 export type IUuidNotes = {
   id: string;
   parentUuid: string;
   note: string;
 }
 
+/**
+ * @category Notes
+ */
 export type IUuidNotesState = Partial<IUuidNotes>;
 
+/**
+ * @category Notes
+ */
 export enum IUuidNotesActionTypes {
   UUID_NOTES = "common/UUID_NOTES"
 }
 
+/**
+ * @category Notes
+ */
 export type IUuidNotesUserAction = PayloadAction<IUuidNotesActionTypes.UUID_NOTES, IUuidNotesState>;
 
+/**
+ * @category Notes
+ */
 export type IUuidNotesActions = IUuidNotesUserAction;
 
 
+/**
+ * @category File
+ */
 export type IUuidFiles = {
   id: string;
   parentUuid: string;
   fileId: string;
 }
 
+/**
+ * @category File
+ */
 export type IUuidFilesState = Partial<IUuidFiles>;
 
+/**
+ * @category File
+ */
 export enum IUuidFilesActionTypes {
   UUID_FILES = "common/UUID_FILES"
 }
 
+/**
+ * @category File
+ */
 export type IUuidFilesUserAction = PayloadAction<IUuidFilesActionTypes.UUID_FILES, IUuidFilesState>;
 
+/**
+ * @category File
+ */
 export type IUuidFilesActions = IUuidFilesUserAction;
 
 
+/**
+ * @category File
+ */
 export type IFile = {
   id: string;
   name: string;
@@ -153,12 +300,24 @@ export type IFile = {
   location: string;
 }
 
+/**
+ * @category File
+ */
 export type IFileState = Partial<IFile>;
 
+/**
+ * @category File
+ */
 export enum IFileActionTypes {
   FILES = "common/FILES"
 }
 
+/**
+ * @category File
+ */
 export type IFileUserAction = PayloadAction<IFileActionTypes.FILES, IFileState>;
 
+/**
+ * @category File
+ */
 export type IFileActions = IFileUserAction;

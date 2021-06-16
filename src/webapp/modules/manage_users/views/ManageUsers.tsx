@@ -12,7 +12,7 @@ import ManageUserModal from './ManageUserModal';
 
 const { LOCK_MANAGE_USERS, UNLOCK_MANAGE_USERS, GET_MANAGE_USERS } = IManageUsersActionTypes;
 
-export function ManageUsers(props: Props): JSX.Element {
+export function ManageUsers(props: IProps): JSX.Element {
   const api = useApi();
   const util = useRedux(state => state.util);
   const { users } = useRedux(state => state.manageUsers);

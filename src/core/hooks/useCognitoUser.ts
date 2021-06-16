@@ -7,6 +7,9 @@ const {
   REACT_APP_COGNITO_CLIENT_ID: ClientId
 } = process.env;
 
+/**
+ * @category Hooks
+ */
 export function useCognitoUser(): CognitoUser | undefined {
   const [cognitoUser, setCognitoUser] = useState<CognitoUser>();
 

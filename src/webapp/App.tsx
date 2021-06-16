@@ -22,7 +22,7 @@ const {
 const { AUTH_DENIAL, AUTH_SUCCESS } = ILoginActionTypes;
 const { SET_SNACK, SET_THEME } = IUtilActionTypes;
 
-const App = (props: Props): JSX.Element => {
+const App = (props: IProps): JSX.Element => {
   const { classes = {}, history = {} as History<unknown> } = props;
   const { Sidebar, ConfirmAction, Home, Profile, ChangeNewPassword, Login, Manage, SignUp, CompleteSignUp } = useComponents();
   

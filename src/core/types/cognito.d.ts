@@ -6,6 +6,10 @@ import {
   RespondToAuthChallengeCommandOutput,
 } from '@aws-sdk/client-cognito-identity-provider';
 
+
+/**
+ * @category Cognito
+ */
 export interface CognitoJwtTokenType {
   token: string;
   payload: Record<string, unknown>;
@@ -16,6 +20,9 @@ export interface CognitoJwtTokenType {
   getIssuedAt(): number;
 }
 
+/**
+ * @category Cognito
+ */
 export interface CognitoUserSessionType {
   clockDrift: number;
   idToken: CognitoJwtTokenType;
@@ -30,6 +37,9 @@ export interface CognitoUserSessionType {
 	isValid(): boolean;
 }
 
+/**
+ * @category Cognito
+ */
 export interface CognitoUserPoolType {
   userPoolId: string;
   clientId: string;
@@ -42,6 +52,9 @@ export interface CognitoUserPoolType {
 	signUp(username: string,	password: string, userAttributes: AttributeType[]): Promise<void>;
 }
 
+/**
+ * @category Cognito
+ */
 export interface CognitoUserType {
   username: string;
   pool: CognitoUserPoolType;
@@ -68,11 +81,17 @@ export interface CognitoUserType {
   getUserAttributes(): Promise<AttributeType[]>;
 }
 
+/**
+ * @category Cognito
+ */
 export type CognitoAuthResponse = RespondToAuthChallengeCommandOutput & {
   userAttributes: AttributeType[];
   requiredAttributes: string[];
 }
 
+/**
+ * @category Cognito
+ */
 export class AuthenticationHelper {
   constructor(region: string);
   getNewPasswordRequiredChallengeUserAttributePrefix(): string;
@@ -86,14 +105,23 @@ export class AuthenticationHelper {
   getLargeAValue(callback: (err: Error, largeAValue: string) => void): void;
 }
 
+/**
+ * @category Cognito
+ */
 export interface CodeDeliveryDetails {
   AttributeName: string;
   DeliveryMedium: string;
   Destination: string;
 }
 
+/**
+ * @category Cognito
+ */
 export type ClientMetadata = { [key: string]: string } | undefined;
 
+/**
+ * @category Cognito
+ */
 export interface IAuthenticationCallback {
   onSuccess: (
     session: CognitoUserSessionType,
@@ -111,10 +139,17 @@ export interface IAuthenticationCallback {
   selectMFAType?: (challengeName: unknown, challengeParameters: unknown) => void;
 }
 
+/**
+ * @category Cognito
+ */
 export interface IMfaSettings {
   PreferredMfa: boolean;
   Enabled: boolean;
 }
+
+/**
+ * @category Cognito
+ */
 export interface IAuthenticationDetailsData {
   Username: string;
   Password?: string;
@@ -122,6 +157,9 @@ export interface IAuthenticationDetailsData {
   ClientMetadata?: ClientMetadata;
 }
 
+/**
+ * @category Cognito
+ */
 export class AuthenticationDetails {
   constructor(data: IAuthenticationDetailsData);
 
@@ -130,6 +168,9 @@ export class AuthenticationDetails {
   public getValidationData(): unknown[];
 }
 
+/**
+ * @category Cognito
+ */
 export interface ICognitoStorage {
   setItem(key: string, value: string): void;
   getItem(key: string): string | null;
@@ -138,6 +179,9 @@ export interface ICognitoStorage {
   clear(): void;
 }
 
+/**
+ * @category Cognito
+ */
 export interface ISignUpResult {
   user: CognitoUserType;
   userConfirmed: boolean;
@@ -145,6 +189,9 @@ export interface ISignUpResult {
   codeDeliveryDetails: CodeDeliveryDetails;
 }
 
+/**
+ * @category Cognito
+ */
 export interface ICognitoUserPoolData {
   UserPoolId: string;
   ClientId: string;
@@ -153,6 +200,9 @@ export interface ICognitoUserPoolData {
   AdvancedSecurityDataCollectionFlag?: boolean;
 }
 
+/**
+ * @category Cognito
+ */
 export interface ICognitoUserSessionData {
   IdToken: CognitoJwtTokenType;
   AccessToken: CognitoJwtTokenType;
@@ -160,6 +210,9 @@ export interface ICognitoUserSessionData {
   ClockDrift?: number;
 }
 
+/**
+ * @category Cognito
+ */
 export interface ICognitoUserData {
   Username: string;
   Pool: CognitoUserPoolType;

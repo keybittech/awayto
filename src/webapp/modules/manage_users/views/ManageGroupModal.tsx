@@ -3,7 +3,7 @@ import { Card, CardContent, Grid, Typography, TextField, CardActions, Button, Fo
 import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
-import { IGroup, IManageGroupsActionTypes, IManageRolesActionTypes, useDispatch, useApi, useRedux, createPayloadAction, IUtilActionTypes } from "awayto";
+import { IGroup, IManageGroupsActionTypes, IManageRolesActionTypes, useDispatch, useApi, useRedux, act, IUtilActionTypes } from "awayto";
 
 const { GET_MANAGE_ROLES } = IManageRolesActionTypes;
 const { CHECK_GROUP_NAME, PUT_MANAGE_GROUPS, POST_MANAGE_GROUPS } = IManageGroupsActionTypes;
@@ -31,7 +31,7 @@ export function ManageGroupModal ({
     const { id, name } = group;
 
     if (!name || !roleIds.length)
-      return dispatch(createPayloadAction(IUtilActionTypes.SET_SNACK, {snackType: 'error', snackOn: 'Please provide a valid group name and roles.' }));
+      return dispatch(act(IUtilActionTypes.SET_SNACK, {snackType: 'error', snackOn: 'Please provide a valid group name and roles.' }));
 
     group.name = formatName(name);
     group.roles = roles?.filter(r => roleIds.includes(r.id));
@@ -55,13 +55,13 @@ export function ManageGroupModal ({
     const name = event.target.value;
     if (name.length <= 50) {
       setGroup({ ...group, name });
-      dispatch(createPayloadAction(CHECK_GROUP_NAME, { checkedName: formatName(name), needCheckName: name != editGroup?.name }, { debounce: { time: 1000 } }))
+      dispatch(act(CHECK_GROUP_NAME, { checkedName: formatName(name), needCheckName: name != editGroup?.name }, { debounce: { time: 1000 } }))
     } 
   }, [group, setGroup])
 
   useEffect(() => {
     if (needCheckName && checkedName) {
-      dispatch(createPayloadAction(CHECK_GROUP_NAME, { checkingName: true, needCheckName: false, isValid: false }));
+      dispatch(act(CHECK_GROUP_NAME, { checkingName: true, needCheckName: false, isValid: false }));
       void api(CHECK_GROUP_NAME, true, { checkedName })
     }
   }, [needCheckName])

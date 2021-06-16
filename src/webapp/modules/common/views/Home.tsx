@@ -7,7 +7,7 @@ import { IGroup, IManageUsersActionTypes, IUtilActionTypes, SiteRoles, useApi, u
 const { GET_MANAGE_USERS } = IManageUsersActionTypes;
 const { TEST_API } = IUtilActionTypes;
 
-export function Home(props: Props): JSX.Element {
+export function Home(props: IProps): JSX.Element {
   const { Secure } = useComponents();
   const api = useApi();
   const { test } = useRedux(state => state.util);

@@ -9,7 +9,7 @@ import ManageRoleModal from './ManageRoleModal';
 
 const { GET_MANAGE_ROLES } = IManageRolesActionTypes;
 
-export function ManageRoles (props: Props): JSX.Element {
+export function ManageRoles (props: IProps): JSX.Element {
   const api = useApi();
   const util = useRedux(state => state.util);
   const { roles } = useRedux(state => state.manageRoles);

@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Card, CardActions, CardContent, Grid, Typography } from '@material-ui/core';
 import { SiteRoles, useComponents } from 'awayto';
 
-export function Manage(props: Props): JSX.Element {
+export function Manage(props: IProps): JSX.Element {
   const { ManageUsers, ManageGroups, ManageRoles, ManageRoleActions, Secure } = useComponents();
 
   const menu = ['users', 'groups', 'roles', 'matrix'].map(comp =>

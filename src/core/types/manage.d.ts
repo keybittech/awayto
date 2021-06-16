@@ -1,14 +1,24 @@
 import { PayloadAction, IUserProfile } from '.';
 
 declare global {
+  /**
+   * @category Awayto
+   */
   export interface ISharedState { 
     manage: IManageState
     manageUsers: IManageUsersState;
     manageRoles: IManageRolesState;
     manageGroups: IManageGroupsState;
   }
-  // ISharedActions
+
+  /**
+   * @category Awayto
+   */
   export type IManageModuleActions = IManageActions | IManageUsersActions | IManageRolesActions | IManageGroupsActions;
+
+  /**
+   * @category Awayto
+   */
   export interface ISharedActionTypes {
     manage: IManageActionTypes;
     manageUsers: IManageUsersActionTypes;
@@ -17,34 +27,55 @@ declare global {
   }
 }
 
+/**
+ * @category Manage
+ */
 export type IManage = {
   manageUsers: IManageUsersState;
   manageRoles: IManageRolesState;
   manageGroups: IManageGroupsState;
 };
 
+/**
+ * @category Manage
+ */
 export type IManageState = Partial<IManage>;
 
+/**
+ * @category Manage
+ */
 export enum IManageActionTypes {
   GET_MODULES = "manage/GET_MODULES"
 }
 
+/**
+ * @category Manage
+ */
 export type IGetModulesAction = PayloadAction<IManageActionTypes.GET_MODULES, IManage>;
 
+/**
+ * @category Manage
+ */
 export type IManageActions = IGetModulesAction;
 
 
 
-///////////////
-// MANAGE USERS
-///////////////
+/**
+ * @category ManageUsers
+ */
 export type IManageUsers = {
   users: IUserProfile[],
   error: Error | string
 };
 
+/**
+ * @category ManageUsers
+ */
 export type IManageUsersState = Partial<IManageUsers>;
 
+/**
+ * @category ManageUsers
+ */
 export enum IManageUsersActionTypes {
   GET_MANAGE_USERS = "GET/manage/users",
   
@@ -58,17 +89,55 @@ export enum IManageUsersActionTypes {
   UNLOCK_MANAGE_USERS = "PUT/manage/users/unlock"
 }
 
+
+/**
+ * @category ManageUsers
+ */
 export type IGetManageUsersAction = PayloadAction<IManageUsersActionTypes.GET_MANAGE_USERS, IUserProfile[]>;
 
+/**
+ * @category ManageUsers
+ */
 export type IGetManageUsersByIdAction = PayloadAction<IManageUsersActionTypes.GET_MANAGE_USERS_BY_ID, IUserProfile>;
+
+/**
+ * @category ManageUsers
+ */
 export type IGetManageUsersInfoAction = PayloadAction<IManageUsersActionTypes.GET_MANAGE_USERS_INFO, IUserProfile[]>;
+
+/**
+ * @category ManageUsers
+ */
 export type IPostManageUsersAction = PayloadAction<IManageUsersActionTypes.POST_MANAGE_USERS, IUserProfile>;
+
+/**
+ * @category ManageUsers
+ */
 export type IPostManageUsersSubAction = PayloadAction<IManageUsersActionTypes.POST_MANAGE_USERS_SUB, IUserProfile>;
+
+/**
+ * @category ManageUsers
+ */
 export type IPostManageUsersAppAcctAction = PayloadAction<IManageUsersActionTypes.POST_MANAGE_USERS_APP_ACCT, IUserProfile>;
+
+/**
+ * @category ManageUsers
+ */
 export type IPutManageUsersAction = PayloadAction<IManageUsersActionTypes.PUT_MANAGE_USERS, IUserProfile>;
+
+/**
+ * @category ManageUsers
+ */
 export type ILockManageUsersAction = PayloadAction<IManageUsersActionTypes.LOCK_MANAGE_USERS, IUserProfile[]>;
+
+/**
+ * @category ManageUsers
+ */
 export type IUnlockManageUsersAction = PayloadAction<IManageUsersActionTypes.UNLOCK_MANAGE_USERS, IUserProfile[]>;
 
+/**
+ * @category ManageUsers
+ */
 export type IManageUsersActions = IGetManageUsersAction
   | IGetManageUsersByIdAction
   | IGetManageUsersInfoAction
@@ -80,24 +149,37 @@ export type IManageUsersActions = IGetManageUsersAction
   | IUnlockManageUsersAction;
 
 
-///////////////
-// MANAGE ROLES
-///////////////
 
+/**
+ * @category Role
+ */
 export type IRole = {
   id: string;
   name: string;
 }
 
+/**
+ * @category Role
+ */
 export type IRoleState = Partial<IRole>;
 
+
+/**
+ * @category Role
+ */
 export type IManageRoles = {
   roles: IRole[],
   error?: Error | string
 };
 
+/**
+ * @category Role
+ */
 export type IManageRolesState = Partial<IManageRoles>;
 
+/**
+ * @category Role
+ */
 export enum IManageRolesActionTypes {
   GET_MANAGE_ROLES = "GET/manage/roles",
   POST_MANAGE_ROLES = "POST/manage/roles",
@@ -105,21 +187,40 @@ export enum IManageRolesActionTypes {
   DELETE_MANAGE_ROLES = "DELETE/manage/roles",
 }
 
+/**
+ * @category Role
+ */
 export type IGetManageRolesAction = PayloadAction<IManageRolesActionTypes.GET_MANAGE_ROLES, IRole[]>;
+
+/**
+ * @category Role
+ */
 export type IPostManageRolesAction = PayloadAction<IManageRolesActionTypes.POST_MANAGE_ROLES, IRole>;
+
+/**
+ * @category Role
+ */
 export type IPutManageRolesAction = PayloadAction<IManageRolesActionTypes.PUT_MANAGE_ROLES, IRoleState>;
+
+/**
+ * @category Role
+ */
 export type IDeleteManageRolesAction = PayloadAction<IManageRolesActionTypes.DELETE_MANAGE_ROLES, IRoleState>;
 
+
+/**
+ * @category Role
+ */
 export type IManageRolesActions = IGetManageRolesAction
   | IPostManageRolesAction
   | IPutManageRolesAction
   | IDeleteManageRolesAction;
 
 
-////////////////
-// MANAGE GROUPS
-////////////////
 
+/**
+ * @category Group
+ */
 export type IGroup = {
   id: string;
   name: string;
@@ -127,8 +228,16 @@ export type IGroup = {
   roles: IRole[];
 }
 
+
+/**
+ * @category Group
+ */
 export type IGroupState = Partial<IGroup>;
 
+
+/**
+ * @category Group
+ */
 export type IManageGroups = {
   groups: IGroup[],
   isValid: boolean,
@@ -138,8 +247,14 @@ export type IManageGroups = {
   error: Error | string
 };
 
+/**
+ * @category Group
+ */
 export type IManageGroupsState = Partial<IManageGroups>;
 
+/**
+ * @category Group
+ */
 export enum IManageGroupsActionTypes {
   GET_MANAGE_GROUPS = "GET/manage/groups",
   CHECK_GROUP_NAME = "GET/manage/group/valid/:name",
@@ -148,12 +263,35 @@ export enum IManageGroupsActionTypes {
   DELETE_MANAGE_GROUPS = "DELETE/manage/groups",
 }
 
+/**
+ * @category Group
+ */
 export type IGetManageGroupsAction = PayloadAction<IManageGroupsActionTypes.GET_MANAGE_GROUPS, IGroup[]>;
+
+/**
+ * @category Group
+ */
 export type ICheckGroupNameAction = PayloadAction<IManageGroupsActionTypes.CHECK_GROUP_NAME, IManageGroupsState>;
+
+/**
+ * @category Group
+ */
 export type IPostManageGroupsAction = PayloadAction<IManageGroupsActionTypes.POST_MANAGE_GROUPS, IGroup>;
+
+/**
+ * @category Group
+ */
 export type IPutManageGroupsAction = PayloadAction<IManageGroupsActionTypes.PUT_MANAGE_GROUPS, IGroupState>;
+
+/**
+ * @category Group
+ */
 export type IDeleteManageGroupsAction = PayloadAction<IManageGroupsActionTypes.DELETE_MANAGE_GROUPS, IGroupState>;
 
+
+/**
+ * @category Group
+ */
 export type IManageGroupsActions = IGetManageGroupsAction 
   | ICheckGroupNameAction 
   | IPostManageGroupsAction 

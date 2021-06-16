@@ -15,7 +15,7 @@ import { act, ILoginActionTypes, cognitoSSRPLogin, useRedux, useDispatch, useCom
 const { RESET_PASSWORD, LOGIN_USER, AUTH_DENIAL } = ILoginActionTypes;
 const { SET_SNACK, START_LOADING, STOP_LOADING } = IUtilActionTypes;
 
-export function Login (props: Props): JSX.Element {
+export function Login (props: IProps): JSX.Element {
   const { SignUp } = useComponents();
   const dispatch = useDispatch();
   const login = useRedux(state => state.login);

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { DialogContent, Grid, Typography, TextField, DialogActions, Button, FormHelperText, FormControl, CircularProgress, InputLabel, Input, InputAdornment, Select, MenuItem, DialogTitle } from "@material-ui/core";
 
-import { IGroup, IUserProfile, IManageUsersActionTypes, IChangeEvent, IManageGroupsActionTypes, useApi, createPayloadAction, IUtilActionTypes, useDispatch, useRedux } from "awayto";
+import { IGroup, IUserProfile, IManageUsersActionTypes, IChangeEvent, IManageGroupsActionTypes, useApi, act, IUtilActionTypes, useDispatch, useRedux } from "awayto";
 
 const { PUT_MANAGE_USERS, POST_MANAGE_USERS, GET_MANAGE_USERS_BY_ID, POST_MANAGE_USERS_SUB, POST_MANAGE_USERS_APP_ACCT } = IManageUsersActionTypes;
 const { GET_MANAGE_GROUPS } = IManageGroupsActionTypes;
@@ -9,7 +9,7 @@ const { GET_MANAGE_GROUPS } = IManageGroupsActionTypes;
 export function ManageUserModal({
   editUser,
   closeModal = () => { return; }
-}: Props & { editUser?: IUserProfile }): JSX.Element {
+}: IProps & { editUser?: IUserProfile }): JSX.Element {
   const api = useApi();
   const dispatch = useDispatch();
   const { groups } = useRedux(state => state.manageGroups);
@@ -52,7 +52,7 @@ export function ManageUserModal({
       const groupRoleKeys = Object.keys(userGroupRoles);
 
       if (!groupRoleKeys.length)
-        return dispatch(createPayloadAction(IUtilActionTypes.SET_SNACK, { snackType: 'error', snackOn: 'Group roles must be assigned.' }));
+        return dispatch(act(IUtilActionTypes.SET_SNACK, { snackType: 'error', snackOn: 'Group roles must be assigned.' }));
 
       user.groups = groupRoleKeys // { "g1": [...], "g2": [...] } => ["g1", "g2"];
         .reduce((memo, key) => {

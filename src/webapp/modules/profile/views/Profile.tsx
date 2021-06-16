@@ -9,7 +9,7 @@ import { DropFile, IUserProfile, IUserProfileActionTypes, useRedux, useDispatch,
 const { SET_SNACK, SET_THEME } = IUtilActionTypes;
 const { GET_USER_PROFILE } = IUserProfileActionTypes;
 
-export function Profile (props: Props): JSX.Element {
+export function Profile (props: IProps): JSX.Element {
   const { classes = {} } = props;
   
   const api = useApi();

@@ -3,6 +3,9 @@ import { green, red } from '@material-ui/core/colors';
 
 const drawerWidth = 150;
 
+/**
+ * @category Style
+ */
 export const styles = ({ mixins, spacing }: Theme): StyleRules => createStyles({
 
   appLogo: { width: '256px' },
@@ -88,6 +91,9 @@ const theme = {
   }
 };
 
+/**
+ * @category Style
+ */
 export const lightTheme = createMuiTheme({
   ...theme,
   palette: {
@@ -97,6 +103,9 @@ export const lightTheme = createMuiTheme({
   }
 });
 
+/**
+ * @category Style
+ */
 export const darkTheme = createMuiTheme({
   ...theme,
   palette: {
@@ -107,4 +116,7 @@ export const darkTheme = createMuiTheme({
   ...styles
 });
 
+/**
+ * @category Style
+ */
 export type IStyles = Record<keyof ReturnType<typeof styles>, string>

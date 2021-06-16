@@ -8,6 +8,9 @@ import { IStyles } from '../style';
 import { CognitoUser } from '../cognito';
 
 declare global {
+  /**
+   * @category Awayto
+   */
   export interface ISharedState {
     root: ILoadedState;
     components: IBaseComponents;
@@ -15,65 +18,130 @@ declare global {
     router: RouterState<unknown>;
   }
   
+  /**
+   * @category Awayto
+   */
   export type ISharedActions = ICommonModuleActions | IManageModuleActions | IProfileModuleActions;
 
-  export type RouteProps = { [prop: string]: string }
-  export type SafeRouteProps = Omit<RouteComponentProps<RouteProps>, "staticContext">;
+  /**
+   * @category Awayto
+   */
   export type IProps = SafeRouteProps & {
     closeModal: () => void;
   } & {
     [prop: string]: boolean | string | number | ILoadedState | (() => void);
   };
-  
-  export type Props = IProps & SafeRouteProps & { 
-    classes: IStyles
-  }
-  export type IBaseComponent = ComponentType<Props>
-  export type IBaseComponents = { [component: string]: IBaseComponent }
-
-  export type TempComponent = IBaseComponent | string | undefined
-  export type LazyComponentPromise = Promise<{ default: IBaseComponent }>
 }
 
+type RouteProps = { [prop: string]: string }
+type SafeRouteProps = Omit<RouteComponentProps<RouteProps>, "staticContext">;
+  
+type Props = IProps & SafeRouteProps & { 
+  classes?: IStyles
+}
+
+/**
+ * @category Awayto
+ */
+export type IBaseComponent = ComponentType<Props>
+
+/**
+ * @category Awayto
+ */
+export type IBaseComponents = { [component: string]: IBaseComponent }
+
+/**
+ * @category Awayto
+ */
+export type TempComponent = IBaseComponent | string | undefined
+
+/**
+ * @category Awayto
+ */
+export type LazyComponentPromise = Promise<{ default: IBaseComponent }>
+
+/**
+ * @category Awayto
+ */
 export type IEmpty = undefined | null | void;
 
+/**
+ * @category Awayto
+ */
 export type ILoadedState = ISharedState[keyof ISharedState];
 
-// export type ISharedActionTypesType = typeof ISharedActions;
-// export type IActions = ISharedActions[keyof ISharedActionTypesType];
-
-
+/**
+ * @category Awayto
+ */
 export type IReducers = ReducersMapObject<ISharedState, ISharedActions>;
+
+/**
+ * @category Awayto
+ */
 export type ILoadedReducers = Partial<IReducers>;
 
+/**
+ * @category Awayto
+ */
 export type IActionTypes = ISharedActionTypes[keyof ISharedActionTypes];
+
+/**
+ * @category Awayto
+ */
 export type MetaAction<Type, Meta> = Action<Type> & {
   meta?: Meta;
 };
+
+/**
+ * @category Awayto
+ */
 export type PayloadAction<Type, Payload, Meta = void> = MetaAction<Type, Meta> & {
   readonly payload: Payload;
 };
 
+/**
+ * @category Awayto
+ */
 export type ThunkResult = ThunkAction<void, ISharedState, unknown | undefined, ISharedActions>
+
+/**
+ * @category Awayto
+ */
 export type ThunkStore = Store<ISharedState, ISharedActions> & {
   dispatch: ThunkDispatch<ISharedState, undefined, ISharedActions>;
 }
 
+/**
+ * @category Awayto
+ */
 export enum SiteRoles {
   ADMIN = "system:admin",
   DEMO = "public:demo",
   GUEST = "public:guest"
 }
 
+/**
+ * @category Awayto
+ */
 export type IChangeEvent = React.ChangeEvent<HTMLTextAreaElement>;
+
+/**
+ * @category Awayto
+ */
 export type IFocusEvent = React.FocusEvent<HTMLTextAreaElement>;
 
+/**
+ * @category Awayto
+ */
 export class ApiResponse {
   responseText?: string;
   responseString?: string;
   responseBody?: Response;
 }
 
+/**
+ * @category Awayto
+ */
 export interface CallApi {
   path?: string;
   method?: string;
@@ -81,6 +149,9 @@ export interface CallApi {
   cognitoUser: CognitoUser;
 }
 
+/**
+ * @category Awayto
+ */
 export interface ApiResponseBody {
   error: Error | string;
   type: string;
@@ -89,6 +160,9 @@ export interface ApiResponseBody {
   awsRequestId: string;
 }
 
+/**
+ * @category Awayto
+ */
 export interface DropFile {
   preview?: string;
   name?: string;

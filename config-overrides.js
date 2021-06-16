@@ -18,7 +18,13 @@ const multipleEntry = require('react-app-rewire-multiple-entry')([
 ]);
 
 const { AWAYTO_CORE, AWAYTO_WEBAPP_MODULES } = process.env;
-const getN = n => ({ [`${n[n.length - 1].split('.')[0]}`]: `${n[n.length - 3]}/${n[n.length - 2]}/${n[n.length - 1].split('.')[0]}` }) // returns { 'MyThing': 'common/views/bla' }
+
+/**
+ * 
+ * @param {string} n A path name returned from glob.sync
+ * @returns An object like `{ 'MyComponent': 'common/views/MyComponent' }`
+ */
+const buildPathObject = n => ({ [`${n[n.length - 1].split('.')[0]}`]: `${n[n.length - 3]}/${n[n.length - 2]}/${n[n.length - 1].split('.')[0]}` }) // returns { 'MyThing': 'common/views/bla' }
 
 const filePath = path.resolve(__dirname + AWAYTO_CORE + '/build.json');
 const globOpts = {
@@ -31,21 +37,49 @@ try {
     fs.closeSync(fs.openSync(filePath, 'w'));
 } catch (error) { }
 
-function storeResource(path) {
-  return glob.sync(path, globOpts).map((m) => getN(m.split('/'))).reduce((a, b) => ({ ...a, ...b }), {});
+/**
+ * 
+ * @param {string} path A file path to a set of globbable files
+ * @returns An object containing file names as keys and values as file paths
+ * ```
+ * {
+    "views": {
+      "Home": "common/views/Home",
+      "Login": "common/views/Login",
+      "Secure": "common/views/Secure",
+    },
+    "reducers": {
+      "login": "common/reducers/login",
+      "util": "common/reducers/util",
+    }
+  }
+ * ```
+ */
+function parseResource(path) {
+  return glob.sync(path, globOpts).map((m) => buildPathObject(m.split('/'))).reduce((a, b) => ({ ...a, ...b }), {});
 }
 
+/**
+ * <p>We keep a reference to the old hash of files</P.
+ */
 let oldHash;
 
+/**
+ * <p>This function runs on build and when webpack dev server receives a request.</p>
+ * <p>Scan the file system for views and reducers and parse them into something we can use in the app.</p>
+ * <p>Check against a hash of existing file structure to see if we need to update the build file. The build file is used later in the app to load the views and reducers.</p>
+ * 
+ * @param {app.next} next The next function from express app
+ */
 function checkWriteBuildFile(next) {
   try {
     const files = JSON.stringify({
-      views: storeResource('.' + AWAYTO_WEBAPP_MODULES + '/**/views/*.tsx'),
-      reducers: storeResource('.' + AWAYTO_WEBAPP_MODULES + '/**/reducers/*.ts')
+      views: parseResource('.' + AWAYTO_WEBAPP_MODULES + '/**/views/*.tsx'),
+      reducers: parseResource('.' + AWAYTO_WEBAPP_MODULES + '/**/reducers/*.ts')
     });
 
     const newHash = crypto.createHash('sha1').update(Buffer.from(files)).digest('base64');
-    
+
     if (oldHash != newHash) {
       oldHash = newHash;
       fs.writeFile(filePath, files, () => next && next())
@@ -60,9 +94,9 @@ function checkWriteBuildFile(next) {
 checkWriteBuildFile();
 
 module.exports = {
-  
+
   webpack: function (config, env) {
-    
+
     multipleEntry.addMultiEntry(config);
 
     useBabelRc()(config);
@@ -100,7 +134,7 @@ module.exports = {
       return config;
     };
   },
-  paths: function(paths, env) {
+  paths: function (paths, env) {
     paths.appTypescriptSrc = path.resolve(__dirname, "src/core/types/index.d.ts");
     paths.appIndexJs = path.resolve(__dirname, "src/webapp/index.tsx");
     paths.appSrc = path.resolve(__dirname, "src");

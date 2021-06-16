@@ -35,6 +35,9 @@ const {
   REACT_APP_COGNITO_CLIENT_ID: ClientId
 } = process.env;
 
+/**
+ * @category Hooks
+ */
 export function useApi(): (actionType: IActionTypes, load?: boolean, body?: ILoadedState, meta?: void) => Promise<unknown> {
   const dispatch = useDispatch();
 

@@ -10,6 +10,9 @@ import storage from 'redux-persist/lib/storage'
 import { ILoadedReducers, ILoadedState, ThunkStore } from './types/index.d';
 import persistStore from 'redux-persist/es/persistStore';
 
+/**
+ * @category Redux
+ */
 export const history: History<unknown> = createBrowserHistory();
 
 const initialRootState = {} as ISharedState;
@@ -17,6 +20,9 @@ const rootReducer: Reducer<ILoadedState, ISharedActions> = (state = initialRootS
   return state as ISharedState;
 }
 
+/**
+ * @category Redux
+ */
 export let initialReducers: ILoadedReducers = {
   root: rootReducer,
   router: connectRouter(history)
@@ -34,6 +40,9 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, createRootReducer);
 
+/**
+ * @category Redux
+ */
 export const store = createStore(
   persistedReducer,
   initialRootState,
@@ -47,8 +56,14 @@ export const store = createStore(
   )
 ) as ThunkStore;
 
+/**
+ * @category Redux
+ */
 export const persistor = persistStore(store);
 
+/**
+ * @category Redux
+ */
 export const addReducer = (reducers: ILoadedReducers): void => {
   initialReducers = { ...initialReducers, ...reducers };
   store.replaceReducer(createRootReducer());

@@ -1,7 +1,11 @@
 import { createElement, useMemo } from 'react';
+import { IBaseComponent, IBaseComponents } from '../types';
 
 export const components = {} as IBaseComponents;
 
+/**
+ * @category Hooks
+ */
 export function useComponents(): IBaseComponents {
   const comps = useMemo(() => new Proxy(components, {
     get: function (target: IBaseComponents, prop: string): IBaseComponents {

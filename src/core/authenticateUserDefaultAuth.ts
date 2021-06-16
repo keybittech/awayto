@@ -19,6 +19,9 @@ const {
   REACT_APP_COGNITO_CLIENT_ID: clientId
 } = process.env;
 
+/**
+ * @category Cognito
+ */
 export const authenticateUserDefaultAuth = async (authDetails: { [key: string]: string }): Promise<CognitoAuthResponse> => (
 
   //  Use a Promise here to interact with callback methods of yore

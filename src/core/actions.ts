@@ -1,29 +1,14 @@
 import { MetaAction, PayloadAction } from './types/index.d';
 
-export const createAction = <Type extends string, Meta>(type: Type, meta?: Meta): MetaAction<Type, Meta> =>
+const createAction = <Type extends string, Meta>(type: Type, meta?: Meta): MetaAction<Type, Meta> =>
   ({ type, meta });
 
 /**
- * 
- * @param type 
- * @param payload 
- * @param meta 
- * @returns 
- */
-export const createPayloadAction = <Type extends string, Payload, Meta>(
-  type: Type,
-  payload: Payload,
-  meta?: Meta,
-): PayloadAction<Type, Payload, Meta> => ({
-  ...createAction(type, meta),
-  payload,
-});
-
-/**
- * <p>Act is used to call Redux actions.
+ * @example
+ * <p>Act is used to call Redux actions.</p>
  * 
  * ```
- * import { act } from 'awayto';
+ * import { act, IUtilActions } from 'awayto';
  * 
  * const { SET_SNACK } = IUtilActions;
  * 
@@ -34,10 +19,17 @@ export const createPayloadAction = <Type extends string, Payload, Meta>(
  * 
  * act(SET_SNACK, snack);
  * ```
- * 
- * @param type {IActionTypes} The const form of an action type, i.e. GET_MANAGE_USERS
- * @param payload {ISharedState} The payload should match a partial of one of the state models.. IUtil, IUserProfile, etc..
+ * @category Awayto
+ * @param type {@link IActionTypes} The const form of an action type, i.e. {@link IUtilActionTypes.SET_SNACK}
+ * @param payload {@link ILoadedState} The payload should match at least a partial of one of the state models.. {@link IUtil}, {@link IUserProfile}, etc..
  * @param meta {any} Unused. Could be used for passing auditing info.
- * @returns 
+ * @returns {@link PayloadAction}
  */
-export const act = createPayloadAction;
+export const act = <Type extends string, Payload, Meta>(
+  type: Type,
+  payload: Payload,
+  meta?: Meta,
+): PayloadAction<Type, Payload, Meta> => ({
+  ...createAction(type, meta),
+  payload,
+});

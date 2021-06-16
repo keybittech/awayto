@@ -22,6 +22,10 @@ import {
   ICognitoStorage
 } from './types/index.d';
 
+
+/**
+ * @category Cognito
+ */
 export class CognitoJwtToken implements CognitoJwtTokenType {
   token: string;
   payload: Record<string, unknown>;
@@ -42,10 +46,25 @@ export class CognitoJwtToken implements CognitoJwtTokenType {
   getIssuedAt = (): number => this.payload.iat as number;
 }
 
+/**
+ * @category Cognito
+ */
 export class CognitoIdToken extends CognitoJwtToken { }
+
+/**
+ * @category Cognito
+ */
 export class CognitoAccessToken extends CognitoJwtToken { }
+
+/**
+ * @category Cognito
+ */
 export class CognitoRefreshToken extends CognitoJwtToken { }
 
+
+/**
+ * @category Cognito
+ */
 export class CognitoUserSession implements CognitoUserSessionType {
   clockDrift: number;
   idToken: CognitoIdToken;
@@ -87,6 +106,10 @@ export class CognitoUserSession implements CognitoUserSessionType {
   }
 }
 
+
+/**
+ * @category Cognito
+ */
 export class CognitoUserPool implements CognitoUserPoolType {
   userPoolId: string;
   clientId: string;
@@ -130,6 +153,9 @@ export class CognitoUserPool implements CognitoUserPoolType {
   }
 }
 
+/**
+ * @category Cognito
+ */
 export class CognitoUser implements CognitoUserType {
   username: string;
   pool: CognitoUserPoolType;
@@ -318,14 +344,23 @@ const {
   REACT_APP_COGNITO_CLIENT_ID: ClientId
 } = process.env;
 
+/**
+ * @category Cognito
+ */
 export { UserPoolId, ClientId }
 
+/**
+ * @category Cognito
+ */
 export const getUserPool = (): CognitoUserPool => {
   if (!UserPoolId || !ClientId)
     throw new Error('Configuration error: missing pool or client ids.')
   return new CognitoUserPool({ UserPoolId, ClientId });
 };
 
+/**
+ * @category Cognito
+ */
 export const cognitoSSRPLogin = async (Username: string, Password: string): Promise<string | void> => {
 
   const response = await authenticateUserDefaultAuth({ Username, Password });
@@ -389,6 +424,9 @@ export const cognitoSSRPLogin = async (Username: string, Password: string): Prom
 //   return true;
 // };
 
+/**
+ * @category Cognito
+ */
 export function logoutUser(): void {
   const pool = getUserPool();
   const cognitoUser = pool.getCurrentUser();
@@ -396,6 +434,9 @@ export function logoutUser(): void {
     cognitoUser.signOut();
 }
 
+/**
+ * @category Cognito
+ */
 export const cognitoPoolSignUp = async (username: string, password: string, email: string): Promise<void> => {
   const userAttributes = [
     {

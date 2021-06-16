@@ -5,7 +5,7 @@ import { useDispatch, useRedux, IUtilActionTypes, act, getUserPool, CognitoUser 
 
 const { SET_SNACK, HAS_CODE } = IUtilActionTypes;
 
-export function CompleteSignUp (props: Props): JSX.Element {
+export function CompleteSignUp (props: IProps): JSX.Element {
 
   const dispatch = useDispatch();
   const user = useRedux(state => state.profile);

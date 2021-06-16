@@ -9,7 +9,7 @@ import ManageGroupModal from './ManageGroupModal';
 
 const { GET_MANAGE_GROUPS } = IManageGroupsActionTypes;
 
-export function ManageGroups (props: Props): JSX.Element {
+export function ManageGroups (props: IProps): JSX.Element {
   const api = useApi();
   const util = useRedux(state => state.util);
   const { groups } = useRedux(state => state.manageGroups);

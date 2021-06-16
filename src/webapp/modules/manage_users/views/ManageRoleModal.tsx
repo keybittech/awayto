@@ -9,7 +9,7 @@ const { POST_MANAGE_ROLES, PUT_MANAGE_ROLES } = IManageRolesActionTypes;
 export function ManageRoleModal ({
   editRole,
   closeModal = () => { return; }
-}: Props & { editRole?: IRole }): JSX.Element {
+}: IProps & { editRole?: IRole }): JSX.Element {
 
   const api = useApi();
   const dispatch = useDispatch();
