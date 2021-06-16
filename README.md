@@ -113,6 +113,22 @@ const profile = useRedux(state => state.profile);
 const modifications = useState<IUserProfile>({ ...profile });
 ```
 
+### act
+Act is used to call Redux actions. This will be converted to a hook.
+
+```ts
+import { act, IUtilActions } from 'awayto';
+
+const { SET_SNACK } = IUtilActions;
+
+const snack = {
+ snackType: 'error',
+ snackOn: 'Please log back in.'
+};
+
+act(SET_SNACK, snack);
+```
+
 ## Contributing
 
 We are happy to have people help with the project whether it be code, feedback, or other. Join our [Discord](https://discord.gg/KzpcTrn5DQ) to learn about the project, meet other members in the community, and get involved.
