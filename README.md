@@ -1,12 +1,21 @@
 # Awayto
  
-Awayto is a workflow enhancing platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape. The right path, a way to be discovered.
+Awayto is a workflow enhancing platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape. The right path is a way to be discovered.
 
 There are a few tenants of Awayto:  
 - Enhance the developer experience
-- Deploy conveniently, manage centrally
-- Provide opportunities to learn
+- Minimal focus on deployment, managed centrally
+- Provide opportunities for developers to learn
 - Use conventions that compliment functionality
+
+The Awayto platform adheres to these tenants in part by being scalable, lightweight, and secure. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:
+
+- Rapidly deployable environment using enterprise level technologies
+- Full scale business application built with business owners in mind
+- Robust user management system allowing for self signup, federated IdP, or admin generated memberships
+- Baked in group and role authorization framework
+- A fully typed Typescript development environment
+- Curated set of database scripts designed with auditing and reporting in mind
 
 ## Installation
  
@@ -27,7 +36,7 @@ AWS RDS
 
 ## Usage
 
-Type reference can be found [here](https://www.keybittech.com/awayto/docs/index.html). Notable functionalities are described below. We're always trying to think of and develop new tools for developers. 
+Type reference can be found [here](https://www.keybittech.com/awayto/docs/modules.html). Notable functionalities are described below. We're always trying to think of and develop new tools for developers. If you have an idea, come tell us on our [Discord](https://discord.gg/KzpcTrn5DQ).
 
 ### Hooks
 There are a few hooks offered out of the box, core to the Awayto UI design experience.
@@ -67,7 +76,7 @@ cognitoUser.getSession();
 ### useComponents
 `useComponents` takes advantage of [React.lazy](https://reactjs.org/docs/code-splitting.html#reactlazy) as well as the [Proxy API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). By combining these functionalities, we end up with a tool that seamlessly meshes with expanding and changing codebases.
 
-As new files are added to the project while the developer is working, they will be automatically discovered and made lazily available through `useComponents`. The only need is to refresh the browser page once the component has been added to the render cycle. If the developer tries to destructure a component that does not exist in the group of lazy loaded components, `useComponents` will return an empty `div`.
+As new files are added to the project while the developer is working, they will be automatically discovered and made lazily available through `useComponents`. The only need is to refresh the browser page once the component has been added to the render cycle. If the developer tries to destructure a component that does not exist in the group of lazy loaded components, `useComponents` will return an empty `div`. This is configurable.
 
 ```ts
 import { useComponents } from 'awayto';
@@ -121,6 +130,7 @@ For code related improvements:
 The MIT License (MIT)
 
 Copyright (c) 2021 [KeyBit Tech LLC](https://keybittech.com)
+Contact Joe McCormick [joe.c.mccormick@gmail.com](mailto:joe.c.mccormick@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
