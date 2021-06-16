@@ -4,11 +4,9 @@ const createAction = <Type extends string, Meta>(type: Type, meta?: Meta): MetaA
   ({ type, meta });
 
 /**
- * @example
- * <p>Act is used to call Redux actions.</p>
+ * Act is used to call Redux actions.
  * 
  * ```
- * 
  * import { act, IUtilActions } from 'awayto';
  * 
  * const { SET_SNACK } = IUtilActions;
@@ -19,7 +17,6 @@ const createAction = <Type extends string, Meta>(type: Type, meta?: Meta): MetaA
  * };
  * 
  * act(SET_SNACK, snack);
- * 
  * ```
  * @category Awayto
  * @param type {@link IActionTypes} The const form of an action type, i.e. {@link IUtilActionTypes.SET_SNACK}

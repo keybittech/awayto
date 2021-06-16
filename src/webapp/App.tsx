@@ -35,7 +35,6 @@ const App = (props: IProps): JSX.Element => {
     dispatch(act(SET_SNACK, { snackOn: '' }));
   }
 
-
   useEffect(() => {
     const bootstrapped = true;
 
