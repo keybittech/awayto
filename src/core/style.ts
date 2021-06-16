@@ -23,7 +23,7 @@ export const styles = ({ mixins, spacing }: Theme): StyleRules => createStyles({
   drawer: { width: drawerWidth },
   drawerPaper: {
     width: drawerWidth,
-    // backgroundColor: '#121f31',     
+    // backgroundColor: '#121f31',
   },
   // necessary for content to be below app bar
   toolbar: mixins.toolbar,
@@ -62,6 +62,13 @@ const theme = {
     secondary: { main: '#aaa' }
   },
 
+  typography: {
+    fontSize: 16,
+    body1: {
+      fontSize: 16,
+    },
+  },
+
   overrides: {
     MuiTableCell: {
       root: {
@@ -87,7 +94,35 @@ const theme = {
       root: {
         padding: '4px 0'
       }
-    }
+    },
+    MuiList: {
+      root: {
+        listStyleType: 'disc',
+        marginTop: 24,
+        marginBottom: 24,
+      },
+      padding: {
+        paddingTop: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
+        paddingLeft: 16,
+      }
+    },
+    MuiListItem: {
+      root: {
+        display: 'list-Item',
+      },
+      gutters: {
+        paddingLeft: 0,
+        paddingRight: 0,
+      },
+    },
+    MuiTypography: {
+      root: {
+        marginTop: 24,
+        marginBottom: 24,
+      },
+    },
   }
 };
 
@@ -100,7 +135,7 @@ export const lightTheme = createMuiTheme({
     ...theme.palette,
     type: 'light',
     primary: { main: '#000' }
-  }
+  },
 });
 
 /**
@@ -115,6 +150,7 @@ export const darkTheme = createMuiTheme({
   },
   ...styles
 });
+
 
 /**
  * @category Style
