@@ -43,16 +43,16 @@ try {
  * @returns An object containing file names as keys and values as file paths
  * ```
  * {
-    "views": {
-      "Home": "common/views/Home",
-      "Login": "common/views/Login",
-      "Secure": "common/views/Secure",
-    },
-    "reducers": {
-      "login": "common/reducers/login",
-      "util": "common/reducers/util",
-    }
-  }
+ *   "views": {
+ *     "Home": "common/views/Home",
+ *     "Login": "common/views/Login",
+ *     "Secure": "common/views/Secure",
+ *   },
+ *   "reducers": {
+ *     "login": "common/reducers/login",
+ *     "util": "common/reducers/util",
+ *   }
+ * }
  * ```
  */
 function parseResource(path) {

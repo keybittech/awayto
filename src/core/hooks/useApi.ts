@@ -36,6 +36,26 @@ const {
 } = process.env;
 
 /**
+ * The `useApi` hook provides type-bound api functionality. By passing in a {@link IActionTypes} we can control the structure of the api request, and more easily handle it on the backend.
+ * 
+ * ```
+ * import { useApi, IManageUsersActions } from 'awayto';
+ * 
+ * const { GET_MANAGE_USERS, GET_MANAGE_USERS_BY_ID } = IManageUsersActions;
+ * 
+ * const api = useApi();
+ * 
+ * api(GET_MANAGE_USERS);
+ * ```
+ * 
+ * As long as we have setup our model, `GET_MANAGE_USERS` will inform the system of the API endpoint and shape of the request/response.
+ * 
+ * If the endpoint takes path parameters, we can pass them in as options. Pass a boolean as the second argument to show or hide a loading screen.
+ *
+ * ```
+ * api(GET_MANAGE_USERS_BY_ID, false, { id });
+ * ```
+ * 
  * @category Hooks
  */
 export function useApi(): (actionType: IActionTypes, load?: boolean, body?: ILoadedState, meta?: void) => Promise<unknown> {
@@ -52,7 +72,7 @@ export function useApi(): (actionType: IActionTypes, load?: boolean, body?: ILoa
     if (!cognitoUser)
       return Promise.reject('No user found with which to call an API.');
 
-    const { [0]: method, [1]: path } = actionType.valueOf().split(/\/(.+)/);
+    const [method, path] = actionType.valueOf().split(/\/(.+)/);
     if (load) dispatch(act(START_LOADING, { isLoading: true }));
 
     return callApi<typeof body>({

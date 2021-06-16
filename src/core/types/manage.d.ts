@@ -78,7 +78,6 @@ export type IManageUsersState = Partial<IManageUsers>;
  */
 export enum IManageUsersActionTypes {
   GET_MANAGE_USERS = "GET/manage/users",
-  
   GET_MANAGE_USERS_BY_ID = "GET/manage/users/:id",
   GET_MANAGE_USERS_INFO = "GET/manage/users/info",
   POST_MANAGE_USERS = "POST/manage/users",

@@ -17,7 +17,7 @@ declare global {
     _persist: PersistState;
     router: RouterState<unknown>;
   }
-  
+
   /**
    * @category Awayto
    */
@@ -27,6 +27,7 @@ declare global {
    * @category Awayto
    */
   export type IProps = SafeRouteProps & {
+    classes?: IStyles;
     closeModal: () => void;
   } & {
     [prop: string]: boolean | string | number | ILoadedState | (() => void);
@@ -35,10 +36,8 @@ declare global {
 
 type RouteProps = { [prop: string]: string }
 type SafeRouteProps = Omit<RouteComponentProps<RouteProps>, "staticContext">;
-  
-type Props = IProps & SafeRouteProps & { 
-  classes?: IStyles
-}
+
+type Props = IProps & SafeRouteProps;
 
 /**
  * @category Awayto
@@ -110,6 +109,89 @@ export type ThunkResult = ThunkAction<void, ISharedState, unknown | undefined, I
 export type ThunkStore = Store<ISharedState, ISharedActions> & {
   dispatch: ThunkDispatch<ISharedState, undefined, ISharedActions>;
 }
+
+/**
+ * @category Build
+ * @param {string} n A path name returned from glob.sync
+ * @returns An object like `{ 'MyComponent': 'common/views/MyComponent' }`
+ */
+export function buildPathObject(path: string): string;
+
+/**
+ * @category Build
+ * @param {string} path A file path to a set of globbable files
+ * @returns An object containing file names as keys and values as file paths.
+ * @example
+ * ```
+ * {
+ *   "views": {
+ *     "Home": "common/views/Home",
+ *     "Login": "common/views/Login",
+ *     "Secure": "common/views/Secure",
+ *   },
+ *   "reducers": {
+ *     "login": "common/reducers/login",
+ *     "util": "common/reducers/util",
+ *   }
+ * }
+ * ```
+ */
+export function parseResource(path: string): Record<string, string>;
+
+/**
+ * <p>This function runs on build and when webpack dev server receives a request.</p>
+ * <p>Scan the file system for views and reducers and parse them into something we can use in the app.</p>
+ * <p>Check against a hash of existing file structure to see if we need to update the build file. The build file is used later in the app to load the views and reducers.</p>
+ * 
+ * ```
+ * // from config-overrides.js
+ * 
+ * function checkWriteBuildFile(next) {
+ *   try {
+ *     const files = JSON.stringify({
+ *       views: parseResource('.' + AWAYTO_WEBAPP_MODULES + '/**\/views/*.tsx'),
+ *       reducers: parseResource('.' + AWAYTO_WEBAPP_MODULES + '/**\/reducers/*.ts')
+ *     });
+ * 
+ *     const newHash = crypto.createHash('sha1').update(Buffer.from(files)).digest('base64');
+ * 
+ *     if (oldHash != newHash) {
+ *       oldHash = newHash;
+ *       fs.writeFile(filePath, files, () => next && next())
+ *     } else {
+ *       next && next()
+ *     }
+ *   } catch (error) {
+ *     console.log('error!', error)
+ *   }
+ * }
+ * 
+ * ```
+ * @category Build
+ * @param {app.next} next The next function from express app
+ */
+export function checkWriteBuildFile(next: () => unknown): void;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * @category Awayto

@@ -8,6 +8,16 @@ const {
 } = process.env;
 
 /**
+ * Use this hook to get access to cognito functionality once the user has logged in, or to check if the user is logged in.
+ * 
+ * ```
+ * import { useCognitoUser } from 'awayto';
+ * 
+ * const cognitoUser = useCognitoUser();
+ * 
+ * cognitoUser.getSession();
+ * ```
+ * 
  * @category Hooks
  */
 export function useCognitoUser(): CognitoUser | undefined {
