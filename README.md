@@ -14,8 +14,8 @@ The Awayto platform adheres to these tenants in part by being scalable, lightwei
 - Full scale business application built with business owners in mind
 - Robust user management system allowing for self signup, federated IdP, or admin generated memberships
 - Baked in group and role authorization framework
-- A fully typed Typescript development environment
-- Curated set of database scripts designed with auditing and reporting in mind
+- Completely typed Typescript development environment
+- Curated set of database scripts designed for auditing and reporting
 
 ## Installation
  
@@ -89,7 +89,7 @@ function ParentComponent(props: IProps): JSX.Element {
 
 }
 ```
-
+.
 ### useDispatch
 This will soon be overtaken by a `useAction` hook.
 
