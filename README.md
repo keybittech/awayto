@@ -36,7 +36,7 @@ AWS RDS
 
 ## Usage
 
-Type reference can be found [here](https://www.keybittech.com/awayto/docs/modules.html). Notable functionalities are described below. We're always trying to think of and develop new tools for developers. If you have an idea, come tell us on our [Discord](https://discord.gg/KzpcTrn5DQ).
+Type reference can be found [here](https://awayto.dev/docs/modules.html). Notable functionalities are described below. We're always trying to think of and develop new tools for developers. If you have an idea, come tell us on our [Discord](https://discord.gg/KzpcTrn5DQ).
 
 ### Hooks
 There are a few hooks offered out of the box, core to the Awayto UI design experience.
