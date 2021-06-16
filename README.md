@@ -2,13 +2,13 @@
  
 Awayto is a workflow enhancing platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape. The right path is a way to be discovered.
 
-There are a few tenants of Awayto:  
+There are a few tenets of Awayto:  
 - Enhance the developer experience
 - Minimal focus on deployment, managed centrally
 - Provide opportunities for developers to learn
 - Use conventions that compliment functionality
 
-The Awayto platform adheres to these tenants in part by being scalable, lightweight, and secure. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:
+The Awayto platform adheres to these tenets in part by being scalable, lightweight, and secure. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:
 
 - Rapidly deployable environment using enterprise level technologies
 - Full scale business application built with business owners in mind
