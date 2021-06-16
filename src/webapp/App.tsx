@@ -3,8 +3,19 @@ import Icon from './img/keybit-name-inverted-half-white-xp.png';
 import { History } from 'history';
 import React, { useEffect } from 'react';
 import { Route, Redirect, withRouter, Switch } from 'react-router-dom';
-import { withStyles, AppBar, Backdrop, CircularProgress, Toolbar, Snackbar, Grid, FormControlLabel, Switch as Toggle } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+
+import withStyles from '@material-ui/core/styles/withStyles'
+import Toggle from '@material-ui/core/Switch'
+import Grid from '@material-ui/core/Grid'
+import Typography from '@material-ui/core/Typography'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Snackbar from '@material-ui/core/Snackbar'
+import Toolbar from '@material-ui/core/Toolbar'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import Backdrop from '@material-ui/core/Backdrop'
+import AppBar from '@material-ui/core/AppBar'
+import Link from '@material-ui/core/Link'
 
 import { ILoginActionTypes, IUtilActionTypes, act, CognitoUserPool, styles, useRedux, useDispatch, useComponents } from 'awayto';
 
@@ -73,21 +84,31 @@ const App = (props: IProps): JSX.Element => {
         <main>
           <Grid container alignItems="center" direction="column">
             <Grid item>
-              <Grid container className={classes.loginWrap} alignItems="center" direction="column" spacing={4}>
+              <Grid container className={classes.loginWrap} alignItems="center" direction="column">
 
-                <Grid item>
-                  <Grid container alignItems="center" direction="column">
+                <Grid item xs={8}>
+                  <Grid container alignItems="center" direction="row">
+                    <Typography variant="h3">AWAYTO</Typography>
                     <img src={Icon} alt="keybit tech logo" className={classes.appLogo} />
-                    {/* <Typography className={classes.siteTitle}>KeyBit Tech</Typography> */}
                   </Grid>
                 </Grid>
-                <Grid item xs>
+                <Grid item xs={8} className={classes.loginWrap}>
                   <Switch>
                     {!['/', '/signup'].includes(history.location.pathname) && <Redirect to="/" />}
-                    {console.log('I want to load a login')}
                     <Route exact path="/" component={login.newPassRequired ? ChangeNewPassword : Login} />
                     <Route exact path="/signup" component={hasSignUpCode ? CompleteSignUp : SignUp} />
                   </Switch>
+
+                  <Grid container>
+                    <Grid item xs={12} style={{ margin: '50px 0' }}>
+                      <Grid container justify="space-evenly">
+                        <Typography><Link href="https://github.com/keybittech/awayto">View on GitHub</Link></Typography>
+                        <Typography><Link href="https://awayto.dev/docs/index.html">Typedoc</Link></Typography>
+                        <Typography><Link href="https://keybittech.com">KeyBit Tech</Link></Typography>
+                        <Typography><Link href="mailto:joe.c.mccormick@gmail.com">Contact</Link></Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>

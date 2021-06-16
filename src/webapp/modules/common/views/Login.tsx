@@ -5,6 +5,9 @@ import Typography from '@material-ui/core/Typography'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import IconButton from '@material-ui/core/IconButton'
 import TextField from '@material-ui/core/TextField'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import Link from '@material-ui/core/Link'
 
 
 import Visibility from '@material-ui/icons/Visibility';
@@ -15,7 +18,8 @@ import { act, ILoginActionTypes, cognitoSSRPLogin, useRedux, useDispatch, useCom
 const { RESET_PASSWORD, LOGIN_USER, AUTH_DENIAL } = ILoginActionTypes;
 const { SET_SNACK, START_LOADING, STOP_LOADING } = IUtilActionTypes;
 
-export function Login (props: IProps): JSX.Element {
+export function Login(props: IProps): JSX.Element {
+  // const { classes = {} } = props;
   const { SignUp } = useComponents();
   const dispatch = useDispatch();
   const login = useRedux(state => state.login);
@@ -43,51 +47,102 @@ export function Login (props: IProps): JSX.Element {
 
   return login ?
     <form onSubmit={submitForm}>
-      <Grid container direction="column" alignItems="stretch" spacing={2}>
-        <Grid item>
-          <TextField
-            fullWidth
-            id="username"
-            label="Username"
-            value={username}
-            name="username"
-            onChange={e => setUsername(e.target.value)}
-          />
-        </Grid>
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={3}>
+          <Grid container direction="column" justify="flex-start" alignItems="stretch" spacing={4}>
+            <Grid item>
+              <TextField
+                fullWidth
+                id="username"
+                label="Username"
+                value={username}
+                name="username"
+                onChange={e => setUsername(e.target.value)}
+              />
+            </Grid>
 
-        <Grid item>
-          <TextField
-            fullWidth
-            id="password"
-            label="Password"
-            value={password}
-            name="password"
-            onChange={e => setPassword(e.target.value)}
-            type={showPass ? 'text' : 'password'}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowPass(!showPass)}
-                  >
-                    {showPass ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-
-        <Grid item>
-          <Grid container justify="space-between">
-            <SignUp {...props} signUpButton />
-            <Button type="submit" color="primary">Login</Button>
+            <Grid item>
+              <TextField
+                fullWidth
+                id="password"
+                label="Password"
+                value={password}
+                name="password"
+                onChange={e => setPassword(e.target.value)}
+                type={showPass ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPass(!showPass)}
+                      >
+                        {showPass ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item>
+              <Grid container justify="space-between">
+                <SignUp {...props} signUpButton />
+                <Button type="submit" color="primary">Login</Button>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
 
         {login.error && <Typography color="error">{login.error}</Typography>}
 
+        <Grid item xs={12} md={9}>
+          <Grid container direction="column" justify="flex-start" alignItems="stretch" spacing={2}>
+            <Grid item>
+              <Typography variant="body1">Awayto is a workflow enhancing platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape. The right path is a way to be discovered.</Typography>
+
+              <Typography variant="body1">There are a few tenants of Awayto:</Typography>
+              <List>
+                <ListItem>
+                  <Typography variant="body2">Enhance the developer experience</Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography variant="body2">Minimal focus on deployment, managed centrally</Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography variant="body2">Provide opportunities for developers to learn</Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography variant="body2">Use conventions that compliment functionality</Typography>
+                </ListItem>
+              </List>
+            </Grid>
+
+            <Grid item>
+              <Typography variant="body1">The Awayto platform adheres to these tenants in part by being scalable, lightweight, and secure. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:</Typography>
+
+              <List>
+                <ListItem>
+                  <Typography variant="body2">Rapidly deployable environment using enterprise level technologies</Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography variant="body2">Full scale business application built with business owners in mind</Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography variant="body2">Robust user management system allowing for self signup, federated IdP, or admin generated memberships</Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography variant="body2">Baked in group and role authorization framework</Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography variant="body2">A fully typed Typescript development environment</Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography variant="body2">Curated set of database scripts designed with auditing and reporting in mind</Typography>
+                </ListItem>
+              </List>
+            </Grid>
+          </Grid>
+        </Grid>
       </Grid>
     </form> :
     <></>
