@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton'
 import TextField from '@material-ui/core/TextField'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import Link from '@material-ui/core/Link'
+// import Link from '@material-ui/core/Link'
 
 
 import Visibility from '@material-ui/icons/Visibility';
@@ -96,52 +96,55 @@ export function Login(props: IProps): JSX.Element {
         {login.error && <Typography color="error">{login.error}</Typography>}
 
         <Grid item xs={12} md={9}>
-          <Grid container direction="column" justify="flex-start" alignItems="stretch" spacing={2}>
-            <Grid item>
-              <Typography variant="body1">Awayto is a workflow enhancing platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape. The right path is a way to be discovered.</Typography>
 
-              <Typography variant="body1">There are a few tenants of Awayto:</Typography>
-              <List>
-                <ListItem>
-                  <Typography variant="body2">Enhance the developer experience</Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography variant="body2">Minimal focus on deployment, managed centrally</Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography variant="body2">Provide opportunities for developers to learn</Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography variant="body2">Use conventions that compliment functionality</Typography>
-                </ListItem>
-              </List>
-            </Grid>
+          <Typography>
+            Awayto is a workflow enhancing platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape. The right path is a way to be discovered.
+          </Typography>
 
-            <Grid item>
-              <Typography variant="body1">The Awayto platform adheres to these tenants in part by being scalable, lightweight, and secure. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:</Typography>
+          <Typography>
+            There are a few tenets of Awayto:
+          </Typography>
 
-              <List>
-                <ListItem>
-                  <Typography variant="body2">Rapidly deployable environment using enterprise level technologies</Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography variant="body2">Full scale business application built with business owners in mind</Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography variant="body2">Robust user management system allowing for self signup, federated IdP, or admin generated memberships</Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography variant="body2">Baked in group and role authorization framework</Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography variant="body2">A fully typed Typescript development environment</Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography variant="body2">Curated set of database scripts designed with auditing and reporting in mind</Typography>
-                </ListItem>
-              </List>
-            </Grid>
-          </Grid>
+          <List>
+            <ListItem>
+              Enhance the developer experience
+            </ListItem>
+            <ListItem>
+              Minimal focus on deployment, managed centrally
+            </ListItem>
+            <ListItem>
+              Provide opportunities for developers to learn
+            </ListItem>
+            <ListItem>
+              Use conventions that compliment functionality
+            </ListItem>
+          </List>
+
+          <Typography>
+            The Awayto platform adheres to these tenets in part by being scalable, lightweight, and secure. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:
+          </Typography>
+
+          <List>
+            <ListItem>
+              Rapidly deployable environment using enterprise level technologies
+            </ListItem>
+            <ListItem>
+              Full scale business application built with business owners in mind
+            </ListItem>
+            <ListItem>
+              Robust user management system allowing for self signup, federated IdP, or admin generated memberships
+            </ListItem>
+            <ListItem>
+              Baked in group and role authorization framework
+            </ListItem>
+            <ListItem>
+              A fully typed Typescript development environment
+            </ListItem>
+            <ListItem>
+              Curated set of database scripts designed with auditing and reporting in mind
+            </ListItem>
+          </List>
+
         </Grid>
       </Grid>
     </form> :
