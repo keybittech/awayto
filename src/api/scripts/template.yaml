@@ -80,44 +80,44 @@ Resources:
   CognitoUserPool:
     Type: 'AWS::Cognito::UserPool'
     Properties:
-      UserPoolName: !Join ['-', [!Ref 'Environment', !Ref 'AWS::Region', 'kbtdevResourcePool']]
+      UserPoolName: !Join ['-', [!Ref 'Environment', !Ref 'AWS::Region', '#APP_NAME#ResourcePool']]
       UsernameConfiguration:
         CaseSensitive: false
 
-  kbtdevResourcePoolParameter:
+  #APP_NAME#ResourcePoolParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Sub '${Environment}kbtdevResourcePool'
+      Name: !Sub '${Environment}#APP_NAME#ResourcePool'
       Value: !Ref CognitoUserPool
       Type: String
 
   CognitoUserPoolClient:
     Type: 'AWS::Cognito::UserPoolClient'
     Properties:
-      ClientName: !Sub '${Environment}kbtdevResourceDataCognitoUserPoolClient'
+      ClientName: !Sub '${Environment}#APP_NAME#ResourceDataCognitoUserPoolClient'
       GenerateSecret: false
       UserPoolId: !Ref CognitoUserPool
 
-  kbtdevResourcePoolClientParameter:
+  #APP_NAME#ResourcePoolClientParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Sub '${Environment}kbtdevResourcePoolClient'
+      Name: !Sub '${Environment}#APP_NAME#ResourcePoolClient'
       Value: !Ref CognitoUserPoolClient
       Type: String
 
   CognitoIdPool:
     Type: 'AWS::Cognito::IdentityPool'
     Properties:
-      IdentityPoolName: !Sub '${Environment}kbtdevResourceCognitoIdPool'
+      IdentityPoolName: !Sub '${Environment}#APP_NAME#ResourceCognitoIdPool'
       CognitoIdentityProviders:
         - ClientId: !Ref CognitoUserPoolClient
           ProviderName: !GetAtt CognitoUserPool.ProviderName
       AllowUnauthenticatedIdentities: false
 
-  kbtdevResourceCognitoIdentityPoolParameter:
+  #APP_NAME#ResourceCognitoIdentityPoolParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Sub '${Environment}kbtdevResourceCognitoIdentityPool'
+      Name: !Sub '${Environment}#APP_NAME#ResourceCognitoIdentityPool'
       Value: !Ref CognitoIdPool
       Type: String
 
@@ -142,7 +142,7 @@ Resources:
                   - authenticated
       Path: /
       Policies:
-        - PolicyName: kbtdevResourceApiAccess
+        - PolicyName: #APP_NAME#ResourceApiAccess
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -156,7 +156,7 @@ Resources:
                         - - 'arn:aws:execute-api'
                           - !Ref 'AWS::Region'
                           - !Ref 'AWS::AccountId'
-                          - !Ref kbtdevResourceApi
+                          - !Ref #APP_NAME#ResourceApi
                       - '*'
         - PolicyName: CognitoApiAccess
           PolicyDocument:
@@ -179,10 +179,10 @@ Resources:
       Roles:
         authenticated: !GetAtt CognitoIdPoolRole.Arn
 
-  kbtdevResourceApi:
+  #APP_NAME#ResourceApi:
     Type: AWS::Serverless::Api
     Properties:
-      Name: !Join ['-', [!Ref 'Environment', !Ref 'AWS::Region', 'kbtdevResourceApi']]
+      Name: !Join ['-', [!Ref 'Environment', !Ref 'AWS::Region', '#APP_NAME#ResourceApi']]
       StageName: !Ref 'Environment'
       Cors: 
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'" 
@@ -191,7 +191,7 @@ Resources:
         swagger: '2.0'
         info:
           version: '2017-04-26T03:23:48Z'
-          title: kbtdevResourceApi
+          title: #APP_NAME#ResourceApi
         basePath: /demo
         schemes:
           # Uncomment for local testing
@@ -266,7 +266,7 @@ Resources:
                     responseTemplates:
                       application/json: !Ref StandardErrorResponseFormat
                 uri: 
-                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${kbtdevResource.Arn}/invocations"
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${#APP_NAME#Resource.Arn}/invocations"
                 passthroughBehavior: when_no_templates
                 httpMethod: POST
                 contentHandling: CONVERT_TO_TEXT
@@ -338,7 +338,7 @@ Resources:
                     responseTemplates:
                       application/json: !Ref StandardErrorResponseFormat
                 uri: 
-                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${kbtdevResource.Arn}/invocations"
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${#APP_NAME#Resource.Arn}/invocations"
                 passthroughBehavior: when_no_templates
                 httpMethod: POST
                 contentHandling: CONVERT_TO_TEXT
@@ -415,7 +415,7 @@ Resources:
                     responseTemplates:
                       application/json: !Ref StandardErrorResponseFormat
                 uri: 
-                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${kbtdevResource.Arn}/invocations"
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${#APP_NAME#Resource.Arn}/invocations"
                 passthroughBehavior: when_no_templates
                 httpMethod: POST
                 contentHandling: CONVERT_TO_TEXT
@@ -446,13 +446,12 @@ Resources:
               request-id:
                 type: string
 
-  kbtdevResource:
+  #APP_NAME#Resource:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Join ['-', [!Ref 'Environment', !Ref 'AWS::Region', 'kbtdevResource']]
-      CodeUri: '.'
-      #CodeUri: 's3://kbt-lambda/lambda.zip'
+      FunctionName: !Join ['-', [!Ref 'Environment', !Ref 'AWS::Region', '#APP_NAME#Resource']]
       Handler: index.handler
+      CodeUri: 's3://<my-bucket>/<my-lambda>.zip'
       Runtime: nodejs12.x
       Timeout: 30
       Role: !Join [':', ['arn:aws:iam:', !Ref 'AWS::AccountId', 'role/LambdaTrust']]
@@ -460,19 +459,19 @@ Resources:
         ProxyEvent:
           Type: Api
           Properties:
-            RestApiId: !Ref kbtdevResourceApi
+            RestApiId: !Ref #APP_NAME#ResourceApi
             Path: /{proxy+}
             Method: ANY
         GetPublic:
           Type: Api
           Properties:
-            RestApiId: !Ref kbtdevResourceApi
+            RestApiId: !Ref #APP_NAME#ResourceApi
             Path: /public/{proxy+}
             Method: GET
         PostPublic:
           Type: Api
           Properties:
-            RestApiId: !Ref kbtdevResourceApi
+            RestApiId: !Ref #APP_NAME#ResourceApi
             Path: /public/{proxy+}
             Method: POST
       Environment:
