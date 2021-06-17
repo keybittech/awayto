@@ -9,7 +9,6 @@ docs
 settings.dev*.env
 settings.prod*.env
 
-lambda.zip
 index.js
 env.json
 dist
