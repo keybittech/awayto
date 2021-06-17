@@ -102,7 +102,7 @@ export function Login(props: IProps): JSX.Element {
           </Typography>
 
           <Typography>
-            There are a few tenants of Awayto:
+            There are a few tenets of Awayto:
           </Typography>
 
           <List>
@@ -121,7 +121,7 @@ export function Login(props: IProps): JSX.Element {
           </List>
 
           <Typography>
-            The Awayto platform adheres to these tenants in part by being scalable, lightweight, and secure. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:
+            The Awayto platform adheres to these tenets in part by being scalable, lightweight, and secure. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:
           </Typography>
 
           <List>
