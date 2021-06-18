@@ -3,23 +3,30 @@
 Awayto is a workflow enhancing platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape. The right path is a way to be discovered.
 
 There are a few tenets of Awayto:  
+
 - Enhance the developer experience
+
 - Provide opportunities for developers to learn
+
 - Minimal focus on deployment, managed centrally
+
 - Use conventions that compliment functionality
 
 The Awayto platform adheres to these tenets in part by being scalable, lightweight, and secure. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:
 
 - Rapidly deployable environment using enterprise level technologies
+
 - Full scale business application built with business owners in mind
+
 - Robust user management system allowing for self signup, federated IdP, or admin generated memberships
+
 - Baked in group and role authorization framework
+
 - Completely typed Typescript development environment
+
 - Curated set of database scripts designed for auditing and reporting
 
-## Installation
- 
-Detailed instructions to come. Awayto is a stack comprised of:
+Awayto is a stack comprised of:
 
 [`typescript`](https://www.typescriptlang.org/), 
 [`react`](https://reactjs.org/), 
@@ -34,62 +41,121 @@ AWS Cognito,
 AWS EC2, 
 AWS RDS
 
-### Prereqs
+## CLI Usage
+
+#### Prerequisites
 
 Any versions mentioned are what was used at time of writing. Any AWS tasks are performed on an AWS account with the Administrator role.
 
 - An AWS Account
+
 - AWS CLI 2.0.42
+
 - Node 16.3.0
+
 - Postgres 11.9
+
 - Python 3.7.9
 
-Then find a nice cosy place on your hard drive and download, fork or clone the repo.
+#### Install
+
+Awayto comes installed as a node-based CLI which we'll use with `npx`.
+
+```
+npm i -g @keybittech/awayto
+```
+
+#### Unpack
+
+Unpack the site files to a `new folder`. This will copy an unconfigured version of Awayto into the current directory.
+
+```
+npx awayto unpack
+```
+
+#### Config
+
+ The application will need to be configured before it will run. Complete the installation section below, or if you have the AWS resources already setup, run:
+
+```
+npx awayto config
+```
+
+#### Update
+
+In the future, if you want get access to new or updated tooling offered by Awayto, you can update the `src/core` folder with:
+
+```
+npx awayto update
+```
+
+>`Caution!` This will overwrite any changes to existing files in the `src/core` folder. If you want to continue receiving Awayto updates, make your changes and developments outside of the `src/core` folder. But if you want to take control and change everything, that's ok too! Just be aware of what the `update` command will do.
+
+## Installation
+
+If you know what you're doing, jump to the [Quick Installation](#quick-installation).
 
 ### Template Pre-Deployment
 
 We focus on using configuration- and template-based deployments when we can (and when it's appropriate). They introduce a basic level of trust in the environment by creating a standard to be followed, make it easy to handle multiple environments natrually, and support the minimal nature that we desire in our deployments.
 
+`npx awayto unpack` somewhere so we have some files to work with.
+
 Before we deploy our template, we need to setup any build resources we'll need. The template is going to deploy a number of services, including an API gateway, a lambda function and Cognito user/identity pools. Perhaps in the future that part will be automated, but for now we don't care where the database comes from. In this section, we'll use Amazon RDS to host our Postgres instance.
 
-`Alternative Use: If you don't want to use RDS, you can setup an EC2 instance, install postgres, configure it for external connections, and connect it to the same VPC and service group used by the lambda function.`
+>`Alternative Use` If you don't want to use RDS, you can setup an EC2 instance, install postgres, configure it for external connections, and connect it to the same VPC and service group used by the lambda function.
 
 Head over to [Amazon RDS](https://console.aws.amazon.com/rds/home) and create a new database, being sure to note the following:
 
 - **Standard Create**
+
 - **Engine Options**: PostgreSQL
+
 - **Version**: 12.6
+
 - **Templates**: Free Tier
+
 - **Storage Type**: General Purpose
 
 Name the database whatever you wish, provide a secure username and password (or let AWS auto generate a password for you), and take note of these. Down the page, we set the database to be publically accessible for the sake of local development. As well, you can create a new VPC if you would like, but the default works too.
 
 The rest of the default settings should be fine, but you should read through all the options on the page to be familiar with what you're setting up. And in the future, if you go out of free tier, you could owe money depending on the setting you choose. This applies for any cloud service you end up using. Be conscious.
 
-Once the database has been deployed, [connect to it](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ConnectToPostgreSQLInstance.html) and deploy the SQL scripts found [here](https://github.com/keybittech/awayto/tree/main/src/api/scripts) in order.
-
-Next, we'll create an [IAM Role](https://console.aws.amazon.com/iam/home) that will get attached to our lambda function. Create a Role named `LambdaTrust` with the following AWS-Managed policies:
-
-- AmazonS3FullAccess
-- CloudWatchLogsFullAccess
-- AmazonCognitoDeveloperAuthenticatedIdentities
-- AmazonCognitoPowerUser
-- AWSLambdaBasicExecutionRole
-- AWSIoTFullAccess
-- AWSConfigRulesExecutionRole
-- AWSLambdaVPCAccessExecutionRole
-
-`The name LambdaTrust must be exact. It corresponds to a resource of the same name used in our template.yaml file.`
+Once the database has been deployed, [connect to it](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ConnectToPostgreSQLInstance.html) and deploy the numbered SQL scripts in the `src/api/scripts` folder. 
 
 With the database setup, we'll then go to the [Parameter Store](https://console.aws.amazon.com/systems-manager/parameters) and create the parameters we can use in our lambda. All of these string parameters should reference the names and values you used to setup the database (defaults are given here):
 
 - PGDATABASE (postgres)
+
 - PGHOST
+
 - PGPASSWORD
+
 - PGPORT (5432)
+
 - PGUSER (postgres)
 
-When we deploy our lambda, we need to supply a zip file containing the code. This zip file is stored in an [S3 bucket](https://s3.console.aws.amazon.com/s3/home), so we need to create one. Remember there are [some rules](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html) when naming S3 buckets. Something like `awayto-deploy` works. Then we'll take the `lambda.zip` from [the repo](https://github.com/keybittech/awayto/tree/main/src/api/scripts) and drop it in our newly created bucket. In our example, we should be resulting with an object at the S3 URI: `s3://awayto-dev-deploy/lambda.zip`. The zip has an index.js file with a simple lambda:
+Next, we'll create an [IAM Role](https://console.aws.amazon.com/iam/home) that will get attached to our lambda function. Create a Role named `LambdaTrust` with the following AWS-Managed policies:
+
+- AmazonS3FullAccess
+
+- CloudWatchLogsFullAccess
+
+- AmazonCognitoDeveloperAuthenticatedIdentities
+
+- AmazonCognitoPowerUser
+
+- AWSLambdaBasicExecutionRole
+
+- AWSIoTFullAccess
+
+- AWSConfigRulesExecutionRole
+
+- AWSLambdaVPCAccessExecutionRole
+
+>`Important!` The name `LambdaTrust` must be exact. It corresponds to a resource of the same name used in our template.yaml file.
+
+When we deploy our lambda, we need to supply a zip file containing the code. This zip file is stored in an [S3 bucket](https://s3.console.aws.amazon.com/s3/home), so we need to create one. Remember there are [some rules](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html) when naming S3 buckets. Something like `awayto-dev-lambda` works. Then we'll take `src/api/scripts/lambda.zip` and drop it in our newly created bucket. Using our example, we now have an object at the S3 URI: `s3://awayto-dev-lambda/lambda.zip`. The zip has an index.js file with a simple lambda:
 
 ```js
 exports.handler =  async function(event, context) {
@@ -97,13 +163,14 @@ exports.handler =  async function(event, context) {
   return true;
 }
 ```
-While we're in S3, let's also create a bucket to host our webapp. For example, `s3://awayto-dev-web`.
+
+While we're in S3, let's also create a bucket to host our webapp. For example, `s3://awayto-dev-webapp`. We'll set this up later.
 
 ### Template Deployment
 
 We'll now look at the [template.yaml](https://github.com/keybittech/awayto/blob/main/src/api/scripts/template.yaml) file and make any necessasry changes before deployment. First let's understand what's in the file. At the top, we list the parameters we just defined in the parameter store. We'll use those to get our lambda to connect to the database.
 
-`Required: Before deploying the template.yaml file, find and replace all instances of #APP_NAME# to whatever name you desire. As well, fill in the CodeUri property using the S3 URI we just created.`
+>`Required!` Before deploying the template.yaml file, find and replace all instances of `#APP_NAME#` to whatever name you desire. As well, fill in the `CodeUri` property using the S3 URI we just created, `s3://awayto-dev-lambda/lambda.zip` (using the one you created).
 
 `StandardRequestFormat` defines the request format that the AWS API Gateway will transform all requests into before forwarding them on to our lambda function. This uses a special customizable mapping which you can learn more about on the [request-response mapping docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html). This mapping is converted into the lambda _event_, which will become important when we start making APIs. If you find yourself parsing the event object, and wonder about its origins, here is where you will find it.
 
@@ -134,11 +201,102 @@ Finally, review the stack parameters and confirm the acknowledgements at the bot
 With our resources in place, let's go to each one and collect some important identifying information we'll use to hook things up in our app.
 
 - AWS Region: This is chosen when you make your AWS account. `Ex: us-east-1`
+
 - User Pool ID: Found on the Cognito [user pool](https://console.aws.amazon.com/cognito/users) details page. `Ex: us-east-1_ABcdefGhi`
+
 - User Client ID: Found on the `App clients` sub-menu of the same page. `Ex: 1abcdef2ghijklmnopqrs34tuvw56`
+
 - API Gateway ID: Found on the [API Gateway](https://console.aws.amazon.com/apigateway/main/apis) main page. `Ex: abcd1efg56`
+
 - API Endpoint: Found by entering the details of your API, visiting the `Stages` submenu, and then clicking on the `stage named after the Environment name` you used when creating your stack. You want the Invoke URL at the top of this area. `Ex: https://abcd1efg56.execute-api.us-east-1.amazonaws.com/dev/`
 
+Use these pieces of data to complete the Awayto installation:
+
+```
+npx awayto config
+```
+
+Once the application has been configured, we can start it up:
+
+```
+npm start
+```
+
+### Quick Installation
+
+1. Install Awayto: `npm i -g @keybittech/awayto`
+
+2. Unpack an Awayto instance in a new folder: `npx awayto unpack`
+
+3. Create [Amazon RDS](https://console.aws.amazon.com/rds/home) instance: 
+    - **Standard Create**
+
+    - **Engine Options**: PostgreSQL
+    - **Version**: 12.6
+    - **Templates**: Free Tier
+    - **Storage Type**: General Purpose
+
+4. [Connect to it](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ConnectToPostgreSQLInstance.html) and deploy the scripts in `src/api/scripts`
+
+5. Create the following string parameters in the [Parameter Store](https://console.aws.amazon.com/systems-manager/parameters):
+    - PGDATABASE (postgres)
+
+    - PGHOST
+    - PGPASSWORD
+    - PGPORT (5432)
+    - PGUSER (postgres)
+
+6. Create `LambdaTrust` [IAM Role](https://console.aws.amazon.com/iam/home) with following AWS-Managed policies:
+    - AmazonS3FullAccess
+
+    - CloudWatchLogsFullAccess
+    - AmazonCognitoDeveloperAuthenticatedIdentities
+    - AmazonCognitoPowerUser
+    - AWSLambdaBasicExecutionRole
+    - AWSIoTFullAccess
+    - AWSConfigRulesExecutionRole
+    - AWSLambdaVPCAccessExecutionRole
+
+7. Create two S3 buckets and put `src/api/scripts/lambda.zip` in one:
+    - `s3://<some-name>-lambda/lambda.zip`
+
+    - `s3://<some-name>-webapp`
+
+8. Rename `#APP_NAME#` to preferred name in `src/api/scripts/template.yaml`.
+
+9. Update the `CodeUri` property in `template.yaml` with the value `s3://<some-name>-lambda/lambda.zip`.
+
+10. In [CloudFormation](https://console.aws.amazon.com/cloudformation/home)
+    
+    - `Create Stack (with new resources)`
+
+    - `Upload a template`
+    
+    - Select `template.yaml`
+    
+    - Click `Next`
+    
+    - Enter a `Stack name` and `Environment`
+    
+    - Click `Next` x 2
+    
+    - Acknowledge and `Create Stack`.
+
+11. Note Resource IDs:
+
+    - AWS Region: This is chosen when you make your AWS account. `Ex: us-east-1`
+
+    - User Pool ID: Found on the Cognito [user pool](https://console.aws.amazon.com/cognito/users) details page. `Ex: us-east-1_ABcdefGhi`
+
+    - User Client ID: Found on the `App clients` sub-menu of the same page. `Ex: 1abcdef2ghijklmnopqrs34tuvw56`
+
+    - API Gateway ID: Found on the [API Gateway](https://console.aws.amazon.com/apigateway/main/apis) main page. `Ex: abcd1efg56`
+
+    - API Endpoint: Found by entering the details of your API, visiting the `Stages` submenu, and then clicking on the `stage named after the Environment name` you used when creating your stack. You want the Invoke URL at the top of this area. `Ex: https://abcd1efg56.execute-api.us-east-1.amazonaws.com/dev/`
+
+12. Configure the local Awayto installation: `npx awayto config`
+
+13. `npm start`
 
 
 ## Usage
@@ -196,7 +354,7 @@ function ParentComponent(props: IProps): JSX.Element {
 
 }
 ```
-.
+
 ### useDispatch
 This will soon be overtaken by a `useAction` hook.
 
