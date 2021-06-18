@@ -1,14 +1,2 @@
 node_modules
-bundle.js
 package-lock.json
-npm-debug.log
-build
-.eslintcache
-doc
-docs
-settings.dev*.env
-settings.prod*.env
-
-index.js
-env.json
-dist
