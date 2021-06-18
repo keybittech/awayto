@@ -88,20 +88,13 @@ const App = (props: IProps): JSX.Element => {
 
                 <Grid item xs={8}>
                   <Grid container alignItems="center" direction="row">
-                    <Typography variant="h3">AWAYTO</Typography>
+                    <Typography variant="h3">AWAYTO&nbsp;</Typography>
                     <img src={Icon} alt="keybit tech logo" className={classes.appLogo} />
                   </Grid>
-                </Grid>
-                <Grid item xs={8} className={classes.loginWrap}>
-                  <Switch>
-                    {!['/', '/signup'].includes(history.location.pathname) && <Redirect to="/" />}
-                    <Route exact path="/" component={login.newPassRequired ? ChangeNewPassword : Login} />
-                    <Route exact path="/signup" component={hasSignUpCode ? CompleteSignUp : SignUp} />
-                  </Switch>
 
                   <Grid container>
-                    <Grid item xs={12} style={{ margin: '50px 0' }}>
-                      <Grid container justify="space-evenly">
+                    <Grid item xs={12}>
+                      <Grid container justify="space-between">
                         <Typography><Link href="https://github.com/keybittech/awayto">View on GitHub</Link></Typography>
                         <Typography><Link href="https://awayto.dev/docs/index.html">Typedoc</Link></Typography>
                         <Typography><Link href="https://keybittech.com">KeyBit Tech</Link></Typography>
@@ -109,6 +102,11 @@ const App = (props: IProps): JSX.Element => {
                       </Grid>
                     </Grid>
                   </Grid>
+                  <Switch>
+                    {!['/', '/signup'].includes(history.location.pathname) && <Redirect to="/" />}
+                    <Route exact path="/" component={login.newPassRequired ? ChangeNewPassword : Login} />
+                    <Route exact path="/signup" component={hasSignUpCode ? CompleteSignUp : SignUp} />
+                  </Switch>
                 </Grid>
               </Grid>
             </Grid>
