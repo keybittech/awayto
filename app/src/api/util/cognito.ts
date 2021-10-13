@@ -1,38 +1,47 @@
-import AWS from 'aws-sdk';
-import { AttributeType, ListUsersResponse, UserType, AdminCreateUserRequest, AdminUpdateUserAttributesRequest } from '@aws-sdk/client-cognito-identity-provider';
+import {
+  AdminGetUserCommand, 
+  AttributeType, 
+  ListUsersResponse, 
+  UserType, 
+  AdminCreateUserRequest, 
+  AdminDisableUserCommand, 
+  AdminEnableUserCommand, 
+  ListUsersCommand, 
+  AdminUpdateUserAttributesCommand, 
+  AdminCreateUserCommand,
+  AdminGetUserResponse
+} from '@aws-sdk/client-cognito-identity-provider' ;
 
-import { IGroup, IRole, IUserProfile } from 'awayto';
+import {
+  UserPoolId, 
+  getUserPool, 
+  IGroup, 
+  IRole, 
+  IUserProfile
+} from 'awayto';
 
-const getProvider = () =>
-  new AWS.CognitoIdentityServiceProvider({
-    apiVersion: '2016-04-18'
-  });
+const pool = getUserPool();
+const params = (Username: string) => ({ Username, UserPoolId });
 
-const UserPoolId = 'us-east-1_KZuydqQje';
-
-const pool = { UserPoolId };
-
-export const getUserInfo = async (Username: string) => await getProvider().adminGetUser({ Username, ...pool }).promise();
+export const getUserInfo = async (Username: string): Promise<AdminGetUserResponse> => 
+  await pool.client.send(new AdminGetUserCommand(params(Username)));
 
 export const adminDisableUser = async (Username: string) =>
-  await getProvider().adminDisableUser({ Username, ...pool }).promise();
+  await pool.client.send(new AdminDisableUserCommand(params(Username)))
 
 export const adminEnableUser = async (Username: string) =>
-  await getProvider().adminEnableUser({ Username, ...pool }).promise();
-
-export const deleteEnableUser = async (Username: string) =>
-  await getProvider().adminEnableUser({ Username, ...pool }).promise();
+  await pool.client.send(new AdminEnableUserCommand(params(Username)));
 
 // export const listUsers = async () =>
 //   await getProvider().listUsers({ ...pool }).promise();
 
 export const listUsers = async (params: ListUsersResponse = {}): Promise<ListUsersResponse> => {
   
-  let { Users = [], PaginationToken: token } = params;
+  let Users = params.Users ?? [];
+  
+  const { PaginationToken: token } = params;
 
-  let listUserParams = { ...pool, ...(token ? { PaginationToken: token } : {}) };
-
-  let { Users: users, PaginationToken } = await getProvider().listUsers(listUserParams).promise();
+  const { Users: users, PaginationToken } = await pool.client.send(new ListUsersCommand({ UserPoolId, ...(token ? { PaginationToken: token } : {}) }));
 
   if (users?.length) {
     
@@ -53,7 +62,7 @@ export const listUsers = async (params: ListUsersResponse = {}): Promise<ListUse
 }
 
 export const updateUserAdmin = async (Username: string) =>
-  await getProvider().adminUpdateUserAttributes({
+  await pool.client.send(new AdminUpdateUserAttributesCommand({
     UserAttributes: [
       {
         Name: 'custom:admin',
@@ -62,26 +71,22 @@ export const updateUserAdmin = async (Username: string) =>
     ],
     UserPoolId,
     Username
-  }).promise();
+  }))
 
 export const updateUserAttributesAdmin = async (Username: string, UserAttributes: AttributeType[]): Promise<any> => {
-  let params: AdminUpdateUserAttributesRequest = {
+  await pool.client.send(new AdminUpdateUserAttributesCommand({
     UserPoolId,
     Username,
     UserAttributes
-  };
-
-  try {
-    return getProvider().adminUpdateUserAttributes(params as AWS.CognitoIdentityServiceProvider.AdminUpdateUserAttributesRequest).promise();
-  } catch (error) {
-    throw error;
-  }
+  }))
 }
   
 
 export const adminCreateUser = async ({ username = '', email = '', password = '', groupRoles = '' }): Promise<boolean | UserType> => {
-  let params: AdminCreateUserRequest = {
-    ...pool,
+  
+  
+  const params: AdminCreateUserRequest = {
+    UserPoolId,
     Username: username,
     ForceAliasCreation: true,
     TemporaryPassword: password,
@@ -109,17 +114,12 @@ export const adminCreateUser = async ({ username = '', email = '', password = ''
     ]
   }
 
-  try {
-    return getProvider().adminCreateUser(params as AWS.CognitoIdentityServiceProvider.AdminCreateUserRequest).promise().then(response => {
-      if (!response.User)
-        return false;
-      return response.User;
-    }).catch(error => {
-      return false;
-    });
-  } catch (error) {
-    throw error;
-  }
+  const { User } = await pool.client.send(new AdminCreateUserCommand(params));
+
+  if (!User)
+    return false;
+
+  return User;
 }
 
 const sets = [

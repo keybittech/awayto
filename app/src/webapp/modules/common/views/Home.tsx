@@ -2,8 +2,9 @@ import React, { useState, useCallback } from 'react';
 import { Button, Input, Grid, Typography, TextField, InputAdornment, FormControl } from '@material-ui/core';
 import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
 
-import { IGroup, IManageUsersActionTypes, IUtilActionTypes, SiteRoles, useApi, useRedux, useComponents } from 'awayto';
+import { IGroup, IManageUsersActionTypes, IUtilActionTypes, IManageRolesActionTypes, SiteRoles, useApi, useRedux, useComponents } from 'awayto';
 
+const { GET_MANAGE_ROLES } = IManageRolesActionTypes;
 const { GET_MANAGE_USERS } = IManageUsersActionTypes;
 const { TEST_API } = IUtilActionTypes;
 
@@ -29,55 +30,16 @@ export function Home(props: IProps): JSX.Element {
     name.replaceAll(/__+/g, '_').replaceAll(/\s/g, '_').replaceAll(/[\W]+/g, '_').replaceAll(/__+/g, '_').replaceAll(/__+/g, '').toLowerCase()
     , []);
 
-  return <Secure {...props} contentRoleGroups={SiteRoles.ADMIN}>
+  return (
     <Grid container>
       <Grid item xs={12}>
-        <Grid container direction="column" spacing={4} justify="space-evenly" >
-          <Grid item>
-            <Typography variant="h6">Group</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <FormControl>
-              <Input type="text" value={getPath} onChange={e => setGetPath(e.target.value)} />
-
-            </FormControl>
-            <TextField
-              fullWidth id="name" label="Name" value={group.name} name="name" onChange={handleName}
-              multiline
-              InputProps={{
-                endAdornment: group.name && (
-                  <InputAdornment
-                    component={({ children }) =>
-                      <Grid container alignItems="center" style={{ width: 'calc(100% + 5em)', maxWidth: 'calc(100% + 5em)' }}>
-                        {children}
-                      </Grid>
-                    }
-                    position="start"
-                    style={{ display: 'flex' }}
-                  >
-                    <Grid item ><ArrowRightAlt /></Grid>
-                    <Grid item xs style={{ wordBreak: 'break-all' }}>
-                      <Typography style={{
-                        backgroundColor: 'rgb(38 42 43)',
-                        padding: '0 4px',
-                        border: '1px solid #666',
-                        lineHeight: '1.15em'
-                      }}>{formatName(group.name)}</Typography>
-                    </Grid>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-        </Grid>
+        <Typography variant="h6">Group</Typography>
       </Grid>
       <Grid item xs={6}>
         <Input type="text" value={getPath} onChange={e => setGetPath(e.target.value)} />
-        <Button onClick={() => {
 
-          void api(GET_MANAGE_USERS, true);
+        <Button onClick={() => { void api(GET_MANAGE_ROLES, true); }}>GET</Button>
 
-        }}>GET</Button>
         <pre>{JSON.stringify(test, null, '\t')}</pre>
         <pre>{JSON.stringify(users, null, '\t')}</pre>
       </Grid>
@@ -93,7 +55,7 @@ export function Home(props: IProps): JSX.Element {
         </Grid>
       </Grid>
     </Grid>
-  </Secure>
+  )
 }
 
 export default Home;

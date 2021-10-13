@@ -9,7 +9,7 @@ const uuidFiles: ApiModule = {
       try {
         const { parentUuid: parent_uuid, fileId: file_id } = props.event.body as IUuidFiles;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidFiles>(`
           INSERT INTO uuid_files (parent_uuid, file_id, created_on, created_sub)
           VALUES ($1, $2, $3, $4)
           RETURNING id
@@ -29,7 +29,7 @@ const uuidFiles: ApiModule = {
       try {
         const { id, parentUuid: parent_uuid, fileId: file_id } = props.event.body as IUuidFiles;
 
-        const updateProps = buildUpdate({ id, parent_uuid, file_id, updated_on: (new Date()).toString(), updated_sub: props.event.userSub as string });
+        const updateProps = buildUpdate({ id, parent_uuid, file_id, updated_on: (new Date()).toString(), updated_sub: props.event.userSub });
 
         await props.client.query(`
           UPDATE uuid_files
@@ -51,7 +51,7 @@ const uuidFiles: ApiModule = {
     cmnd : async (props) => {
       try {
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidFiles>(`
           SELECT * FROM enabled_uuid_files
         `);
         
@@ -70,7 +70,7 @@ const uuidFiles: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidFiles>(`
           SELECT * FROM enabled_uuid_files
           WHERE id = $1
         `, [id]);
@@ -90,7 +90,7 @@ const uuidFiles: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidFiles>(`
           DELETE FROM uuid_files
           WHERE id = $1
         `, [id]);

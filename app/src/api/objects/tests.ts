@@ -6,7 +6,7 @@ const tests: ApiModule = {
 
   test_return_400: {
     path: 'GET/test/event/400',
-    cmnd: async () => {
+    cmnd: () => {
       try {
         return false;
       } catch (error) {
@@ -16,9 +16,9 @@ const tests: ApiModule = {
   },
 
   test_return_401: {
-    roles: ['you_dont_have_this_role'],
+    contentRoles: ['you_dont_have_this_role'],
     path: 'GET/test/event/401',
-    cmnd: async () => {
+    cmnd: () => {
       try {
         return true;
       } catch (error) {
@@ -29,7 +29,7 @@ const tests: ApiModule = {
 
   test_tests: {
     path: 'POST/test',
-    cmnd: async (props) => {
+    cmnd: (props) => {
       try {
 
         const { file } = props.event.body as { file: File };
@@ -44,7 +44,7 @@ const tests: ApiModule = {
 
   test_signup: {
     path: 'POST/test/signup',
-    cmnd: async (props) => {
+    cmnd: (props) => {
       try {
         
         console.log(props.event);
@@ -62,7 +62,7 @@ const tests: ApiModule = {
     cmnd: async () => {
       try {
 
-        const listUsersResponse = await listUsers() as ListUsersResponse;
+        const listUsersResponse = await listUsers();
 
         const mappedResposnse = listUsersResponse.Users?.map(u => {
           const user = {

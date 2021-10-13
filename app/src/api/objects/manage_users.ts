@@ -91,7 +91,7 @@ const manageUsers: ApiModule = {
           } as IUserProfile;
         }) || [];
 
-        return users as IUserProfile[];
+        return users;
 
       } catch (error) {
         throw new Error(error);
@@ -182,7 +182,7 @@ const manageUsers: ApiModule = {
           user = { ...user, info };
         });
 
-        return users as IUserProfile[];
+        return users;
 
       } catch (error) {
         throw new Error(error);
@@ -197,7 +197,7 @@ const manageUsers: ApiModule = {
       const ids = props.event.body as string[];
       try {
         await asyncForEach<string>(ids, async (id) => {
-          const profile = await props.client.query(`
+          const profile = await props.client.query<IUserProfile>(`
             UPDATE users
             SET locked = true
             WHERE id = $1
@@ -220,7 +220,7 @@ const manageUsers: ApiModule = {
         const ids = props.event.body as string[];
 
         await asyncForEach(ids, async (id: string) => {
-          const profile = await props.client.query(`
+          const profile = await props.client.query<IUserProfile>(`
             UPDATE users
             SET locked = false
             WHERE id = $1

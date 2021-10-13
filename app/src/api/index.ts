@@ -4,6 +4,7 @@ import { Handler } from 'aws-lambda';
 import { Pool, PoolClient } from 'pg'
 import routeMatch, { RouteMatch } from 'route-match';
 const { Route, RouteCollection, PathMatcher } = routeMatch as RouteMatch;
+import { ApiModule, ApiModulet, ApiEvent, ILoadedState } from 'awayto';
 
 import Tests from './objects/tests';
 import Public from './objects/public';
@@ -18,7 +19,6 @@ import ManageGroups from './objects/manage_groups';
 import ManageUsers from './objects/manage_users';
 import auditRequest from './util/auditor';
 import authorize from './util/auth';
-import { ApiModulet } from 'awayto';
 
 const Objects = Object.assign({},
   Tests,
@@ -32,19 +32,20 @@ const Objects = Object.assign({},
   ManageRoles,
   ManageGroups,
   ManageUsers
-)
+) as ApiModule;
 
-let paths = Object.keys(Objects).map(key => {
-  return new Route(key, Objects[key].path as string)
+const paths = Object.keys(Objects).map(key => {
+  return new Route(key, Objects[key].path)
 });
-let routeCollection = new RouteCollection(paths);
-let pathMatcher = new PathMatcher(routeCollection);
+const routeCollection = new RouteCollection(paths);
+const pathMatcher = new PathMatcher(routeCollection);
 
-let pool = new Pool();
+const pool = new Pool();
 
-export const handler: Handler = async (event, context, callback) => {
 
-  let { httpMethod, pathParameters, resource, body, sourceIp, triggerSource } = event;
+export const handler: Handler<ApiEvent> = async (event, context, callback) => {
+
+  const { httpMethod, pathParameters, resource, sourceIp, triggerSource } = event;
   const { awsRequestId } = context;
   const path = resource.replace('{proxy+}', pathParameters.proxy)
   const signUp = triggerSource == 'PostConfirmation_ConfirmSignUp';
@@ -52,12 +53,13 @@ export const handler: Handler = async (event, context, callback) => {
   const proxyPath = signUp ? 'user' : path;
   const resourcePath = `${method}${proxyPath}`;
   const pathMatch = pathMatcher.match(resourcePath);
-  const { groups, roles, cmnd } = Objects[pathMatch._route] as ApiModulet;
+  const { contentGroups, contentRoles } = Objects[pathMatch._route];
   const dev = !sourceIp;
 
   if (dev) {
-    if (typeof body == 'string')
-      event.body = JSON.parse(body);
+    if (typeof event.body == 'string') {
+      event.body = JSON.parse(event.body) as Record<string, unknown>;
+    }
 
     event.sourceIp = 'localhost';
     event.userSub = 'ecd63d7f-daab-494a-9df2-7e5290120671';
@@ -77,6 +79,8 @@ export const handler: Handler = async (event, context, callback) => {
 
   let client: PoolClient | undefined;
 
+  console.log('THIS IS A TEST EVENT: \n', JSON.stringify(event, null, 2));
+
   try {
 
     client = await pool.connect();
@@ -84,7 +88,7 @@ export const handler: Handler = async (event, context, callback) => {
     if (!pathMatch)
       return errCallback(404, "404_NOT_FOUND"); // Return 404 NOT FOUND
 
-    if (roles && !authorize({ userToken: event.userAdmin, contentGroups: groups, contentRoles: roles }))
+    if (contentRoles && !authorize({ userToken: event.userAdmin, contentGroups, contentRoles }))
       return errCallback(401, "401_UNAUTHORIZED"); // Return 401 UNAUTHORIZED
 
     console.log('====== Method: ', httpMethod);
@@ -95,7 +99,7 @@ export const handler: Handler = async (event, context, callback) => {
     event.pathParameters = pathMatch._params;
 
     await auditRequest({ event, context, client });
-    const response = await cmnd({ event, context, client });
+    const response = await Objects[pathMatch._route].cmnd({ event, context, client });
 
     if (response === false) {
       return errCallback(400, "400_BAD_REQUEST"); // Return 400 BAD REQUEST
@@ -117,7 +121,7 @@ export const handler: Handler = async (event, context, callback) => {
 
   } catch (error) {
     console.log('====== CRITICAL ERROR:', error)
-    errCallback(500, `500_INTERNAL_SERVER_ERROR ${error}`); // Return 500 INTERNAL SERVER ERROR
+    errCallback(500, `500_INTERNAL_SERVER_ERROR ${error as string}`); // Return 500 INTERNAL SERVER ERROR
 
     // callback(JSON.stringify({
     //   errorType: 'Internal Server Error',

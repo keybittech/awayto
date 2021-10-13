@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { ApiResponseBody, CallApi, IActionTypes, ILoadedState, IUtilActionTypes } from '../types/index.d';
+import { ApiResponseBody, CallApi, IActionTypes, ILoadedState, IUtilActionTypes } from '../index';
 import { act } from '../actions';
 import { useDispatch } from './useDispatch';
 import { CognitoUserPool } from '../cognito';

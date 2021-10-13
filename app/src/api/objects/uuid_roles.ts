@@ -37,7 +37,7 @@ const uuidRoles: ApiModule = {
 
         if (!id) return false;
 
-        const updateProps = buildUpdate({ id, parent_uuid, role_id, updated_on: (new Date()).toString(), updated_sub: props.event.userSub as string });
+        const updateProps = buildUpdate({ id, parent_uuid, role_id, updated_on: (new Date()).toString(), updated_sub: props.event.userSub });
 
         await props.client.query(`
           UPDATE uuid_roles
@@ -59,7 +59,7 @@ const uuidRoles: ApiModule = {
     cmnd : async (props) => {
       try {
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidRoles>(`
           SELECT * FROM enabled_uuid_roles
         `);
         
@@ -78,7 +78,7 @@ const uuidRoles: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidRoles>(`
           SELECT * FROM enabled_uuid_roles
           WHERE id = $1
         `, [id]);
@@ -98,7 +98,7 @@ const uuidRoles: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidRoles>(`
           DELETE FROM uuid_roles
           WHERE id = $1
         `, [id]);

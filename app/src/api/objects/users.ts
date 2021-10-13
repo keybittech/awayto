@@ -7,6 +7,7 @@ const users: ApiModule = {
     path: 'GET/public/username',
     cmnd: async (props) => {
       try {
+        await props.client.query('');
         return { result: "you are public", ...props.event.pathParameters, ...props.event.queryStringParameters };
       } catch (error) {
         throw new Error(error);
@@ -41,7 +42,7 @@ const users: ApiModule = {
       try {
         const { id, firstName: first_name, lastName: last_name, email, image } = props.event.body as IUserProfile;
 
-        const updateProps = buildUpdate({ id, first_name, last_name, email, image, updated_on: (new Date()).toISOString(), updated_sub: props.event.userSub as string });
+        const updateProps = buildUpdate({ id, first_name, last_name, email, image, updated_on: (new Date()).toISOString(), updated_sub: props.event.userSub });
 
         const { rows: [ user ] } = await props.client.query<IUserProfile>(`
           UPDATE users
@@ -62,7 +63,7 @@ const users: ApiModule = {
     path: 'GET/users/profile',
     cmnd: async (props) => {
       try {
-        const response = await props.client.query(`
+        const response = await props.client.query<IUserProfile>(`
           SELECT * 
           FROM enabled_users
           WHERE sub = $1
@@ -83,7 +84,7 @@ const users: ApiModule = {
       const { sub } = props.event.pathParameters;
 
       try {
-        const response = await props.client.query(`
+        const response = await props.client.query<IUserProfile>(`
           SELECT * FROM enabled_users
           WHERE sub = $1 
         `, [sub]);
@@ -103,7 +104,7 @@ const users: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUserProfile>(`
           SELECT * FROM enabled_users
           WHERE id = $1 
         `, [id]);

@@ -1,4 +1,4 @@
-import { MetaAction, PayloadAction } from './types/index.d';
+import { MetaAction, PayloadAction } from '.';
 
 const createAction = <Type extends string, Meta>(type: Type, meta?: Meta): MetaAction<Type, Meta> =>
   ({ type, meta });

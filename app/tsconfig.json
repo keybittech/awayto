@@ -1,8 +1,5 @@
 {
   "extends": "./tsconfig.paths.json",
-  "include": [
-    "src"
-  ],
   "compilerOptions": {
     "target": "es2017",
     "lib": [
@@ -24,5 +21,9 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx"
-  }
+  },
+  "include": [
+    "src",
+    "types"
+  ]
 }

@@ -11,7 +11,7 @@ import AuthenticationHelper from './auth/AuthenticationHelper';
 import BigInteger from './auth/BigInteger';
 import DateHelper from './auth/DateHelper';
 
-import { CognitoAuthResponse, AuthenticationHelper as AuthHelperType } from './types/index.d';
+import { CognitoAuthResponse, AuthenticationHelper as AuthHelperType } from '.';
 
 const {
   REACT_APP_AWS_REGION: region,
@@ -28,7 +28,7 @@ export const authenticateUserDefaultAuth = async (authDetails: { [key: string]: 
   new Promise((resolve, reject) => {
 
     if (!userPoolId)
-      throw new Error('Configuration error: userPoolId missing during auth.');
+      return reject('Configuration error: userPoolId missing during auth.');
 
     const client = new CognitoIdentityProviderClient({ region });
     const { Username, Password } = authDetails;
@@ -116,13 +116,13 @@ export const authenticateUserDefaultAuth = async (authDetails: { [key: string]: 
                 resolve({ AuthenticationResult } as CognitoAuthResponse);
               }
             }).catch(err => {
-              throw err;
+              reject(err);
             })
           }
         );
 
       }).catch(err => {
-        throw err;
+        reject(err);
       });
     });
   })

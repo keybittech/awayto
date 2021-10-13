@@ -13,7 +13,7 @@ const files: ApiModule = {
         const uuid = uuid4();
         const { name, fileTypeId: file_type_id, location } = props.event.body as IFile;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IFile>(`
           INSERT INTO files (uuid, name, file_type_id, location, created_on, created_sub)
           VALUES ($1, $2, $3, $4, $5, $6)
           RETURNING id
@@ -33,7 +33,7 @@ const files: ApiModule = {
       try {
         const { id, name, fileTypeId: file_type_id, location } = props.event.body as IFile;
 
-        const updateProps = buildUpdate({ id, name, file_type_id, location, updated_on: (new Date()).toString(), updated_sub: props.event.userSub as string });
+        const updateProps = buildUpdate({ id, name, file_type_id, location, updated_on: (new Date()).toString(), updated_sub: props.event.userSub });
 
         await props.client.query(`
           UPDATE files
@@ -55,7 +55,7 @@ const files: ApiModule = {
     cmnd : async (props) => {
       try {
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IFile>(`
           SELECT * FROM enabled_files
         `);
         
@@ -74,7 +74,7 @@ const files: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IFile>(`
           SELECT * FROM enabled_files
           WHERE id = $1
         `, [id]);
@@ -94,7 +94,7 @@ const files: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IFile>(`
           DELETE FROM files
           WHERE id = $1
         `, [id]);

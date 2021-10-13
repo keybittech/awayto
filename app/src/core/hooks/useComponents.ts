@@ -1,5 +1,5 @@
 import { createElement, useMemo } from 'react';
-import { IBaseComponent, IBaseComponents } from '../types';
+import { IBaseComponent, IBaseComponents } from '..';
 
 export const components = {} as IBaseComponents;
 

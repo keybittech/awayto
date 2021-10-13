@@ -64,7 +64,7 @@ const App = (props: IProps): JSX.Element => {
 
   return <>
     {login.bootstrapped ? <>
-      {!!login.username ?
+      {login.username && !login.session ?
         <div className={classes.root}>
           <AppBar position="fixed" className={classes.appBar}>
             <Toolbar />

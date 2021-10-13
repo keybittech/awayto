@@ -115,7 +115,9 @@ Head over to [Amazon RDS](https://console.aws.amazon.com/rds/home) and create a 
 
 - **Templates**: Free Tier
 
-- **Storage Type**: General Purpose
+- **DB instance identifier**: Pick a unique name
+
+- **Public access**: Yes
 
 Name the database whatever you wish, provide a secure username and password (or let AWS auto generate a password for you), and take note of these. Down the page, we set the database to be publically accessible for the sake of local development. As well, you can create a new VPC if you would like, but the default works too.
 
@@ -198,7 +200,9 @@ Finally, review the stack parameters and confirm the acknowledgements at the bot
 
 ### Code Deployment
 
-With our resources in place, let's go to each one and collect some important identifying information we'll use to hook things up in our app.
+First we'll go to our [lambda function](https://console.aws.amazon.com/lambda/home), verify its configuration, and connect the VPC. In your lambda details, navigate to `Configuration` and ensure the `Environment Variables` are correct. These will be used to connect to our DB instance when the lambda spins up. Then go to `VPC` and press `Edit`. On the next menu, choose the default VPC, or a custom VPC if you made one during database creation; add any two subnets; and the default service group attached to your VPC.
+
+With our resources connected and in place, let's go to each one and collect some important identifying information we'll use to hook things up in our app.
 
 - AWS Region: This is chosen when you make your AWS account. `Ex: us-east-1`
 

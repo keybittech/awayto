@@ -34,11 +34,11 @@ export function Login(props: IProps): JSX.Element {
     e.preventDefault()
     dispatch(act(START_LOADING, { isLoading: true }));
     try {
-      const ChallengeName = await cognitoSSRPLogin(username, password);
-      if (ChallengeName)
-        dispatch(act(RESET_PASSWORD, { newPassRequired: true }));
+      const session = await cognitoSSRPLogin(username, password);
+      if (session)
+        dispatch(act(RESET_PASSWORD, { newPassRequired: true, session, username }));
       else
-        dispatch(act(LOGIN_USER, { username }));
+        dispatch(act(LOGIN_USER, { newPassRequired: false, session: false, username  }));
     } catch (error) {
       dispatch(act(SET_SNACK, { snackType: 'error', snackOn: `Error while submitting login form ${error as string}.` }))
       dispatch(act(AUTH_DENIAL, { error: error as string }));

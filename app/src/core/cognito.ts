@@ -8,6 +8,7 @@ import {
   ConfirmSignUpCommandOutput,
   GetUserCommand,
   InitiateAuthCommand,
+  RespondToAuthChallengeCommand,
   SignUpCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 
@@ -20,7 +21,10 @@ import {
   CognitoUserPoolType,
   CognitoUserType,
   ICognitoStorage
-} from './types/index.d';
+} from '.';
+
+//@ts-ignore
+var localStorage = localStorage || require('localstorage-memory');
 
 
 /**
@@ -128,7 +132,8 @@ export class CognitoUserPool implements CognitoUserPoolType {
     this.userPoolId = UserPoolId;
     this.clientId = ClientId;
     this.client = new CognitoIdentityProviderClient({ region });
-    this.storage = sessionStorage;
+
+    this.storage = localStorage;
   }
 
   getUserPoolId = (): string => this.userPoolId;
@@ -178,7 +183,7 @@ export class CognitoUser implements CognitoUserType {
     this.signInUserSession = undefined;
     this.authenticationFlowType = 'USER_SRP_AUTH';
 
-    this.storage = Storage || sessionStorage;
+    this.storage = Storage || localStorage;
 
     this.keyPrefix = `CognitoIdentityServiceProvider.${this.pool.getClientId()}`;
     this.userDataKey = `${this.keyPrefix}.${this.username}.userData`;
@@ -335,8 +340,6 @@ export class CognitoUser implements CognitoUserType {
       AccessToken: this.signInUserSession.getAccessToken().getToken()
     }))).UserAttributes as AttributeType[];
   }
-
-  completeNewPasswordChallenge(pass: string): string { return pass; }
 }
 
 const {
@@ -364,10 +367,10 @@ export const getUserPool = (): CognitoUserPool => {
 export const cognitoSSRPLogin = async (Username: string, Password: string): Promise<string | void> => {
 
   const response = await authenticateUserDefaultAuth({ Username, Password });
-  const { ChallengeName, AuthenticationResult } = response;
+  const { ChallengeName, AuthenticationResult, Session } = response;
 
   if (ChallengeName) {
-    return ChallengeName;
+    return Session;
   } else {
     const { IdToken, AccessToken, RefreshToken } = AuthenticationResult as Required<AuthenticationResultType>;
 
@@ -379,11 +382,30 @@ export const cognitoSSRPLogin = async (Username: string, Password: string): Prom
       RefreshToken: new CognitoRefreshToken(RefreshToken)
     }));
 
-    sessionStorage.setItem('id', IdToken);
-    sessionStorage.setItem('accessToken', AccessToken);
-    sessionStorage.setItem('provider', 'user_pool');
-    sessionStorage.setItem('providerToken', '');
+    localStorage.setItem('id', IdToken);
+    localStorage.setItem('accessToken', AccessToken);
+    localStorage.setItem('provider', 'user_pool');
+    localStorage.setItem('providerToken', '');
   }
+}
+
+export const completeNewPasswordChallenge = async (password: string, username: string, session: string): Promise<void | boolean> => {
+
+  const pool = getUserPool();
+
+  const res = await pool.client.send(new RespondToAuthChallengeCommand({
+    ChallengeName: 'NEW_PASSWORD_REQUIRED',
+    ClientId: pool.getClientId(),
+    ChallengeResponses: {
+      NEW_PASSWORD: password,
+      USERNAME: username
+    },
+    Session: session
+  }))
+
+  console.log('response from password stuff', res);
+
+  return true;
 }
 
 // TODO May be used with Federated IdP
@@ -394,13 +416,13 @@ export const cognitoSSRPLogin = async (Username: string, Password: string): Prom
 //   if (!cognitoUser)
 //     return false;
 
-//   const jwtToken = new CognitoJwtToken(sessionStorage.getItem('idToken') as string)
+//   const jwtToken = new CognitoJwtToken(localStorage.getItem('idToken') as string)
 
 //   if (Date.now() < (jwtToken.getExpiration() - 60000))
 //     return true;
 
-//   const provider = sessionStorage.getItem('provider');
-//   // let token = sessionStorage.getItem('providerToken');
+//   const provider = localStorage.getItem('provider');
+//   // let token = localStorage.getItem('providerToken');
 
 //   switch (provider) {
 //     case 'facebook':
@@ -430,8 +452,10 @@ export const cognitoSSRPLogin = async (Username: string, Password: string): Prom
 export function logoutUser(): void {
   const pool = getUserPool();
   const cognitoUser = pool.getCurrentUser();
-  if (cognitoUser)
+  if (cognitoUser) {
     cognitoUser.signOut();
+    localStorage.clear()
+  }
 }
 
 /**
