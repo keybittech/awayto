@@ -18,9 +18,9 @@ import ManageGroups from './objects/manage_groups';
 import ManageUsers from './objects/manage_users';
 import auditRequest from './util/auditor';
 import authorize from './util/auth';
-import { ApiModulet } from 'awayto';
+import { ApiEvent, ApiModule, ApiModulet } from 'awayto';
 
-const Objects = Object.assign({},
+const Objects = Object.assign(
   Tests,
   Public,
   Files,
@@ -32,19 +32,20 @@ const Objects = Object.assign({},
   ManageRoles,
   ManageGroups,
   ManageUsers
-)
+) as Record<string, ApiModulet>
 
-let paths = Object.keys(Objects).map(key => {
-  return new Route(key, Objects[key].path as string)
+const paths = Object.keys(Objects).map(key => {
+  return new Route(key, Objects[key].path)
 });
-let routeCollection = new RouteCollection(paths);
-let pathMatcher = new PathMatcher(routeCollection);
+const routeCollection = new RouteCollection(paths);
+const pathMatcher = new PathMatcher(routeCollection);
 
-let pool = new Pool();
+const pool = new Pool();
 
-export const handler: Handler = async (event, context, callback) => {
+export const handler: Handler<ApiEvent> = async (event, context, callback) => {
 
-  let { httpMethod, pathParameters, resource, body, sourceIp, triggerSource } = event;
+  const { httpMethod, pathParameters, resource, sourceIp, triggerSource } = event;
+
   const { awsRequestId } = context;
   const path = resource.replace('{proxy+}', pathParameters.proxy)
   const signUp = triggerSource == 'PostConfirmation_ConfirmSignUp';
@@ -52,12 +53,12 @@ export const handler: Handler = async (event, context, callback) => {
   const proxyPath = signUp ? 'user' : path;
   const resourcePath = `${method}${proxyPath}`;
   const pathMatch = pathMatcher.match(resourcePath);
-  const { groups, roles, cmnd } = Objects[pathMatch._route] as ApiModulet;
+  const { groups, roles } = Objects[pathMatch._route];
   const dev = !sourceIp;
 
   if (dev) {
-    if (typeof body == 'string')
-      event.body = JSON.parse(body);
+    if (typeof event.body == 'string')
+      event.body = JSON.parse(event.body) as JSON;
 
     event.sourceIp = 'localhost';
     event.userSub = 'ecd63d7f-daab-494a-9df2-7e5290120671';
@@ -95,7 +96,7 @@ export const handler: Handler = async (event, context, callback) => {
     event.pathParameters = pathMatch._params;
 
     await auditRequest({ event, context, client });
-    const response = await cmnd({ event, context, client });
+    const response = await Objects[pathMatch._route].cmnd({ event, context, client });
 
     if (response === false) {
       return errCallback(400, "400_BAD_REQUEST"); // Return 400 BAD REQUEST
@@ -117,7 +118,7 @@ export const handler: Handler = async (event, context, callback) => {
 
   } catch (error) {
     console.log('====== CRITICAL ERROR:', error)
-    errCallback(500, `500_INTERNAL_SERVER_ERROR ${error}`); // Return 500 INTERNAL SERVER ERROR
+    errCallback(500, `500_INTERNAL_SERVER_ERROR ${error as string}`); // Return 500 INTERNAL SERVER ERROR
 
     // callback(JSON.stringify({
     //   errorType: 'Internal Server Error',

@@ -28,7 +28,7 @@ const manageGroups: ApiModule = {
         return group;
 
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
     }
   },
@@ -60,7 +60,7 @@ const manageGroups: ApiModule = {
         return group;
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -71,14 +71,14 @@ const manageGroups: ApiModule = {
     cmnd : async (props) => {
       try {
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IGroup>(`
           SELECT * FROM enabled_groups_ext
         `);
         
         return response.rows;
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -90,7 +90,7 @@ const manageGroups: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IGroup>(`
           SELECT * FROM enabled_groups_ext
           WHERE id = $1
         `, [id]);
@@ -98,7 +98,7 @@ const manageGroups: ApiModule = {
         return response.rows[0];
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -110,7 +110,7 @@ const manageGroups: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IGroup>(`
           DELETE FROM groups
           WHERE id = $1
         `, [id]);
@@ -118,7 +118,7 @@ const manageGroups: ApiModule = {
         return response.rows;
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -139,7 +139,7 @@ const manageGroups: ApiModule = {
         return { id };
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -160,7 +160,7 @@ const manageGroups: ApiModule = {
         return { checkingName: false, isValid: count == 0 };
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }

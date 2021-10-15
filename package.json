@@ -1,13 +1,13 @@
 {
   "name": "@keybittech/awayto",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Awayto is a workflow enhancing platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape. The right path is a way to be discovered.",
   "homepage": "https://awayto.dev/",
   "repository": {
     "type": "git",
     "url": "https://github.com/keybittech/awayto.git"
   },
-  "author": "Joe McCormick <joe.c.mccormick@gmail.com> (https://awayto.dev/)",
+  "author": "Joe McCormick <joe@keybittech.com> (https://awayto.dev/)",
   "license": "MIT",
   "keywords": [
     "react",
@@ -25,9 +25,16 @@
   ],
   "private": false,
   "bin": {
-    "awayto": "bin/cli.js"
+    "awayto": "bin/index.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-cloudformation": "^3.36.0",
+    "@aws-sdk/client-ec2": "^3.26.0",
+    "@aws-sdk/client-iam": "^3.36.0",
+    "@aws-sdk/client-rds": "^3.21.0",
+    "@aws-sdk/client-s3": "^3.13.1",
+    "@aws-sdk/client-ssm": "^3.36.0",
+    "archiver": "^5.3.0",
     "fs-extra": "^10.0.0"
   }
 }

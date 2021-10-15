@@ -6,11 +6,11 @@ const tests: ApiModule = {
 
   test_return_400: {
     path: 'GET/test/event/400',
-    cmnd: async () => {
+    cmnd: () => {
       try {
         return false;
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
     }
   },
@@ -18,18 +18,18 @@ const tests: ApiModule = {
   test_return_401: {
     roles: ['you_dont_have_this_role'],
     path: 'GET/test/event/401',
-    cmnd: async () => {
+    cmnd: () => {
       try {
         return true;
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
     }
   },
 
   test_tests: {
     path: 'POST/test',
-    cmnd: async (props) => {
+    cmnd: (props) => {
       try {
 
         const { file } = props.event.body as { file: File };
@@ -37,14 +37,14 @@ const tests: ApiModule = {
         return true;
 
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
     }
   },
 
   test_signup: {
     path: 'POST/test/signup',
-    cmnd: async (props) => {
+    cmnd: (props) => {
       try {
         
         console.log(props.event);
@@ -52,7 +52,7 @@ const tests: ApiModule = {
         return true;
 
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
     }
   },
@@ -62,7 +62,7 @@ const tests: ApiModule = {
     cmnd: async () => {
       try {
 
-        const listUsersResponse = await listUsers() as ListUsersResponse;
+        const listUsersResponse = await listUsers();
 
         const mappedResposnse = listUsersResponse.Users?.map(u => {
           const user = {
@@ -76,7 +76,7 @@ const tests: ApiModule = {
         return { listUsersResponse };
 
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
     }
   },

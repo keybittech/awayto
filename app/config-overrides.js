@@ -60,7 +60,7 @@ function parseResource(path) {
 }
 
 /**
- * <p>We keep a reference to the old hash of files</P.
+ * <p>We keep a reference to the old hash of files</p>.
  */
 let oldHash;
 
@@ -101,13 +101,13 @@ module.exports = {
 
     useBabelRc()(config);
 
-    addWebpackPlugin(new CircularDependencyPlugin({
-      exclude: /a\.js|node_modules/,
-      include: /src/,
-      failOnError: true,
-      allowAsyncCycles: false,
-      cwd: process.cwd(),
-    }))(config);
+    // addWebpackPlugin(new CircularDependencyPlugin({
+    //   exclude: /a\.js|node_modules/,
+    //   include: /src/,
+    //   failOnError: true,
+    //   allowAsyncCycles: false,
+    //   cwd: process.cwd(),
+    // }))(config);
 
     alias(configPaths('./tsconfig.paths.json'))(config);
 

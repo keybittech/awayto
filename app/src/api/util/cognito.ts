@@ -28,11 +28,12 @@ export const deleteEnableUser = async (Username: string) =>
 
 export const listUsers = async (params: ListUsersResponse = {}): Promise<ListUsersResponse> => {
   
-  let { Users = [], PaginationToken: token } = params;
+  let { Users = [] } = params;
+  const { PaginationToken: token } = params;
 
-  let listUserParams = { ...pool, ...(token ? { PaginationToken: token } : {}) };
+  const listUserParams = { ...pool, ...(token ? { PaginationToken: token } : {}) };
 
-  let { Users: users, PaginationToken } = await getProvider().listUsers(listUserParams).promise();
+  const { Users: users, PaginationToken } = await getProvider().listUsers(listUserParams).promise();
 
   if (users?.length) {
     
@@ -65,7 +66,7 @@ export const updateUserAdmin = async (Username: string) =>
   }).promise();
 
 export const updateUserAttributesAdmin = async (Username: string, UserAttributes: AttributeType[]): Promise<any> => {
-  let params: AdminUpdateUserAttributesRequest = {
+  const params: AdminUpdateUserAttributesRequest = {
     UserPoolId,
     Username,
     UserAttributes
@@ -80,7 +81,7 @@ export const updateUserAttributesAdmin = async (Username: string, UserAttributes
   
 
 export const adminCreateUser = async ({ username = '', email = '', password = '', groupRoles = '' }): Promise<boolean | UserType> => {
-  let params: AdminCreateUserRequest = {
+  const params: AdminCreateUserRequest = {
     ...pool,
     Username: username,
     ForceAliasCreation: true,

@@ -10,7 +10,7 @@ const uuidGroups: ApiModule = {
 
         const { parentUuid, groupId } = props.event.body as IUuidGroups;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidGroups>(`
           INSERT INTO uuid_groups (parent_uuid, group_id, created_on, created_sub)
           VALUES ($1, $2, $3, $4)
           RETURNING id
@@ -19,7 +19,7 @@ const uuidGroups: ApiModule = {
         return { id: response.rows[0].id };
 
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
     }
   },
@@ -32,7 +32,7 @@ const uuidGroups: ApiModule = {
 
         if (!id) throw 'Must have an ID to update uuid_groups';
 
-        const updateProps = buildUpdate({ id, parent_uuid, group_id, updated_on: (new Date()).toString(), updated_sub: props.event.userSub as string });
+        const updateProps = buildUpdate({ id, parent_uuid, group_id, updated_on: (new Date()).toString(), updated_sub: props.event.userSub });
 
         await props.client.query(`
           UPDATE uuid_groups
@@ -43,7 +43,7 @@ const uuidGroups: ApiModule = {
         return { id };
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -54,14 +54,14 @@ const uuidGroups: ApiModule = {
     cmnd : async (props) => {
       try {
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidGroups>(`
           SELECT * FROM enabled_uuid_groups
         `);
         
         return response.rows;
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -73,7 +73,7 @@ const uuidGroups: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidGroups>(`
           SELECT * FROM enabled_uuid_groups
           WHERE id = $1
         `, [id]);
@@ -81,7 +81,7 @@ const uuidGroups: ApiModule = {
         return response.rows;
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -93,7 +93,7 @@ const uuidGroups: ApiModule = {
       try {
         const { parentUuid } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidGroups>(`
           SELECT * FROM enabled_uuid_groups
           WHERE "parentUuid" = $1
         `, [parentUuid]);
@@ -101,7 +101,7 @@ const uuidGroups: ApiModule = {
         return response.rows;
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -113,7 +113,7 @@ const uuidGroups: ApiModule = {
       try {
         const { groupId } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidGroups>(`
           SELECT * FROM enabled_uuid_groups
           WHERE "groupId" = $1
         `, [groupId]);
@@ -121,7 +121,7 @@ const uuidGroups: ApiModule = {
         return response.rows;
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -133,7 +133,7 @@ const uuidGroups: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
         
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidGroups>(`
           DELETE FROM uuid_groups
           WHERE id = $1
         `, [id]);
@@ -141,7 +141,7 @@ const uuidGroups: ApiModule = {
         return response.rows;
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }

@@ -1,0 +1,483 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+- AWS::Serverless-2016-10-31
+
+Parameters:
+  Environment:
+    Type: String
+    Description: The environment to build
+  PGHOST:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: PGHOST_##id##
+  PGUSER:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: PGUSER_##id##
+  PGPASSWORD:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: PGPASSWORD_##id##
+  PGDATABASE:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: PGDATABASE_##id##
+  PGPORT:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: PGPORT_##id##
+
+  StandardRequestFormat:
+    Type: String
+    Default: "{
+        \"stage\" : \"$context.stage\",
+        \"sourceIp\" : \"$context.identity.sourceIp\",
+        \"userAgent\" : \"$context.identity.userAgent\",
+        \"apiKey\" : \"$context.identity.apiKey\",
+        \"userSub\": \"$context.authorizer.claims.sub\",
+        \"userEmail\": \"$context.authorizer.claims.email\",
+        \"userAdmin\": \"$context.authorizer.claims['custom:admin']\",
+        \"userInternal\": \"$context.authorizer.claims['custom:internal']\",
+        \"userExternal\": \"$context.authorizer.claims['custom:external']\",
+        \"customerId\": \"$context.authorizer.claims.family_name\",
+        \"resource\" : \"$context.resourcePath\",
+        \"httpMethod\": \"$context.httpMethod\",
+        \"body\": $input.json('$'),
+        \"headers\": {
+          #foreach($header in $input.params().header.keySet())
+          \"$header\": \"$util.escapeJavaScript($input.params().header.get($header))\" #if($foreach.hasNext),#end
+          #end
+        },
+        \"pathParameters\": {
+          #foreach($param in $input.params().path.keySet())
+          \"$param\": \"$util.escapeJavaScript($input.params().path.get($param))\" #if($foreach.hasNext),#end
+          #end
+        },
+        \"query\": {
+          #foreach($queryParam in $input.params().querystring.keySet())
+          \"$queryParam\": \"$util.escapeJavaScript($input.params().querystring.get($queryParam))\" #if($foreach.hasNext),#end
+          #end
+        }  
+      }"
+  
+  StandardErrorResponseFormat:
+    Type: String
+    Default: "
+      #set ($errorMessageObj = $util.parseJson($input.path('$.errorMessage')))
+      {
+        \"type\" : \"$errorMessageObj.errorType\",
+        \"error\" : \"$errorMessageObj.message\"
+      }"
+
+Globals:
+  Function:
+    Environment:
+      Variables:
+        PGHOST: !Ref PGHOST
+        PGUSER: !Ref PGUSER
+        PGPASSWORD: !Ref PGPASSWORD
+        PGDATABASE: !Ref PGDATABASE
+        PGPORT: !Ref PGPORT
+        Environment: !Ref Environment
+
+Resources:
+
+  CognitoUserPool:
+    Type: 'AWS::Cognito::UserPool'
+    Properties:
+      UserPoolName: !Join ['-', [!Ref 'Environment', !Ref 'AWS::Region', '##id##ResourcePool']]
+      UsernameConfiguration:
+        CaseSensitive: false
+
+  ##id##ResourcePoolParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '${Environment}##id##ResourcePool'
+      Value: !Ref CognitoUserPool
+      Type: String
+
+  CognitoUserPoolClient:
+    Type: 'AWS::Cognito::UserPoolClient'
+    Properties:
+      ClientName: !Sub '${Environment}##id##ResourceDataCognitoUserPoolClient'
+      GenerateSecret: false
+      UserPoolId: !Ref CognitoUserPool
+
+  ##id##ResourcePoolClientParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '${Environment}##id##ResourcePoolClient'
+      Value: !Ref CognitoUserPoolClient
+      Type: String
+
+  CognitoIdPool:
+    Type: 'AWS::Cognito::IdentityPool'
+    Properties:
+      IdentityPoolName: !Sub '${Environment}##id##ResourceCognitoIdPool'
+      CognitoIdentityProviders:
+        - ClientId: !Ref CognitoUserPoolClient
+          ProviderName: !GetAtt CognitoUserPool.ProviderName
+      AllowUnauthenticatedIdentities: false
+
+  ##id##ResourceCognitoIdentityPoolParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '${Environment}##id##ResourceCognitoIdentityPool'
+      Value: !Ref CognitoIdPool
+      Type: String
+
+  CognitoIdPoolRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                - cognito-identity.amazonaws.com
+            Action:
+              - 'sts:AssumeRoleWithWebIdentity'
+            Condition:
+              StringEquals:
+                'cognito-identity.amazonaws.com:aud':
+                  - !Ref CognitoIdPool
+              'ForAnyValue:StringLike':
+                'cognito-identity.amazonaws.com:amr':
+                  - authenticated
+      Path: /
+      Policies:
+        - PolicyName: ##id##ResourceApiAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 'execute-api:Invoke'
+                Resource:
+                  - !Join 
+                    - /
+                    - - !Join 
+                        - ':'
+                        - - 'arn:aws:execute-api'
+                          - !Ref 'AWS::Region'
+                          - !Ref 'AWS::AccountId'
+                          - !Ref ##id##ResourceApi
+                      - '*'
+        - PolicyName: CognitoApiAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - 'cognito-identity:*'
+                  - 'cognito-idp:*'
+                  - 'cognito-sync:*'
+                  - 'iam:ListRoles'
+                  - 'iam:ListOpenIdConnectProviders'
+                  - 'sns:ListPlatformApplications'
+                Resource: '*'
+
+  CIPRoleAttach:
+    Type: 'AWS::Cognito::IdentityPoolRoleAttachment'
+    Properties:
+      IdentityPoolId: !Ref CognitoIdPool
+      Roles:
+        authenticated: !GetAtt CognitoIdPoolRole.Arn
+
+  ##id##ResourceApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Join ['-', [!Ref 'Environment', !Ref 'AWS::Region', '##id##ResourceApi']]
+      StageName: !Ref 'Environment'
+      Cors: 
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'" 
+        AllowOrigin: "'*'"
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          version: '2017-04-26T03:23:48Z'
+          title: ##id##ResourceApi
+        basePath: /demo
+        schemes:
+          # Uncomment for local testing
+          - http
+          - https
+        paths:
+          /public/{proxy+}:
+            get:
+              consumes:
+                - application/json
+              produces:
+                - application/json
+              parameters:
+              - name: proxy
+                in: path
+                required: true
+                type: string
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                '400':
+                  description: Bad Request
+                  schema:
+                    $ref: '#/definitions/Error'
+                '401':
+                  description: Unauthorized
+                  schema:
+                    $ref: '#/definitions/Error'
+                '403':
+                  description: Forbidden
+                  schema:
+                    $ref: '#/definitions/Error'
+                '404':
+                  description: Not Found
+                  schema:
+                    $ref: '#/definitions/Error'
+                '500':
+                  description: Internal Server Error
+                  schema:
+                    $ref: '#/definitions/Error'
+              x-amazon-apigateway-integration:
+                requestTemplates:
+                  application/json : !Ref StandardRequestFormat 
+                responses:
+                  default:
+                    statusCode: '200'
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                  '.*httpStatus\":400.*':
+                    statusCode: '400'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                  '.*httpStatus\":401.*':
+                    statusCode: '401'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                  '.*httpStatus\":403.*':
+                    statusCode: '403'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                  '.*httpStatus\":404.*':
+                    statusCode: '404'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                  '.*httpStatus\":500.*':
+                    statusCode: '500'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                uri: 
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${##id##Resource.Arn}/invocations"
+                passthroughBehavior: when_no_templates
+                httpMethod: POST
+                contentHandling: CONVERT_TO_TEXT
+                type: aws  
+            post:
+              consumes:
+                - application/json
+              produces:
+                - application/json
+              parameters:
+              - name: proxy
+                in: path
+                required: true
+                type: string
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                '400':
+                  description: Bad Request
+                  schema:
+                    $ref: '#/definitions/Error'
+                '401':
+                  description: Unauthorized
+                  schema:
+                    $ref: '#/definitions/Error'
+                '403':
+                  description: Forbidden
+                  schema:
+                    $ref: '#/definitions/Error'
+                '404':
+                  description: Not Found
+                  schema:
+                    $ref: '#/definitions/Error'
+                '500':
+                  description: Internal Server Error
+                  schema:
+                    $ref: '#/definitions/Error'
+              x-amazon-apigateway-integration:
+                requestTemplates:
+                  application/json : !Ref StandardRequestFormat 
+                responses:
+                  default:
+                    statusCode: '200'
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                  '.*httpStatus\":400.*':
+                    statusCode: '400'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                  '.*httpStatus\":401.*':
+                    statusCode: '401'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                  '.*httpStatus\":403.*':
+                    statusCode: '403'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                  '.*httpStatus\":404.*':
+                    statusCode: '404'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                  '.*httpStatus\":500.*':
+                    statusCode: '500'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                uri: 
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${##id##Resource.Arn}/invocations"
+                passthroughBehavior: when_no_templates
+                httpMethod: POST
+                contentHandling: CONVERT_TO_TEXT
+                type: aws  
+          /{proxy+}:
+            x-amazon-apigateway-any-method:
+              security:
+                - myApiUsers: []
+              x-amazon-apigateway-auth:
+                type: aws_iam
+              consumes:
+                - application/json
+              produces:
+                - application/json
+              parameters:
+              - name: proxy
+                in: path
+                required: true
+                type: string
+              responses:
+                '200':
+                  description: Success
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                '400':
+                  description: Bad Request
+                  schema:
+                    $ref: '#/definitions/Error'
+                '401':
+                  description: Unauthorized
+                  schema:
+                    $ref: '#/definitions/Error'
+                '403':
+                  description: Forbidden
+                  schema:
+                    $ref: '#/definitions/Error'
+                '404':
+                  description: Not Found
+                  schema:
+                    $ref: '#/definitions/Error'
+                '500':
+                  description: Internal Server Error
+                  schema:
+                    $ref: '#/definitions/Error'
+              x-amazon-apigateway-integration:
+                requestTemplates:
+                  application/json : !Ref StandardRequestFormat 
+                responses:
+                  default:
+                    statusCode: '200'
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                  '.*httpStatus\":400.*':
+                    statusCode: '400'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                  '.*httpStatus\":401.*':
+                    statusCode: '401'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                  '.*httpStatus\":403.*':
+                    statusCode: '403'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                  '.*httpStatus\":404.*':
+                    statusCode: '404'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                  '.*httpStatus\":500.*':
+                    statusCode: '500'
+                    responseTemplates:
+                      application/json: !Ref StandardErrorResponseFormat
+                uri: 
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${##id##Resource.Arn}/invocations"
+                passthroughBehavior: when_no_templates
+                httpMethod: POST
+                contentHandling: CONVERT_TO_TEXT
+                type: aws  
+
+        securityDefinitions:
+          myApiUsers:
+            type: apiKey
+            name: Authorization
+            in: header
+            x-amazon-apigateway-authtype: cognito_user_pools
+            x-amazon-apigateway-authorizer:
+              providerARNs:
+                - 'Fn::Sub': '${CognitoUserPool.Arn}'
+              type: cognito_user_pools
+        
+        definitions:
+          Empty:
+            type: object
+            title: Empty Schema
+          Error:
+            type: object
+            properties:
+              message:
+                type: string
+              type:
+                type: string
+              request-id:
+                type: string
+
+  ##id##Resource:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Join ['-', [!Ref 'Environment', !Ref 'AWS::Region', '##id##Resource']]
+      Handler: index.handler
+      CodeUri: 's3://##id##-lambda/lambda.zip'
+      Runtime: nodejs12.x
+      Timeout: 30
+      Role: !Join [':', ['arn:aws:iam:', !Ref 'AWS::AccountId', 'role/LambdaTrust']]
+      Events:
+        ProxyEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ##id##ResourceApi
+            Path: /{proxy+}
+            Method: ANY
+        GetPublic:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ##id##ResourceApi
+            Path: /public/{proxy+}
+            Method: GET
+        PostPublic:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ##id##ResourceApi
+            Path: /public/{proxy+}
+            Method: POST
+      Environment:
+        Variables:
+          PGHOST: !Ref 'PGHOST'
+          PGUSER: !Ref 'PGUSER'
+          PGPASSWORD: !Ref 'PGPASSWORD'
+          PGDATABASE: !Ref 'PGDATABASE'
+          PGPORT: !Ref 'PGPORT'

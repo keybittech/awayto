@@ -9,7 +9,7 @@ const uuidNotes: ApiModule = {
       try {
         const { parentUuid: parent_uuid, note } = props.event.body as IUuidNotes;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidNotes>(`
           INSERT INTO uuid_notes (parent_uuid, note, created_on, created_sub)
           VALUES ($1, $2, $3, $4)
           RETURNING id
@@ -18,7 +18,7 @@ const uuidNotes: ApiModule = {
         return { id: response.rows[0].id };
 
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
     }
   },
@@ -29,7 +29,7 @@ const uuidNotes: ApiModule = {
       try {
         const { id, parentUuid: parent_uuid, note } = props.event.body as IUuidNotes;
 
-        const updateProps = buildUpdate({ id, parent_uuid, note, updated_on: (new Date()).toString(), updated_sub: props.event.userSub as string });
+        const updateProps = buildUpdate({ id, parent_uuid, note, updated_on: (new Date()).toString(), updated_sub: props.event.userSub });
 
         await props.client.query(`
           UPDATE uuid_notes
@@ -40,7 +40,7 @@ const uuidNotes: ApiModule = {
         return { id };
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -51,14 +51,14 @@ const uuidNotes: ApiModule = {
     cmnd : async (props) => {
       try {
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidNotes>(`
           SELECT * FROM enabled_uuid_notes
         `);
         
         return response.rows;
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -70,7 +70,7 @@ const uuidNotes: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidNotes>(`
           SELECT * FROM enabled_uuid_notes
           WHERE id = $1
         `, [id]);
@@ -78,7 +78,7 @@ const uuidNotes: ApiModule = {
         return response.rows;
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -90,7 +90,7 @@ const uuidNotes: ApiModule = {
       try {
         const { id } = props.event.pathParameters;
 
-        const response = await props.client.query(`
+        const response = await props.client.query<IUuidNotes>(`
           DELETE FROM uuid_notes
           WHERE id = $1
         `, [id]);
@@ -98,7 +98,7 @@ const uuidNotes: ApiModule = {
         return response.rows;
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }
@@ -119,7 +119,7 @@ const uuidNotes: ApiModule = {
         return { id };
         
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
 
     }

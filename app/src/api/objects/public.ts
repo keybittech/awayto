@@ -4,11 +4,11 @@ const tests: ApiModule = {
 
   get_public_api: {
     path: 'GET/public',
-    cmnd: async () => {
+    cmnd: () => {
       try {
         return { name: 'kbt public api', version: 1 };
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
     }
   },
@@ -22,37 +22,37 @@ const tests: ApiModule = {
 
         switch(path) {
           case 'roles':
-            return await (await props.client.query<IRole>(`SELECT * FROM roles`)).rows;
+            return (await props.client.query<IRole>(`SELECT * FROM roles`)).rows;
           default:
             break;
         }
 
         return false;
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
     }
   },
 
   post_public_api: {
     path: 'POST/public',
-    cmnd: async (props) => {
+    cmnd: (props) => {
       try {
-        return { result: "you posted public", ...props.event.body };
+        return [];// { result: "you posted public", ...props.event.body };
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
     }
   },
 
   post_public_api_path: {
     path: 'POST/public/:path',
-    cmnd: async (props) => {
+    cmnd: (props) => {
       const { path } = props.event.pathParameters;
       try {
-        return { result: "you posted public path of " + path, ...props.event.body };
+        return true; //{ result: "you posted public path of " + path, ...props.event.body };
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
     }
   }

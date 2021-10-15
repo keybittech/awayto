@@ -16,7 +16,7 @@ export type ApiModulet = {
   groups?: string[];
   roles?: string[];
   path: string;
-  cmnd(props: ApiProps, meta?: string): Promise<LambdaApiResponse | ILoadedState[] | boolean>;
+  cmnd(props: ApiProps, meta?: string): LambdaApiResponse | ILoadedState[] | boolean | Promise<LambdaApiResponse | ILoadedState[] | boolean>;
 }
 
 /**
@@ -35,6 +35,9 @@ export type ApiEvent = {
   [name: string]: unknown;
   body: Record<string, string | Record<string, unknown>> | ILoadedState;
   userSub: string;
+  userAdmin: string;
+  resource: string;
+  httpMethod: string;
   query: Record<string, string>;
   pathParameters: Record<string, string>;
   queryStringParameters: Record<string, string>;

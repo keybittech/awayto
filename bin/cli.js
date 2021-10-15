@@ -125,7 +125,7 @@ if (args[0] == 'update') {
     ];
 
     copyFiles.forEach(async file => {
-      await fse.copySync(path.resolve(__dirname, `../app/${file}`), path.resolve(process.env.INIT_CWD, file));
+      fse.copySync(path.resolve(__dirname, `../app/${file}`), path.resolve(process.env.INIT_CWD, file));
     });
 
     process.exit();

@@ -15,7 +15,7 @@ export const getS3PresignedObject= async (Bucket: string, Key: string) => {
       // resolve(location);
   
     } catch (error) {
-      reject(new Error(error));
+      reject(error);
     }
   })
 }
@@ -37,7 +37,7 @@ export const saveObject = async (bucket: string, type: string, id: string, body:
       // resolve(location);
   
     } catch (error) {
-      reject(new Error(error));
+      reject(error);
     }
   })
 
@@ -56,7 +56,7 @@ export const deleteObject = async (bucket: string, type: string, id: string) => 
     // }).promise();
     
   } catch (error) {
-    throw new Error(error);
+    throw error;
   }
 
 }

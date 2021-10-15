@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "awayto": ["src/core/types/index"]
+    }
+  }
+}
