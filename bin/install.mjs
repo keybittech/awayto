@@ -288,11 +288,17 @@ export default async function () {
     awaytoId: id,
     name: config.name,
     description: config.description,
+    environment: config.environment,
+    seed,
+    dbHost: dbInstance.Endpoint.Address.toString(),
     awsRegion: region,
     cognitoUserPoolId: resources['CognitoUserPool'],
     cognitoClientId: resources['CognitoUserPoolClient'],
-    apiGatewayEndpoint: `https://${resources[id + 'ResourceApi']}.execute-api.${region}.amazonaws.com/${resources[id + 'ResourceApiStage']}/`
+    apiGatewayEndpoint: `https://${resources[id + 'ResourceApi']}.execute-api.${region}.amazonaws.com/${resources[id + 'ResourceApiStage']}/`,
+    website: `http://${id + '-webapp'}.s3-website.${region}.amazonaws.com`
   }
+
+  createSeed(awaytoConfig);
 
   const copyFiles = [
     'src',
@@ -383,7 +389,7 @@ export default async function () {
       child_process.execSync(`aws lambda update-function-code --function-name ${config.environment}-${region}-${id}Resource --region ${region} --s3-bucket ${id + '-lambda'} --s3-key lambda.zip`);
       child_process.execSync(`rm lambda.zip`);
 
-      console.log(`site available at http://${id + '-webapp'}.s3-website.${region}.amazonaws.com`)
+      console.log(`Site available at ${awaytoConfig.website}.`)
       process.exit();
     });
 
@@ -457,54 +463,7 @@ const makeLoader = () => {
   }, 250)
 }
 
-
-
-// Quick Installation
-// Install Awayto: npm i -g @keybittech/awayto
-
-// Unpack an Awayto instance in a new folder: npx awayto unpack
-
-
-// --
-
-
-
-
-
-
-
-// Rename #APP_NAME# to preferred name in src/api/scripts/template.yaml.
-
-// Update the CodeUri property in template.yaml with the value s3://<some-name>-lambda/lambda.zip.
-
-// In CloudFormation
-
-// Create Stack (with new resources)
-
-// Upload a template
-
-// Select template.yaml
-
-// Click Next
-
-// Enter a Stack name and Environment
-
-// Click Next x 2
-
-// Acknowledge and Create Stack.
-
-// Note Resource IDs:
-
-// AWS Region: This is chosen when you make your AWS account. Ex: us-east-1
-
-// User Pool ID: Found on the Cognito user pool details page. Ex: us-east-1_ABcdefGhi
-
-// User Client ID: Found on the App clients sub-menu of the same page. Ex: 1abcdef2ghijklmnopqrs34tuvw56
-
-// API Gateway ID: Found on the API Gateway main page. Ex: abcd1efg56
-
-// API Endpoint: Found by entering the details of your API, visiting the Stages submenu, and then clicking on the stage named after the Environment name you used when creating your stack. You want the Invoke URL at the top of this area. Ex: https://abcd1efg56.execute-api.us-east-1.amazonaws.com/dev/
-
-// Configure the local Awayto installation: npx awayto config
-
-// npm start
+const createSeed = (config) => {
+  fs.writeFileSync(path.resolve(__dirname + `/data/seeds/${config.awaytoId}.json`), JSON.stringify(config));
+  console.log('Generated project seed.');
+}

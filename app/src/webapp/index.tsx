@@ -15,7 +15,7 @@ awayto(
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <CssBaseline />
       <ConnectedRouter history={history}>
-        <Suspense fallback="loading....">
+        <Suspense fallback="">
           <App />
         </Suspense>
       </ConnectedRouter>

@@ -1,2 +1,4 @@
 node_modules
 package-lock.json
+bin/data/seeds/*.json
+bin/data/template.yaml

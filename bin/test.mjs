@@ -30,33 +30,45 @@ const cfClient = new CloudFormationClient();
 
 export default async function() {
 
-  
 
-  const output = fs.createWriteStream('lambda.zip');
-  const archive = archiver('zip');
+  const configur = {
+    id: 'boop',
+    beep: 'bop'
+  }
 
-  // listen for all archive data to be written
-// 'close' event is fired only when a file descriptor is involved
-output.on('close', function() {
-  console.log(archive.pointer() + ' total bytes');
-  console.log('archiver has been finalized and the output file descriptor has closed.');
-  process.exit();
-});
+  const createSeed = (config) => {
+    fs.writeFileSync(path.resolve(__dirname + `/data/seeds/${config.id}.json`), JSON.stringify(config))
+    process.exit();
+  }
 
-// This event is fired when the data source is drained no matter what was the data source.
-// It is not part of this library but rather from the NodeJS Stream API.
-// @see: https://nodejs.org/api/stream.html#stream_event_end
-output.on('end', function() {
-  console.log('Data has been drained');
-});
+  createSeed(configur);
 
-  archive.on('error', function(error) {
-    throw error;
-  });
 
-  archive.pipe(output);
-  archive.directory('apipkg/', false);
-  await archive.finalize();
+  // const output = fs.createWriteStream('lambda.zip');
+  // const archive = archiver('zip');
+
+  // // listen for all archive data to be written
+  // // 'close' event is fired only when a file descriptor is involved
+  // output.on('close', function() {
+  //   console.log(archive.pointer() + ' total bytes');
+  //   console.log('archiver has been finalized and the output file descriptor has closed.');
+  //   process.exit();
+  // });
+
+  // // This event is fired when the data source is drained no matter what was the data source.
+  // // It is not part of this library but rather from the NodeJS Stream API.
+  // // @see: https://nodejs.org/api/stream.html#stream_event_end
+  // output.on('end', function() {
+  //   console.log('Data has been drained');
+  // });
+
+  // archive.on('error', function(error) {
+  //   throw error;
+  // });
+
+  // archive.pipe(output);
+  // archive.directory('apipkg/', false);
+  // await archive.finalize();
 
 
   // const id = 'boo'

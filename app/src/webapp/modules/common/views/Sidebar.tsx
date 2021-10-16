@@ -1,4 +1,4 @@
-import Icon from '../../../img/keybit-logo-xp.png';
+import Icon from '../../../img/kbt-icon.png';
 
 import { History } from 'history';
 import React from 'react';

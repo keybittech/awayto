@@ -1,6 +1,12 @@
 # Awayto
- 
-Awayto is a workflow enhancing platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape. The right path is a way to be discovered.
+
+[Awayto.dev](https://awayto.dev/) - [Typedoc](https://awayto.dev/docs/index.html) - [KeyBit Tech](https://keybittech.com/) - [Discord](https://discord.gg/KzpcTrn5DQ) - [Twitch](https://twitch.tv/awayto) - [Twitter](https://twitter.com/awaytodev) - [Contact](mailto:joe@keybittech.com) 
+
+`!` We're actively looking for contributors and AWS replacements for our cloudless implementation! If interested, [join the discord](https://discord.gg/KzpcTrn5DQ). Thanks!
+
+Awayto is a curated development platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape. The right path is a way to be discovered.
+
+Deploy a fully-featured application in about 10 minutes that is primed for quick development. Run a business, impress a client with a quick demo, finish your poc with time to spare; all easily achievable with Awayto. Managing the infrastructure for web applications is often cumbersome and time consuming. Awayto can be thought of as a method for working with web applications, laying out each step should you care to change something, removing complexity.
 
 There are a few tenets of Awayto:  
 
@@ -12,7 +18,7 @@ There are a few tenets of Awayto:
 
 - Use conventions that compliment functionality
 
-The Awayto platform adheres to these tenets in part by being scalable, lightweight, and secure. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:
+The Awayto platform adheres to these tenets in part by being scalable, lightweight, and informative in its formation. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:
 
 - Rapidly deployable environment using enterprise level technologies
 
@@ -22,9 +28,9 @@ The Awayto platform adheres to these tenets in part by being scalable, lightweig
 
 - Baked in group and role authorization framework
 
-- Completely typed Typescript development environment
+- Fully-typed development environment using Typescript; use the same types on the full stack
 
-- Curated set of database scripts designed for auditing and reporting
+- Database schema designed for auditing and reporting
 
 Awayto is a stack comprised of:
 
@@ -123,7 +129,7 @@ cognitoUser.getSession();
 ```
 
 ### useComponents
-`useComponents` takes advantage of [React.lazy](https://reactjs.org/docs/code-splitting.html#reactlazy) as well as the [Proxy API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). By combining these functionalities, we end up with a tool that seamlessly meshes with expanding and changing codebases.
+`useComponents` takes advantage of [React.lazy](https://reactjs.org/docs/code-splitting.html#reactlazy) as well as the [Proxy API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). By combining these functionalities, we end up with a tool that makes it easy to work in an expanding and quickly changing code base.
 
 As new files are added to the project while the developer is working, they will be automatically discovered and made lazily available through `useComponents`. The only need is to refresh the browser page once the component has been added to the render cycle. If the developer tries to destructure a component that does not exist in the group of lazy loaded components, `useComponents` will return an empty `div`. This is configurable.
 
@@ -195,7 +201,7 @@ For code related improvements:
 The MIT License (MIT)
 
 Copyright (c) 2021 [KeyBit Tech LLC](https://keybittech.com)
-Contact Joe McCormick [joe.c.mccormick@gmail.com](mailto:joe.c.mccormick@gmail.com)
+Contact Joe McCormick [joe@keybittech.com](mailto:joe@keybittech.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

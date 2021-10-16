@@ -1,4 +1,4 @@
-import Icon from './img/keybit-name-inverted-half-white-xp.png';
+import Icon from './img/kbt-icon.png';
 
 import { History } from 'history';
 import React, { useEffect } from 'react';
@@ -88,8 +88,8 @@ const App = (props: IProps): JSX.Element => {
 
                 <Grid item xs={8}>
                   <Grid container alignItems="center" direction="row">
-                    <Typography variant="h3">AWAYTO&nbsp;</Typography>
                     <img src={Icon} alt="keybit tech logo" className={classes.appLogo} />
+                    <Typography variant="h3">&nbsp;AWAYTO</Typography>
                   </Grid>
 
                   <Grid container>
@@ -98,7 +98,10 @@ const App = (props: IProps): JSX.Element => {
                         <Typography><Link href="https://github.com/keybittech/awayto">View on GitHub</Link></Typography>
                         <Typography><Link href="https://awayto.dev/docs/index.html">Typedoc</Link></Typography>
                         <Typography><Link href="https://keybittech.com">KeyBit Tech</Link></Typography>
-                        <Typography><Link href="mailto:joe.c.mccormick@gmail.com">Contact</Link></Typography>
+                        <Typography><Link href="https://discord.gg/KzpcTrn5DQ">Discord</Link></Typography>
+                        <Typography><Link href="https://twitch.tv/awayto">Twitch</Link></Typography>
+                        <Typography><Link href="https://twitter.com/awaytodev">Twitter</Link></Typography>
+                        <Typography><Link href="mailto:joe@keybittech.com">Contact</Link></Typography>
                       </Grid>
                     </Grid>
                   </Grid>

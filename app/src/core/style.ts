@@ -8,7 +8,7 @@ const drawerWidth = 150;
  */
 export const styles = ({ mixins, spacing }: Theme): StyleRules => createStyles({
 
-  appLogo: { width: '256px' },
+  appLogo: { width: '64px' },
   logo: { width: '64px' },
 
   root: { display: 'flex' },
