@@ -8,13 +8,13 @@ import { ask } from './tool.mjs';
 import { asyncForEach } from './tool.mjs';
 import { truncate } from 'fs';
 
-const rdsClient = new RDSClient();
-const ssmClient = new SSMClient();
-const iamClient = new IAMClient();
-const s3Client = new S3Client();
-const cfClient = new CloudFormationClient();
-
 export default async function () {
+
+  const rdsClient = new RDSClient();
+  const ssmClient = new SSMClient();
+  const iamClient = new IAMClient();
+  const s3Client = new S3Client();
+  const cfClient = new CloudFormationClient();
 
   console.log('Warning! This is a destructive action and cannot be undone. All Awayto resources will be deleted, including buckets, lambdas, stacks, parameters, and dbs.')
   const id = await ask('Awayto ID to Uninstall:\n> ');

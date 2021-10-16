@@ -15,17 +15,17 @@ import { CloudFormationClient, CreateStackCommand, DescribeStacksCommand, ListSt
 import { ask, replaceText, asyncForEach } from './tool.mjs';
 import regions from './data/regions.mjs';
 
-const url = new URL(import.meta.url);
-const __dirname = path.dirname(new URL(fs.realpathSync(url)).pathname);
-
-const rdsClient = new RDSClient();
-const ec2Client = new EC2Client();
-const ssmClient = new SSMClient();
-const iamClient = new IAMClient();
-const s3Client = new S3Client();
-const cfClient = new CloudFormationClient();
-
 export default async function () {
+
+  const url = new URL(import.meta.url);
+  const __dirname = path.dirname(new URL(fs.realpathSync(url)).pathname);
+  
+  const rdsClient = new RDSClient();
+  const ec2Client = new EC2Client();
+  const ssmClient = new SSMClient();
+  const iamClient = new IAMClient();
+  const s3Client = new S3Client();
+  const cfClient = new CloudFormationClient();
 
   const config = {
     name: await ask('Project Name:\n> ') || 'awayto',
