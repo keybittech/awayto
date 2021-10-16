@@ -1,10 +1,26 @@
-## Manual Installation
+# Installation
 
+```
+npm i -g @keybittech/awayto
+```
 
+Make sure your console session can perform AWS CLI commands with Administrator role access. After restarting your console you can make a new folder or go into an existing folder and deploy an Awayto app.
+
+```
+mkdir proj
+cd proj
+awayto
+```
+
+Then follow the prompts.
+
+The installation is now automated once you complete the questionnaire. If you still want to do things manually, see the process below.
+
+# Manual Installation
 
 If you know what you're doing, jump to the [Quick Installation](#quick-installation).
 
-### Template Pre-Deployment
+## Template Pre-Deployment
 
 We focus on using configuration- and template-based deployments when we can (and when it's appropriate). They introduce a basic level of trust in the environment by creating a standard to be followed, make it easy to handle multiple environments natrually, and support the minimal nature that we desire in our deployments.
 
@@ -75,7 +91,7 @@ exports.handler =  async function(event, context) {
 
 While we're in S3, let's also create a bucket to host our webapp. For example, `s3://awayto-dev-webapp`. We'll set this up later.
 
-### Template Deployment
+## Template Deployment
 
 We'll now look at the [template.yaml](https://github.com/keybittech/awayto/blob/main/src/api/scripts/template.yaml) file and make any necessasry changes before deployment. First let's understand what's in the file. At the top, we list the parameters we just defined in the parameter store. We'll use those to get our lambda to connect to the database.
 
@@ -105,7 +121,7 @@ There is no need to tag our stack, or add any advanced configurations. Our Admin
 
 Finally, review the stack parameters and confirm the acknowledgements at the bottom of the page, which are simply informing us that we are about to create resources and roles in AWS, and to reflect on the impacts of such actions. Then `Create Stack`. Pretty simple, right? Now you get to enjoy excitedly clicking the deployment refresh button to see your page fill with green success messages and built resource names.
 
-### Code Deployment
+## Code Deployment
 
 With our resources in place, let's go to each one and collect some important identifying information we'll use to hook things up in our app.
 
@@ -131,7 +147,7 @@ Once the application has been configured, we can start it up:
 npm start
 ```
 
-### Quick Installation
+## Quick Installation
 
 1. Install Awayto: `npm i -g @keybittech/awayto`
 
