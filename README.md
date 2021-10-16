@@ -81,11 +81,7 @@ Then follow the prompts. Old installation guide moved to `INSTALL.md` as the ins
 
 #### Update
 
-In the future, if you want get access to new or updated tooling offered by Awayto, you can update the `src/core` folder with:
-
-```
-npx awayto update
-```
+In the future, if you want get access to new or updated tooling offered by Awayto, you can update the `src/core` folder using `awayto` in an existing install directory.
 
 >`Caution!` This will overwrite any changes to existing files in the `src/core` folder. If you want to continue receiving Awayto updates, make your changes and developments outside of the `src/core` folder. But if you want to take control and change everything, that's ok too! Just be aware of what the `update` command will do.
 
