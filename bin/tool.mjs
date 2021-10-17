@@ -8,7 +8,7 @@ var rl = readline.createInterface({
 
 const ask = (q, pattern) => new Promise((resolve, reject) => {
   rl.question(pattern ? `${q} Invalid Characters: ${pattern}\n> ` : q, async function (answer) {
-    if (pattern && pattern.test(answer)) {
+    if (answer.length && pattern && pattern.test(answer)) {
       console.log('Invalid character found.\n');
       resolve(await ask(q, pattern));
     }
@@ -43,4 +43,13 @@ const asyncForEach = async (array, callback) => {
   }
 }
 
-export { ask, replaceText, asyncForEach };
+const makeLambdaPayload = (body) => {
+  const str = JSON.stringify(body);
+  const payload = new Uint8Array(str.length);
+  for (let i = 0; i < str.length; i++) {
+    payload[i] = str.charCodeAt(i);
+  }
+  return payload;
+}
+
+export { ask, replaceText, asyncForEach, makeLambdaPayload };

@@ -5,6 +5,7 @@ import { Pool, PoolClient } from 'pg'
 import routeMatch, { RouteMatch } from 'route-match';
 const { Route, RouteCollection, PathMatcher } = routeMatch as RouteMatch;
 
+import Deploy from './objects/deploy';
 import Tests from './objects/tests';
 import Public from './objects/public';
 import Files from './objects/files';
@@ -21,6 +22,7 @@ import authorize from './util/auth';
 import { ApiEvent, ApiModule, ApiModulet } from 'awayto';
 
 const Objects = Object.assign(
+  Deploy,
   Tests,
   Public,
   Files,

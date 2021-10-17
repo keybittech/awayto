@@ -11,37 +11,62 @@ import { SSMClient, DescribeParametersCommand, PutParameterCommand } from '@aws-
 import { IAMClient, GetRoleCommand, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
 import { S3Client, CreateBucketCommand, ListBucketsCommand, PutObjectCommand, PutBucketWebsiteCommand, GetBucketWebsiteCommand } from '@aws-sdk/client-s3';
 import { CloudFormationClient, CreateStackCommand, DescribeStacksCommand, ListStackResourcesCommand } from '@aws-sdk/client-cloudformation';
+import { LambdaClient, GetFunctionConfigurationCommand, UpdateFunctionConfigurationCommand, InvokeCommand } from '@aws-sdk/client-lambda';
 
-import { ask, replaceText, asyncForEach } from './tool.mjs';
+import { ask, replaceText, asyncForEach, makeLambdaPayload } from './tool.mjs';
 import regions from './data/regions.mjs';
+
+
+const rdsClient = new RDSClient();
+const ec2Client = new EC2Client();
+const ssmClient = new SSMClient();
+const iamClient = new IAMClient();
+const s3Client = new S3Client();
+const cfClient = new CloudFormationClient();
+const lamClient = new LambdaClient();
 
 export default async function() {
 
-  const url = new URL(import.meta.url);
-  const __dirname = path.dirname(new URL(fs.realpathSync(url)).pathname);
-  
-  const rdsClient = new RDSClient();
-  const ec2Client = new EC2Client();
-  const ssmClient = new SSMClient();
-  const iamClient = new IAMClient();
-  const s3Client = new S3Client();
-  const cfClient = new CloudFormationClient();
-  
-  // http://bucket-name.s3-website.Region.amazonaws.com/object-name
-  
+  try {
+    const resp = await lamClient.send(new InvokeCommand({
+      FunctionName: 'dev-us-east-1-kbtdevResource',
+      InvocationType: 'Event',
+      Payload: makeLambdaPayload({
+        "httpMethod": "GET",
+        "pathParameters": {
+          "proxy": "deploy"
+        },
+        "body": {}
+      })
+    }));
+    
+    console.log(JSON.stringify(resp, null, 2));
 
-
-  const configur = {
-    id: 'boop',
-    beep: 'bop'
+  } catch (error) {
+    console.log('err', error);
   }
 
-  const createSeed = (config) => {
-    fs.writeFileSync(path.resolve(__dirname + `/data/seeds/${config.id}.json`), JSON.stringify(config))
-    process.exit();
-  }
+  process.exit();
+  
+  // const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
 
-  createSeed(configur);
+  // fs.writeFileSync(path.join(__dirname, `/testerrrrrrrrrr.json`), '{}')
+  
+  // // http://bucket-name.s3-website.Region.amazonaws.com/object-name
+  
+
+
+  // const configur = {
+  //   id: 'boop',
+  //   beep: 'bop'
+  // }
+
+  // const createSeed = (config) => {
+  //   fs.writeFileSync(path.resolve(__dirname + `/data/seeds/${config.id}.json`), JSON.stringify(config))
+  //   process.exit();
+  // }
+
+  // createSeed(configur);
 
 
   // const output = fs.createWriteStream('lambda.zip');
