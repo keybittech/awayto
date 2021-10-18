@@ -1,12 +1,14 @@
-import { CognitoIdentityProviderClient, SignUpCommand, AdminConfirmSignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { CognitoIdentityProviderClient, SignUpCommand, AdminConfirmSignUpCommand, AddCustomAttributesCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { ask } from './tool.mjs'
 
 
 const cipClient = new CognitoIdentityProviderClient();
 
 export default async function(props = {}) {
-
-  if (!Object.keys(props).length) {
+  
+  let install = !!Object.keys(props).length;
+  
+  if (!install) {
     props = {
       clientId: await ask('Client Id:\n> '),
       poolId: await ask('Pool Id:\n> '),
@@ -43,5 +45,7 @@ export default async function(props = {}) {
     console.log(error);
   }
 
-  process.exit();
+  if (!install) {
+    process.exit();
+  }
 }

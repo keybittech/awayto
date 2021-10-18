@@ -5,17 +5,20 @@ import archiver from 'archiver';
 import child_process from 'child_process';
 import { URL } from 'url';
 
-import { RDSClient, ModifyDBInstanceCommand, CreateDBInstanceCommand, DescribeOrderableDBInstanceOptionsCommand, DescribeDBInstancesCommand, RestoreDBClusterFromS3Command, RestoreDBInstanceFromDBSnapshotCommand } from '@aws-sdk/client-rds';
+import { CognitoIdentityProviderClient, AddCustomAttributesCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { RDSClient, ModifyDBInstanceCommand, CreateDBInstanceCommand, DescribeOrderableDBInstanceOptionsCommand, DescribeDBInstancesCommand } from '@aws-sdk/client-rds';
 import { EC2Client, DescribeAvailabilityZonesCommand } from '@aws-sdk/client-ec2'
-import { SSMClient, DescribeParametersCommand, PutParameterCommand } from '@aws-sdk/client-ssm';
+import { SSMClient, PutParameterCommand } from '@aws-sdk/client-ssm';
 import { IAMClient, GetRoleCommand, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
-import { S3Client, CreateBucketCommand, ListBucketsCommand, PutObjectCommand, PutBucketWebsiteCommand, PutBucketPolicyCommand } from '@aws-sdk/client-s3';
+import { S3Client, CreateBucketCommand, PutObjectCommand, PutBucketWebsiteCommand, PutBucketPolicyCommand } from '@aws-sdk/client-s3';
 import { CloudFormationClient, CreateStackCommand, DescribeStacksCommand, ListStackResourcesCommand } from '@aws-sdk/client-cloudformation';
 import { LambdaClient, GetFunctionConfigurationCommand, UpdateFunctionConfigurationCommand, InvokeCommand } from '@aws-sdk/client-lambda';
 
 import { ask, replaceText, asyncForEach, makeLambdaPayload } from './tool.mjs';
 import regions from './data/regions.mjs';
+import createAccount from './createAccount.mjs';
   
+const cipClient = new CognitoIdentityProviderClient();
 const rdsClient = new RDSClient();
 const ec2Client = new EC2Client();
 const ssmClient = new SSMClient();
@@ -32,8 +35,9 @@ export default async function () {
     name: await ask('Project Name (\'awayto\'):\n> ', /^[a-zA-Z0-9]*$/) || 'awayto',
     description: await ask('Project Description (\'Awayto is a workflow enhancing platform, producing great value with minimal investment.\'):\n> ') || 'Awayto is a workflow enhancing platform, producing great value with minimal investment.',
     environment: await ask('Environment (\'dev\'):\n> ') || 'dev',
-    username: await ask('DB Username (\'postgres\'):\n> ') || 'postgres',
-    password: await ask('DB Password 8 char min (\'postgres\'):\n> ', /[@"\/]/) || 'postgres',
+    username: await ask('Admin/DB Username (\'awaytoadmin\'):\n> ') || 'awaytoadmin',
+    password: await ask('Admin/DB Password [8 char min] (\'Tester1!\'):\n> ', /[@"\/]/) || 'Tester1!',
+    email: await ask('Admin Email (\'install@keybittech.com\'):\n> ') || 'install@keybittech.com',
     regionId: await ask(`${regions.map((r, i) => `${i}. ${r}`).join('\n')}\nChoose a number (0. us-east-1):\n> `) || '0'
   };
 
@@ -55,7 +59,7 @@ export default async function () {
   const username = config.username;
   const password = config.password;
 
-  console.log('== Beginning Awayto Install: ' + id);
+  console.log('== Beginning Awayto Install (~5 - 10 minutes): ' + id);
 
   // Create Amazon RDS instance
   const createRdsInstance = async () => {
@@ -314,6 +318,18 @@ export default async function () {
     website: `http://${id + '-webapp'}.s3-website.${region}.amazonaws.com`
   }
 
+  console.log('Adding role attribute to Cognito.');
+  await cipClient.send(new AddCustomAttributesCommand({
+    UserPoolId: resources['CognitoUserPool'],
+    CustomAttributes: [
+      {
+        AttributeDataType: 'String',
+        Name: 'admin',
+        Mutable: true
+      }
+    ]
+  }));
+      
   createSeed(__dirname, awaytoConfig);
 
   const copyFiles = [
@@ -450,6 +466,14 @@ export default async function () {
         Type: 'String',
         Overwrite: true
       }));
+
+      await createAccount({
+        poolId: awaytoConfig.cognitoUserPoolId,
+        clientId: awaytoConfig.cognitoClientId,
+        username: config.username,
+        password: config.password,
+        email: config.email
+      })
 
       console.log(`Site available at ${awaytoConfig.website}.`)
       process.exit();
