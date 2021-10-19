@@ -1,6 +1,6 @@
 # Awayto
 
-[Awayto.dev](https://awayto.dev/) - [Typedoc](https://awayto.dev/docs/index.html) - [KeyBit Tech](https://keybittech.com/) - [Discord](https://discord.gg/KzpcTrn5DQ) - [Twitch](https://twitch.tv/awayto) - [Twitter](https://twitter.com/awaytodev) - [Contact](mailto:joe@keybittech.com) [LinkedIn](https://www.linkedin.com/in/joe-mccormick-76224429/)
+[Awayto.dev](https://awayto.dev/) - [Typedoc](https://awayto.dev/docs/index.html) - [KeyBit Tech](https://keybittech.com/) - [Discord](https://discord.gg/KzpcTrn5DQ) - [Twitch](https://twitch.tv/awayto) - [Twitter](https://twitter.com/awaytodev) - [Contact](mailto:joe@keybittech.com) - [LinkedIn](https://www.linkedin.com/in/joe-mccormick-76224429/)
 
 `!` We're actively looking for contributors and AWS replacements for our cloudless implementation! If interested, [join the discord](https://discord.gg/KzpcTrn5DQ). Thanks!
 
