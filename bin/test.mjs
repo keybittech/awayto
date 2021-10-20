@@ -5,6 +5,8 @@ import archiver from 'archiver';
 import child_process from 'child_process';
 import { URL } from 'url';
 
+
+
 import { RDSClient, ModifyDBInstanceCommand, CreateDBInstanceCommand, DescribeOrderableDBInstanceOptionsCommand, DescribeDBInstancesCommand, RestoreDBClusterFromS3Command, RestoreDBInstanceFromDBSnapshotCommand } from '@aws-sdk/client-rds';
 import { EC2Client, DescribeAvailabilityZonesCommand } from '@aws-sdk/client-ec2'
 import { SSMClient, DescribeParametersCommand, PutParameterCommand } from '@aws-sdk/client-ssm';
@@ -15,6 +17,7 @@ import { LambdaClient, GetFunctionConfigurationCommand, UpdateFunctionConfigurat
 
 import { ask, replaceText, asyncForEach, makeLambdaPayload } from './tool.mjs';
 import regions from './data/regions.mjs';
+import { resolveCname } from 'dns';
 
 
 const rdsClient = new RDSClient();
@@ -28,25 +31,63 @@ const lamClient = new LambdaClient();
 export default async function() {
 
   try {
-    const resp = await lamClient.send(new InvokeCommand({
-      FunctionName: 'dev-us-east-1-kbtdevResource',
-      InvocationType: 'Event',
-      Payload: makeLambdaPayload({
-        "httpMethod": "GET",
-        "pathParameters": {
-          "proxy": "deploy"
-        },
-        "body": {}
-      })
-    }));
-    
-    console.log(JSON.stringify(resp, null, 2));
 
+    const content = {
+      name:  await ask('Name?'),
+      description:  await ask('Description?')
+    }
+
+    console.log('boop', content);
+  
+    // const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
+
+    // const pathName = path.join(__dirname, "tester.mjs");
+
+    // const cmd = child_process.spawn("node", [pathName], {
+    //   spawn: true,
+    //   detached: true,
+    //   stdio: 'ignore',
+    //   shell: true,
+    // });
+
+    // console.log('dthe path', path.resolve(__dirname, "./something.json"));
+
+    // let nameEntry = '';
+
+    // // cmd.stdin.on('data', data => {
+    // //   nameEntry = data;
+    // //   console.log(data);
+    // // })
+
+    // // cmd.stdout.on('data',  function(data) {
+    // //   console.log('we responded with', data.toString('utf8'));
+    // //   console.log('we responded errrr', Buffer.from(data).toString());
+    // //   process.exit();
+    // // })
+
+    // // cmd.stderr.on('data',  function(err, res) {
+    // //   console.log('we responded with', err);
+    // //   console.log('we responded wisaddsafth', res);
+    // // })
+    
+    process.exit();
   } catch (error) {
     console.log('err', error);
   }
 
-  process.exit();
+  // const resp = await lamClient.send(new InvokeCommand({
+  //   FunctionName: 'dev-us-east-1-kbtdevResource',
+  //   InvocationType: 'Event',
+  //   Payload: makeLambdaPayload({
+  //     "httpMethod": "GET",
+  //     "pathParameters": {
+  //       "proxy": "deploy"
+  //     },
+  //     "body": {}
+  //   })
+  // }));
+  
+  // console.log(JSON.stringify(resp, null, 2));
   
   // const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
 

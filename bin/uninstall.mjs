@@ -6,7 +6,8 @@ import { CloudFormationClient, DeleteStackCommand } from '@aws-sdk/client-cloudf
 
 import { ask } from './tool.mjs';
 import { asyncForEach } from './tool.mjs';
-import { truncate } from 'fs';
+import path from 'path';
+import fs from 'fs';
 
 const rdsClient = new RDSClient();
 const ssmClient = new SSMClient();
@@ -16,9 +17,17 @@ const cfClient = new CloudFormationClient();
 
 export default async function () {
 
+  const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
+
   console.log('Warning! This is a destructive action and cannot be undone. All Awayto resources will be deleted, including buckets, lambdas, stacks, parameters, and dbs.')
   const id = await ask('Awayto ID to Uninstall:\n> ');
   const delRole = await ask('Delete LambdaTrust role (0)?\n0. No\n1. Yes\n> ') || '0';
+
+  try {
+    fs.rmSync(path.resolve(__dirname, `data/seeds/${id}.json`))
+  } catch (error) {
+    
+  }
 
   if (!id) {
     console.log('no id found!');
