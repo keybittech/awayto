@@ -78,6 +78,10 @@ export type IUtilLoadingActionPayload = { isLoading: boolean };
  * @category Util
  */
 export type IApiErrorActionPayload = { error: string }
+/**
+ * @category Util
+ */
+export type ISetThemeActionPayload = { theme: string }
 
 /**
  * @category Util
@@ -107,7 +111,7 @@ export type IStopLoadingAction = PayloadAction<IUtilActionTypes.STOP_LOADING, IU
 /**
  * @category Util
  */
-export type ISetThemeAction = PayloadAction<IUtilActionTypes.SET_THEME, { theme: string }>;
+export type ISetThemeAction = PayloadAction<IUtilActionTypes.SET_THEME, ISetThemeActionPayload>;
 
 /**
  * @category Util
