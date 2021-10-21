@@ -60,16 +60,16 @@ export function Login(props: IProps): JSX.Element {
           </Typography>
 
           <List>
-            <ListItem>
+            <ListItem className="bullet">
               Enhance the developer experience
             </ListItem>
-            <ListItem>
+            <ListItem className="bullet">
               Provide opportunities for developers to learn
             </ListItem>
-            <ListItem>
+            <ListItem className="bullet">
               Minimal focus on deployment, managed centrally
             </ListItem>
-            <ListItem>
+            <ListItem className="bullet">
               Use conventions that compliment functionality
             </ListItem>
           </List>
@@ -79,22 +79,22 @@ export function Login(props: IProps): JSX.Element {
           </Typography>
 
           <List>
-            <ListItem>
+            <ListItem className="bullet">
               Rapidly deployable environment using enterprise level technologies
             </ListItem>
-            <ListItem>
+            <ListItem className="bullet">
               Full scale business application built with business owners in mind
             </ListItem>
-            <ListItem>
+            <ListItem className="bullet">
               Robust user management system allowing for self signup, federated IdP, or admin generated memberships
             </ListItem>
-            <ListItem>
+            <ListItem className="bullet">
               Baked in group and role authorization framework
             </ListItem>
-            <ListItem>
+            <ListItem className="bullet">
               Completely typed Typescript development environment
             </ListItem>
-            <ListItem>
+            <ListItem className="bullet">
               Curated set of database scripts designed for auditing and reporting
             </ListItem>
           </List>
@@ -108,9 +108,7 @@ export function Login(props: IProps): JSX.Element {
 
   return login ?
     <form onSubmit={submitForm}>
-      <Grid container spacing={4}>
-
-        {getContent()}
+      <Grid container spacing={4} direction="row-reverse">
 
         <Grid item xs={12} md={3}>
           <Grid container direction="column" justify="flex-start" alignItems="stretch" spacing={4}>
@@ -157,6 +155,8 @@ export function Login(props: IProps): JSX.Element {
           </Grid>
           {login.error && <Typography color="error">{login.error}</Typography>}
         </Grid>
+
+        {getContent()}
 
       </Grid>
     </form> :

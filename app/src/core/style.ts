@@ -17,7 +17,7 @@ export const styles = ({ mixins, spacing }: Theme): StyleRules => createStyles({
 
   siteTitle: { fontSize: '1.5rem', fontFamily: 'roboto', textAlign: 'center' },
 
-  menuText: { fontSize: '.75rem' },
+  menuText: { fontSize: '.75rem', margin: '0' },
 
   appBar: { width: `calc(100% - ${drawerWidth}px)`, marginLeft: drawerWidth, backgroundColor: '#666' },
   drawer: { width: drawerWidth },
@@ -99,7 +99,7 @@ const theme = {
       root: {
         listStyleType: 'disc',
         marginTop: 24,
-        marginBottom: 24,
+        marginBottom: 24
       },
       padding: {
         paddingTop: 0,
@@ -110,7 +110,9 @@ const theme = {
     },
     MuiListItem: {
       root: {
-        display: 'list-Item',
+        '&.bullet': {
+          display: 'list-Item'
+        }
       },
       gutters: {
         paddingLeft: 0,
