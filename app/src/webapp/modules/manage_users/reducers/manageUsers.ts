@@ -64,6 +64,8 @@ function reduceLockState(state: IManageUsersState, action: ILockManageUsersActio
 
 const manageUsersReducer: Reducer<IManageUsersState, IManageUsersActions> = (state = initialManageUsersState, action) => {
   switch (action.type) {
+    case "LOGOUT":
+      return initialManageUsersState;
     case IManageUsersActionTypes.GET_MANAGE_USERS:
       return reduceGetManageUsers(state, action);
     case IManageUsersActionTypes.POST_MANAGE_USERS:

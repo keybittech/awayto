@@ -42,6 +42,8 @@ function reduceDeleteState(state: IManageRolesState, action: IDeleteManageRolesA
 
 const manageRolesReducer: Reducer<IManageRolesState, IManageRolesActions> = (state = initialManageRolesState, action) => {
   switch (action.type) {
+    case "LOGOUT":
+      return initialManageRolesState;
     case IManageRolesActionTypes.GET_MANAGE_ROLES:
       return reduceGetManageRoles(state, action);
     case IManageRolesActionTypes.POST_MANAGE_ROLES:

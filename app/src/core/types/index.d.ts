@@ -101,6 +101,11 @@ export type PayloadAction<Type, Payload, Meta = void> = MetaAction<Type, Meta> &
 /**
  * @category Awayto
  */
+export type LogoutAction = PayloadAction<"LOGOUT", void>;
+
+/**
+ * @category Awayto
+ */
 export type ThunkResult = ThunkAction<void, ISharedState, unknown | undefined, ISharedActions>
 
 /**

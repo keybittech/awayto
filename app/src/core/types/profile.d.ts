@@ -1,4 +1,5 @@
 import { AdminGetUserResponse } from '@aws-sdk/client-cognito-identity-provider';
+import { LogoutAction } from 'awayto';
 import { PayloadAction, IGroup } from '.';
 
 declare global {
@@ -96,7 +97,8 @@ export type ISignUpUserAction = PayloadAction<IUserProfileActionTypes.SIGNUP_USE
 /**
  * @category UserProfile
  */
-export type IUserProfileActions = IPostUserProfileAction 
+export type IUserProfileActions = LogoutAction
+  | IPostUserProfileAction 
   | IPutUserProfileAction 
   | IGetUserProfileAction 
   | IGetUserProfileBySubAction 

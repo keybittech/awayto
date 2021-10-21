@@ -1,3 +1,4 @@
+import { LogoutAction } from 'awayto';
 import { LocationChangeAction } from 'connected-react-router';
 import { PayloadAction } from '.';
 
@@ -221,7 +222,8 @@ export type IForcePassChangeAction = PayloadAction<ILoginActionTypes.FORCE_PASS_
 /**
  * @category Login
  */
-export type ILoginActions = ILoginUserAction
+export type ILoginActions = LogoutAction
+  | ILoginUserAction
   | ILogoutUserAction
   | IAuthUserAction
   | IAuthUserSuccessAction

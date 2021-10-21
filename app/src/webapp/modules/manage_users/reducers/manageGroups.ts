@@ -44,6 +44,8 @@ function reduceDeleteState(state: IManageGroupsState, action: IDeleteManageGroup
 
 const manageGroupsReducer: Reducer<IManageGroupsState, IManageGroupsActions> = (state = initialManageGroupsState, action) => {
   switch (action.type) {
+    case "LOGOUT":
+      return initialManageGroupsState;
     case IManageGroupsActionTypes.GET_MANAGE_GROUPS:
       return reduceGetManageGroups(state, action);
     case IManageGroupsActionTypes.POST_MANAGE_GROUPS:

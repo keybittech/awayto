@@ -15,6 +15,8 @@ function reduceLogin(state: ILoginState, action: ILoginActions): ILoginState {
 
 const loginReducer: Reducer<ILoginState, ILoginActions> = (state = initialLoginState, action) => {
   switch (action.type) {
+    case "LOGOUT":
+      return initialLoginState;
     case ILoginActionTypes.LOGIN_USER:
     case ILoginActionTypes.AUTH_USER:
     case ILoginActionTypes.AUTH_SUCCESS:

@@ -1,3 +1,4 @@
+import { LogoutAction } from 'awayto';
 import { PayloadAction, IUserProfile } from '.';
 
 declare global {
@@ -137,7 +138,8 @@ export type IUnlockManageUsersAction = PayloadAction<IManageUsersActionTypes.UNL
 /**
  * @category ManageUsers
  */
-export type IManageUsersActions = IGetManageUsersAction
+export type IManageUsersActions = LogoutAction
+  | IGetManageUsersAction
   | IGetManageUsersByIdAction
   | IGetManageUsersInfoAction
   | IPostManageUsersAction
@@ -210,7 +212,8 @@ export type IDeleteManageRolesAction = PayloadAction<IManageRolesActionTypes.DEL
 /**
  * @category Role
  */
-export type IManageRolesActions = IGetManageRolesAction
+export type IManageRolesActions = LogoutAction
+  | IGetManageRolesAction
   | IPostManageRolesAction
   | IPutManageRolesAction
   | IDeleteManageRolesAction;
@@ -291,7 +294,8 @@ export type IDeleteManageGroupsAction = PayloadAction<IManageGroupsActionTypes.D
 /**
  * @category Group
  */
-export type IManageGroupsActions = IGetManageGroupsAction 
+export type IManageGroupsActions = LogoutAction
+  | IGetManageGroupsAction 
   | ICheckGroupNameAction 
   | IPostManageGroupsAction 
   | IPutManageGroupsAction 

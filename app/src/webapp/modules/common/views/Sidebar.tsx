@@ -20,10 +20,10 @@ export function Sidebar (props: IProps): JSX.Element {
   }
 
   const logout = () => {
-    logout();
     sessionStorage.clear();
     localStorage.clear();
-    dispatch(act(IUtilActionTypes.CLEAR_REDUX, { username: '' }));
+    dispatch(act(IUtilActionTypes.CLEAR_REDUX, null));
+    navigate('/');
   }
 
   return (
