@@ -6,12 +6,14 @@ import {
   ISetThemeActionPayload
 } from 'awayto';
 
+const kbtTheme = localStorage.getItem('kbt_theme');
+
 const initialUtilState = {
   snackOn: '',
   isLoading: false,
   isConfirming: false,
   hasSignUpCode: false,
-  theme: localStorage.getItem('kbt_theme') || 'dark'
+  theme: kbtTheme !== "undefined" ? kbtTheme : 'dark'
 } as IUtilState;
 
 function reduceUtil(state: IUtilState, action: IUtilActions): IUtilState {

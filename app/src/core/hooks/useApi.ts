@@ -4,6 +4,7 @@ import { ApiResponseBody, CallApi, IActionTypes, ILoadedState, IUtilActionTypes 
 import { act } from '../actions';
 import { useDispatch } from './useDispatch';
 import { CognitoUserPool } from '../cognito';
+import { HttpResponse } from '@aws-sdk/types';
 
 const { START_LOADING, API_SUCCESS, API_ERROR, STOP_LOADING, SET_SNACK } = IUtilActionTypes;
 
@@ -81,10 +82,10 @@ export function useApi(): (actionType: IActionTypes, load?: boolean, body?: ILoa
       body: !body ? undefined : 'string' == typeof body ? body : JSON.stringify(body),
       cognitoUser
     })
-      .then(response => {
-        console.log('This is what is resolved to useApi: ', response);
-        dispatch(act(actionType || API_SUCCESS, response, meta));
-        return response as T;
+      .then((response: HttpResponse) => {
+        const body = JSON.parse(response.body) as T;
+        dispatch(act(actionType || API_SUCCESS, body, meta));
+        return body;
       })
       .catch(e => {
         const error = (e as Error).message;
