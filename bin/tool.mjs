@@ -6,11 +6,15 @@ var rl = readline.createInterface({
   output: process.stdout
 });
 
-const ask = (q, pattern) => new Promise((resolve, reject) => {
-  rl.question(pattern ? `${q} Invalid Characters: ${pattern}\n> ` : q, async function (answer) {
-    if (answer.length && pattern && pattern.test(answer)) {
+const ask = (q, invalid, valid) => new Promise((resolve, reject) => {
+  rl.question(invalid ? `${q} Invalid Characters: ${invalid}\n> ` : q, async function (answer) {
+    if (answer.length && invalid && invalid.test(answer)) {
       console.log('Invalid character found.\n');
-      resolve(await ask(q, pattern));
+      resolve(await ask(q, invalid, valid));
+    }
+    if (answer.length && valid && !valid.test(answer)) {
+      console.log('Invalid character found.\n');
+      resolve(await ask(q, invalid, valid));
     }
     resolve(answer);
   });

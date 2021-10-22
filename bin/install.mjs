@@ -32,7 +32,7 @@ export default async function () {
   const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
 
   const config = {
-    name: await ask('Project Name (\'awayto\'):\n> ', /^[a-zA-Z0-9]*$/) || 'awayto',
+    name: await ask('Project Name (\'awayto\'):\n> ', null, /^[a-zA-Z0-9]*$/) || 'awayto',
     description: await ask('Project Description (\'Awayto is a workflow enhancing platform, producing great value with minimal investment.\'):\n> ') || 'Awayto is a workflow enhancing platform, producing great value with minimal investment.',
     environment: await ask('Environment (\'dev\'):\n> ') || 'dev',
     username: await ask('Admin/DB Username (\'awaytoadmin\'):\n> ') || 'awaytoadmin',

@@ -31,13 +31,22 @@ const lamClient = new LambdaClient();
 export default async function() {
 
   try {
+    const config = {
+      name: await ask('Project Name (\'awayto\'):\n> ', null, /^[a-zA-Z0-9]*$/) || 'awayto',
+      description: await ask('Project Description (\'Awayto is a workflow enhancing platform, producing great value with minimal investment.\'):\n> ') || 'Awayto is a workflow enhancing platform, producing great value with minimal investment.',
+      environment: await ask('Environment (\'dev\'):\n> ') || 'dev',
+      username: await ask('Admin/DB Username (\'awaytoadmin\'):\n> ') || 'awaytoadmin',
+      password: await ask('Admin/DB Password [8 char min] (\'Tester1!\'):\n> ', /[@"\/]/) || 'Tester1!',
+      email: await ask('Admin Email (\'install@keybittech.com\'):\n> ') || 'install@keybittech.com',
+      regionId: await ask(`${regions.map((r, i) => `${i}. ${r}`).join('\n')}\nChoose a number (0. us-east-1):\n> `) || '0'
+    };
 
-    const content = {
-      name:  await ask('Name?'),
-      description:  await ask('Description?')
-    }
+    // const content = {
+    //   name:  await ask('Name?'),
+    //   description:  await ask('Description?')
+    // }
 
-    console.log('boop', content);
+    // console.log('boop', content);
   
     // const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
 
