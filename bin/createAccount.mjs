@@ -31,7 +31,7 @@ export default async function(props = {}) {
         },
         {
           Name: 'custom:admin',
-          Value: 'public:guest'
+          Value: 'system:admin'
         }
       ]
     }));
