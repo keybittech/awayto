@@ -3,6 +3,7 @@ import { SSMClient, DeleteParameterCommand } from '@aws-sdk/client-ssm';
 import { IAMClient, DeleteRoleCommand } from '@aws-sdk/client-iam';
 import { S3Client, DeleteBucketCommand, DeleteObjectCommand, ListObjectsCommand } from '@aws-sdk/client-s3';
 import { CloudFormationClient, DeleteStackCommand } from '@aws-sdk/client-cloudformation';
+import { EC2Client, RevokeSecurityGroupIngressCommand } from '@aws-sdk/client-ec2';
 
 import { ask } from './tool.mjs';
 import { asyncForEach } from './tool.mjs';
@@ -12,6 +13,7 @@ import fs from 'fs';
 const rdsClient = new RDSClient();
 const ssmClient = new SSMClient();
 const iamClient = new IAMClient();
+const ec2Client = new EC2Client();
 const s3Client = new S3Client();
 const cfClient = new CloudFormationClient();
 
@@ -23,11 +25,7 @@ export default async function () {
   const id = await ask('Awayto ID to Uninstall:\n> ');
   const delRole = await ask('Delete LambdaTrust role (0)?\n0. No\n1. Yes\n> ') || '0';
 
-  try {
-    fs.rmSync(path.resolve(__dirname, `data/seeds/${id}.json`))
-  } catch (error) {
-    
-  }
+  let seed = JSON.parse(fs.readFileSync(path.resolve(__dirname, `data/seeds/${id}.json`)));
 
   if (!id) {
     console.log('no id found!');
@@ -58,7 +56,7 @@ export default async function () {
     }
 
     try {
-
+      console.log('Clearing s3 bucket files and buckets.');
       const lambdaBucket = await s3Client.send(new ListObjectsCommand({ Bucket: id + '-lambda' }));
       
       await asyncForEach(lambdaBucket.Contents, async c => {
@@ -77,6 +75,26 @@ export default async function () {
     } catch (error) {
       console.log('Failed to delete s3 buckets.', error);
     }
+
+    if (seed.ruleId) {
+      if (seed.ruleId == 'existing') {
+        console.log('This installation used an existing security group rule, and will not remove any. Be sure to check your default security group rules if needed.')
+      } else {
+        try {
+          await ec2Client.send(new RevokeSecurityGroupIngressCommand({
+            GroupName: 'default',
+            SecurityGroupRuleIds: [seed.ruleId]
+          }));
+          console.log('Revoked ingress rules.');
+        } catch (error) {
+          console.log('Did not remove any ingress rules.', error);
+        }
+      }
+    }
+
+    try {
+      fs.rmSync(path.resolve(__dirname, `data/seeds/${id}.json`))
+    } catch (error) { }
 
     console.log(id + ' successfully uninstalled!');
   }

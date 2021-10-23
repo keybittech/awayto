@@ -1,7 +1,8 @@
 // Keep at top
 const path = require('path');
 const dotenv = require('dotenv');
-dotenv.config({ path: path.join(__dirname, `settings.${process.env.NODE_ENV}.env`) })
+
+dotenv.config({ path: path.join(__dirname, `settings.${process.argv.includes('--local') ? 'local' : process.env.NODE_ENV}.env`) })
 dotenv.config({ path: path.join(__dirname, `settings.application.env`) })
 
 const crypto = require('crypto');

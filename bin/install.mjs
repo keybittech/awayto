@@ -3,11 +3,12 @@ import fs from 'fs';
 import fse from 'fs-extra';
 import archiver from 'archiver';
 import child_process from 'child_process';
+import publicIp from 'public-ip';
 import { URL } from 'url';
 
 import { CognitoIdentityProviderClient, AddCustomAttributesCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { RDSClient, waitUntilDBInstanceAvailable, ModifyDBInstanceCommand, CreateDBInstanceCommand, DescribeOrderableDBInstanceOptionsCommand, DescribeDBInstancesCommand } from '@aws-sdk/client-rds';
-import { EC2Client, DescribeAvailabilityZonesCommand } from '@aws-sdk/client-ec2'
+import { EC2Client, DescribeAvailabilityZonesCommand, AuthorizeSecurityGroupIngressCommand } from '@aws-sdk/client-ec2'
 import { SSMClient, PutParameterCommand } from '@aws-sdk/client-ssm';
 import { IAMClient, GetRoleCommand, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
 import { S3Client, CreateBucketCommand, PutObjectCommand, PutBucketWebsiteCommand, PutBucketPolicyCommand } from '@aws-sdk/client-s3';
@@ -38,19 +39,18 @@ export default async function () {
     username: await ask('Admin/DB Username (\'awaytoadmin\'):\n> ') || 'awaytoadmin',
     password: await ask('Admin/DB Password [8 char min] (\'Tester1!\'):\n> ', /[@"\/]/) || 'Tester1!',
     email: await ask('Admin Email (\'install@keybittech.com\'):\n> ') || 'install@keybittech.com',
-    regionId: await ask(`${regions.map((r, i) => `${i}. ${r}`).join('\n')}\nChoose a number (0. us-east-1):\n> `) || '0'
+    localTesting: (await ask(`Setup local testing? (WARNING! This will make your DB "public", create an ingress rule in the security group to allow this computer's public IP in AWS, and store the (gitignored) db credentials file in plaintext in this folder. Only enable if you know what you're doing! (0. No):\n0.No\n1.Yes\n> `) || '0') == '1',
+    regionId: await ask(`${regions.map((r, i) => `${i}. ${r}`).join('\n')}\nChoose a number (0. us-east-1):\n> `) || '0',
   };
 
   const region = regions[parseInt(config.regionId)];
 
-  const azCommand = new DescribeAvailabilityZonesCommand({
+  const { AvailabilityZones } = await ec2Client.send(new DescribeAvailabilityZonesCommand({
     Filters: [{
       Name: 'region-name',
       Values: [region]
     }]
-  })
-
-  const { AvailabilityZones } = await ec2Client.send(azCommand);
+  }));
   const { ZoneName } = AvailabilityZones[await ask(`${AvailabilityZones.map((r, i) => `${i}. ${r.ZoneName}`).join('\n')}\nChoose a number (0. default):\n> `) || '0']
 
   // Generate uuids
@@ -94,7 +94,7 @@ export default async function () {
       DeletionProtection: false,
       MasterUsername: username,
       MasterUserPassword: password,
-      PubliclyAccessible: false,
+      PubliclyAccessible: config.localTesting,
       AvailabilityZone: ZoneName
     });
 
@@ -339,8 +339,6 @@ export default async function () {
     ]
   }));
 
-  createSeed(__dirname, awaytoConfig);
-
   const copyFiles = [
     'src',
     'public',
@@ -366,6 +364,7 @@ export default async function () {
   const tmplFiles = [
     '.gitignore',
     'public/index.html',
+    'settings.local.env',
     'settings.development.env',
     'settings.production.env'
   ];
@@ -380,6 +379,7 @@ export default async function () {
     'package.json',
     'public/index.html',
     'public/manifest.json',
+    'settings.local.env',
     'settings.development.env',
     'settings.production.env'
   ];
@@ -400,7 +400,7 @@ export default async function () {
 
   try {
     console.log('Building webapp and api.')
-    child_process.execSync(`npm run build`);
+    child_process.execSync(`npm run build-deploy`);
   } catch (error) {
     console.log('webapp build failed')
   }
@@ -439,6 +439,29 @@ export default async function () {
 
       const dbInsRes = await rdsClient.send(describeCommand);
       const dbInstance = dbInsRes.DBInstances[0];
+
+      if (config.localTesting) {
+        try {
+          const ip4 = await publicIp.v4();
+          const { SecurityGroupRules } = await ec2Client.send(new AuthorizeSecurityGroupIngressCommand({
+            CidrIp: `${ip4}/32`,
+            FromPort: 5432,
+            ToPort: 5432,
+            IpProtocol: 'TCP',
+            GroupName: 'default',
+            GroupId: dbInstance.VpcSecurityGroups[0].VpcSecurityGroupId,
+          }));
+
+          awaytoConfig.ruleId = SecurityGroupRules[0].SecurityGroupRuleId;
+          console.log('Created a security group rule for this computer to access the default security group (and therefore the DB).');
+        } catch (error) {
+          awaytoConfig.ruleId = 'existing';
+          console.log('Skipped security group rule creation as it already exists for this computer.');
+        }
+      }
+
+      fs.writeFileSync(path.join(__dirname, `data/seeds/${awaytoConfig.awaytoId}.json`), JSON.stringify(awaytoConfig));
+      console.log('Generated project seed.');
 
       const lamCfgCommand = await lamClient.send(new GetFunctionConfigurationCommand({
         FunctionName: awaytoConfig.functionName
@@ -481,19 +504,21 @@ export default async function () {
         Overwrite: true
       }));
 
-      fse.copySync(path.resolve(__dirname, 'data/env.json.template'), path.resolve(process.cwd(), 'env.json'));
-      const envJson = {
-        "Environment": config.environment,
-        "PGDATABASE": 'postgres',
-        "PGPASSWORD": config.password,
-        "PGHOST": dbInstance.Endpoint.Address,
-        "PGPORT": 5432,
-        "PGUSER": config.username
-      }
+      if (config.localTesting) {
+        fse.copySync(path.resolve(__dirname, 'data/env.json.template'), path.resolve(process.cwd(), 'env.json'));
+        const envJson = {
+          "Environment": config.environment,
+          "PGDATABASE": 'postgres',
+          "PGPASSWORD": config.password,
+          "PGHOST": dbInstance.Endpoint.Address,
+          "PGPORT": 5432,
+          "PGUSER": config.username
+        }
 
-      await asyncForEach(Object.keys(envJson), async k => {
-        await replaceText(path.resolve(process.cwd(), 'env.json'), k, envJson[k]);
-      })
+        await asyncForEach(Object.keys(envJson), async k => {
+          await replaceText(path.resolve(process.cwd(), 'env.json'), k, envJson[k]);
+        })
+      }
 
       await createAccount({
         poolId: awaytoConfig.cognitoUserPoolId,
@@ -504,80 +529,14 @@ export default async function () {
       });
 
       console.log(`Site available at ${awaytoConfig.website}.`)
+      console.log('You may also run the project locally with "npm run start-stack". See the package for more options.');
+
       process.exit();
     });
 
     await archive.finalize();
   } catch (error) {
-    console.log('api deploy failed')
+    console.log('api deploy failed', error)
   }
 
 };
-
-const pollStackCreated = (id) => {
-
-  const loader = makeLoader();
-  const describeCommand = new DescribeStacksCommand({
-    StackName: id
-  });
-
-  const executePoll = async (resolve, reject) => {
-    try {
-      const response = await cfClient.send(describeCommand);
-      const instance = response.Stacks[0];
-
-      if (instance.StackStatus.toLowerCase() == 'create_complete') {
-        clearInterval(loader);
-        process.stdout.write("\r\x1b[K")
-        return resolve(instance);
-      } else {
-        setTimeout(executePoll, 10000, resolve, reject);
-      }
-    } catch (error) {
-      return reject(error);
-    }
-  }
-
-  return new Promise(executePoll);
-}
-
-const pollDBStatusAvailable = (id) => {
-
-  const loader = makeLoader();
-  const describeCommand = new DescribeDBInstancesCommand({
-    DBInstanceIdentifier: id
-  });
-
-  const executePoll = async (resolve, reject) => {
-    try {
-      const response = await rdsClient.send(describeCommand);
-      const instance = response.DBInstances[0];
-
-      if (instance.DBInstanceStatus.toLowerCase() == 'available') {
-        clearInterval(loader);
-        process.stdout.write("\r\x1b[K")
-        return resolve(instance);
-      } else {
-        setTimeout(executePoll, 10000, resolve, reject);
-      }
-    } catch (error) {
-      return reject(error);
-    }
-  }
-
-  return new Promise(executePoll);
-};
-
-const makeLoader = () => {
-  let counter = 1;
-  return setInterval(function () {
-    process.stdout.write("\r\x1b[K")
-    process.stdout.write(`${counter % 2 == 0 ? '-' : '|'}`);
-    counter++;
-  }, 250)
-}
-
-const createSeed = (dir, config) => {
-  fs.writeFileSync(path.join(dir, `data/seeds/${config.awaytoId}.json`), JSON.stringify(config));
-  console.log('Generated project seed.');
-}

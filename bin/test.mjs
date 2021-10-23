@@ -3,12 +3,13 @@ import fs from 'fs';
 import fse from 'fs-extra';
 import archiver from 'archiver';
 import child_process from 'child_process';
+import publicIp from 'public-ip';
 import { URL } from 'url';
 
 
 
 import { RDSClient, waitUntilDBInstanceAvailable, ModifyDBInstanceCommand, CreateDBInstanceCommand, DescribeOrderableDBInstanceOptionsCommand, DescribeDBInstancesCommand, RestoreDBClusterFromS3Command, RestoreDBInstanceFromDBSnapshotCommand } from '@aws-sdk/client-rds';
-import { EC2Client, DescribeAvailabilityZonesCommand } from '@aws-sdk/client-ec2'
+import { EC2Client, DescribeAvailabilityZonesCommand, AuthorizeSecurityGroupIngressCommand } from '@aws-sdk/client-ec2'
 import { SSMClient, DescribeParametersCommand, PutParameterCommand } from '@aws-sdk/client-ssm';
 import { IAMClient, GetRoleCommand, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
 import { S3Client, CreateBucketCommand, ListBucketsCommand, PutObjectCommand, PutBucketWebsiteCommand, GetBucketWebsiteCommand } from '@aws-sdk/client-s3';
@@ -33,16 +34,17 @@ export default async function() {
 
   try {
 
-    const id = 'booooadskjllsdkfjds'
 
-    fs.copyFileSync(path.join(__dirname, 'data/template.yaml.template'), path.join(__dirname, 'data/template.yaml'))
-    fs.copyFileSync(path.join(__dirname, 'data/template.yaml.template'), path.resolve(process.cwd(), 'template.sam.yaml'))
+    // const id = 'booooadskjllsdkfjds'
+
+    // fs.copyFileSync(path.join(__dirname, 'data/template.yaml.template'), path.join(__dirname, 'data/template.yaml'))
+    // fs.copyFileSync(path.join(__dirname, 'data/template.yaml.template'), path.resolve(process.cwd(), 'template.sam.yaml'))
     
-    await replaceText(path.join(__dirname, 'data/template.yaml'), 'id', id);
-    await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'id', id);
+    // await replaceText(path.join(__dirname, 'data/template.yaml'), 'id', id);
+    // await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'id', id);
   
-    await replaceText(path.join(__dirname, 'data/template.yaml'), 'storageSite', `'s3://${id}-lambda/lambda.zip'`);
-    await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'storageSite', `'.'`);
+    // await replaceText(path.join(__dirname, 'data/template.yaml'), 'storageSite', `'s3://${id}-lambda/lambda.zip'`);
+    // await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'storageSite', `'.'`);
 
     
     process.exit();

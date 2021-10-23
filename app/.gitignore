@@ -6,6 +6,7 @@ build
 .eslintcache
 doc
 docs
+settings.loc*.env
 settings.dev*.env
 settings.prod*.env
 

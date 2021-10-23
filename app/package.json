@@ -79,11 +79,13 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "start-local": "npm-run-all -p start start-api watch-api",
+    "start-stack": "npm-run-all -p watch-api start-local start-api ",
+    "start-local": "react-app-rewired start --local",
     "start-api": "sam local start-api -t ./template.sam.yaml -n ./env.json -p 3001 --host localhost",
-    "watch-web": "react-app-rewired build",
+    "watch-api": "webpack --config api.webpack.js --watch",
+    "build-web": "react-app-rewired build",
     "build-api": "webpack --config api.webpack.js",
-    "watch-api": "webpack --config api.webpack.js --watch"
+    "build-deploy": "npm-run-all -p build-web build-api"
   },
   "eslintConfig": {
     "extends": [

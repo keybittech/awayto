@@ -56,7 +56,7 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
   const resourcePath = `${method}${proxyPath}`;
   const pathMatch = pathMatcher.match(resourcePath);
   const { groups, roles } = Objects[pathMatch._route];
-  const dev = !sourceIp;
+  const dev = sourceIp == 'localhost' || !sourceIp;
 
   if (dev) {
     if (typeof event.body == 'string')
@@ -98,7 +98,7 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
     event.pathParameters = pathMatch._params;
 
     try {
-      await auditRequest({ event, context, client });
+      !dev && await auditRequest({ event, context, client });
     } catch (error) { console.log('ERROR AUDITING REQUEST, are you deploying the db?', error) }
     
     const response = await Objects[pathMatch._route].cmnd({ event, context, client });
@@ -106,18 +106,28 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
     if (response === false) {
       return errCallback(400, "400_BAD_REQUEST"); // Return 400 BAD REQUEST
     } else {
-
-      return {
+      const payload = {
         statusCode: 200,
         body: JSON.stringify(response),
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Content-Type": "application/json"
         }
-      };
+      }
+
+      if (dev) {
+        signUp ? 
+        context.succeed(event) : 
+        callback(null, {
+          statusCode: 200,
+          body: JSON.stringify(payload),
+          headers: { "Access-Control-Allow-Origin": "*" }
+        }); // Return 200 SUCCESS
+      } else {
+        return payload
+      }
 
       // Uncomment for local testing
-      // signUp ? context.succeed(event) : callback(null, { statusCode: 200, body: JSON.stringify(response), headers: { "Access-Control-Allow-Origin": "*" } }); // Return 200 SUCCESS
       // signUp ? context.succeed(event) : callback(null, { statusCode: 200, body: JSON.stringify(response) });
     }
 

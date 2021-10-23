@@ -56,4 +56,17 @@ const makeLambdaPayload = (body) => {
   return payload;
 }
 
-export { ask, replaceText, asyncForEach, makeLambdaPayload };
+const makeLoader = () => {
+  let counter = 1;
+  return setInterval(function () {
+    process.stdout.write("\r\x1b[K")
+    process.stdout.write(`${counter % 2 == 0 ? '-' : '|'}`);
+    counter++;
+  }, 250)
+}
+
+const loadMessage = (msg) => {
+  process.stdout.write(`\r\x1b[K${msg}\n`);
+}
+
+export { ask, replaceText, asyncForEach, makeLambdaPayload, makeLoader, loadMessage };
