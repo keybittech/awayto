@@ -17,7 +17,7 @@ import { LambdaClient, waitUntilFunctionUpdated, GetFunctionConfigurationCommand
 import { ask, replaceText, asyncForEach, makeLambdaPayload } from './tool.mjs';
 import regions from './data/regions.mjs';
 import createAccount from './createAccount.mjs';
-  
+
 const cipClient = new CognitoIdentityProviderClient();
 const rdsClient = new RDSClient();
 const ec2Client = new EC2Client();
@@ -65,7 +65,7 @@ export default async function () {
   const createRdsInstance = async () => {
 
     console.log('Beginning DB instance creation.');
-  
+
     // TODO, expand on this to allow customization
 
     // // Get all available AWS db engines for Postgres
@@ -75,13 +75,13 @@ export default async function () {
     //   DBInstanceClass: 't3micro'
     // });
 
-    
+
     // const instanceTypeResponse = await rdsClient.send(instanceTypeCommand);
     // console.log(instanceTypeResponse);
-    
+
     // // We only want to create a t2.micro standard type DB as this is AWS free tier
     // const what = instanceTypeResponse.OrderableDBInstanceOptions.find(o => o.DBInstanceClass.includes('micro'));
-    
+
     const createCommand = new CreateDBInstanceCommand({
       DBInstanceClass: 'db.t3.micro',
       DBInstanceIdentifier: id,
@@ -234,12 +234,22 @@ export default async function () {
   console.log('Creating LambdaTrust role.');
   await createLambdaRole();
 
+  // Create two template files
+  // template.yaml will go to CloudFormation for actual deployment
+  // template.sam.yaml is used in the deployed file structure to run SAM local
+
+  fs.copyFileSync(path.join(__dirname, 'data/template.yaml.template'), path.join(__dirname, 'data/template.yaml'))
+  fs.copyFileSync(path.join(__dirname, 'data/template.yaml.template'), path.resolve(process.cwd(), 'template.sam.yaml'))
+
+  await replaceText(path.join(__dirname, 'data/template.yaml'), 'id', id);
+  await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'id', id);
+
+  await replaceText(path.join(__dirname, 'data/template.yaml'), 'storageSite', `'s3://${id}-lambda/lambda.zip'`);
+  await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'storageSite', `'./apipkg'`);
+
   // Create two S3 buckets and put src/api/scripts/lambda.zip in one:
   // s3://<some-name>-lambda/lambda.zip
   // s3://<some-name>-webapp
-
-  fs.copyFileSync(path.join(__dirname, 'data/template.yaml.template'), path.join(__dirname, 'data/template.yaml'))
-  await replaceText(path.join(__dirname, 'data/template.yaml'), 'id', id);
 
   await s3Client.send(new CreateBucketCommand({ Bucket: id + '-lambda' }));
   await s3Client.send(new CreateBucketCommand({ Bucket: id + '-webapp' }));
@@ -328,7 +338,7 @@ export default async function () {
       }
     ]
   }));
-      
+
   createSeed(__dirname, awaytoConfig);
 
   const copyFiles = [
@@ -415,7 +425,7 @@ export default async function () {
     archive.pipe(output);
     archive.directory('apipkg/', false);
 
-    output.on('close', async function() {
+    output.on('close', async function () {
       child_process.execSync(`aws s3 cp ./lambda.zip s3://${id + '-lambda'}`);
       child_process.execSync(`aws lambda update-function-code --function-name ${config.environment}-${region}-${id}Resource --region ${region} --s3-bucket ${id + '-lambda'} --s3-key lambda.zip`);
       child_process.execSync(`rm lambda.zip`);
@@ -426,14 +436,14 @@ export default async function () {
       const describeCommand = new DescribeDBInstancesCommand({
         DBInstanceIdentifier: id
       });
-  
+
       const dbInsRes = await rdsClient.send(describeCommand);
       const dbInstance = dbInsRes.DBInstances[0];
 
       const lamCfgCommand = await lamClient.send(new GetFunctionConfigurationCommand({
         FunctionName: awaytoConfig.functionName
       }));
-  
+
       let envVars = Object.assign({}, lamCfgCommand.Environment.Variables);
       envVars['PGHOST'] = dbInstance.Endpoint.Address;
 
@@ -459,7 +469,7 @@ export default async function () {
           "pathParameters": {
             "proxy": "deploy"
           },
-          "body": { }
+          "body": {}
         })
       }));
 
@@ -471,6 +481,20 @@ export default async function () {
         Overwrite: true
       }));
 
+      fse.copySync(path.resolve(__dirname, 'data/env.json.template'), path.resolve(process.cwd(), 'env.json'));
+      const envJson = {
+        "Environment": config.environment,
+        "PGDATABASE": 'postgres',
+        "PGPASSWORD": config.password,
+        "PGHOST": dbInstance.Endpoint.Address,
+        "PGPORT": 5432,
+        "PGUSER": config.username
+      }
+
+      await asyncForEach(Object.keys(envJson), async k => {
+        await replaceText(path.resolve(process.cwd(), 'env.json'), k, envJson[k]);
+      })
+
       await createAccount({
         poolId: awaytoConfig.cognitoUserPoolId,
         clientId: awaytoConfig.cognitoClientId,
@@ -478,7 +502,7 @@ export default async function () {
         password: config.password,
         email: config.email
       });
-  
+
       console.log(`Site available at ${awaytoConfig.website}.`)
       process.exit();
     });

@@ -451,7 +451,7 @@ Resources:
     Properties:
       FunctionName: !Join ['-', [!Ref 'Environment', !Ref 'AWS::Region', '##id##Resource']]
       Handler: index.handler
-      CodeUri: 's3://##id##-lambda/lambda.zip'
+      CodeUri: ##storageSite##
       Runtime: nodejs12.x
       Timeout: 30
       Role: !Join [':', ['arn:aws:iam:', !Ref 'AWS::AccountId', 'role/LambdaTrust']]

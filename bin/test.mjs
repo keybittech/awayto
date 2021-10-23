@@ -29,8 +29,21 @@ const cfClient = new CloudFormationClient();
 const lamClient = new LambdaClient();
 
 export default async function() {
+  const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
 
   try {
+
+    const id = 'booooadskjllsdkfjds'
+
+    fs.copyFileSync(path.join(__dirname, 'data/template.yaml.template'), path.join(__dirname, 'data/template.yaml'))
+    fs.copyFileSync(path.join(__dirname, 'data/template.yaml.template'), path.resolve(process.cwd(), 'template.sam.yaml'))
+    
+    await replaceText(path.join(__dirname, 'data/template.yaml'), 'id', id);
+    await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'id', id);
+  
+    await replaceText(path.join(__dirname, 'data/template.yaml'), 'storageSite', `'s3://${id}-lambda/lambda.zip'`);
+    await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'storageSite', `'.'`);
+
     
     process.exit();
 
@@ -91,7 +104,6 @@ export default async function() {
 
     // console.log('boop', content);
   
-    // const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
 
     // const pathName = path.join(__dirname, "tester.mjs");
 
