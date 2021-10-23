@@ -266,6 +266,30 @@ const deploy: ApiModule = {
             FROM uuid_notes un
             WHERE un.enabled = true;
 
+            CREATE OR REPLACE VIEW 
+                enabled_groups_ext 
+            AS
+            SELECT 
+                eg.*,
+                ug.users,
+                rls.* as roles
+            FROM enabled_groups eg
+            LEFT JOIN LATERAL (
+                SELECT JSON_AGG(r.*) as roles
+                FROM (
+                    SELECT er.id, er.name
+                    FROM enabled_uuid_roles eur
+                    JOIN enabled_roles er ON eur."roleId" = er.id
+                    WHERE eur."parentUuid" = eg.id
+                ) r
+            ) as rls ON true
+            LEFT JOIN (
+              SELECT eug."groupId", COUNT(eug."parentUuid") users
+              FROM enabled_uuid_groups eug
+                JOIN users u ON u.id = eug."parentUuid"
+              GROUP BY eug."groupId"
+            ) ug ON ug."groupId" = eg.id;
+
             CREATE OR REPLACE VIEW
                 enabled_users_ext
             AS
@@ -282,30 +306,6 @@ const deploy: ApiModule = {
                     WHERE eug."parentUuid" = u.id
                 ) g
             ) as grps ON true;
-
-            CREATE OR REPLACE VIEW 
-                enabled_groups_ext 
-            AS
-            SELECT 
-                eg.*,
-                ug.users,
-                rls.* as roles
-            FROM enabled_groups eg
-            LEFT JOIN LATERAL (
-                SELECT JSON_AGG(r.*) as roles
-                FROM (
-                    SELECT er.id, er.name
-                    FROM enabled_uuid_roles eur
-                    JOIN enabled_roles er ON eur."roleId" = er.id
-                    WHERE eur."parentUuid" = u.id
-                ) r
-            ) as rls ON true
-            LEFT JOIN (
-              SELECT eug."groupId", COUNT(eug."parentUuid") users
-              FROM enabled_uuid_groups eug
-                JOIN users u ON u.id = eug."parentUuid"
-              GROUP BY eug."groupId"
-            ) ug ON ug."groupId" = eg.id;
           `
         );
 

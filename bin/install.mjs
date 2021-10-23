@@ -6,13 +6,13 @@ import child_process from 'child_process';
 import { URL } from 'url';
 
 import { CognitoIdentityProviderClient, AddCustomAttributesCommand } from '@aws-sdk/client-cognito-identity-provider';
-import { RDSClient, ModifyDBInstanceCommand, CreateDBInstanceCommand, DescribeOrderableDBInstanceOptionsCommand, DescribeDBInstancesCommand } from '@aws-sdk/client-rds';
+import { RDSClient, waitUntilDBInstanceAvailable, ModifyDBInstanceCommand, CreateDBInstanceCommand, DescribeOrderableDBInstanceOptionsCommand, DescribeDBInstancesCommand } from '@aws-sdk/client-rds';
 import { EC2Client, DescribeAvailabilityZonesCommand } from '@aws-sdk/client-ec2'
 import { SSMClient, PutParameterCommand } from '@aws-sdk/client-ssm';
 import { IAMClient, GetRoleCommand, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
 import { S3Client, CreateBucketCommand, PutObjectCommand, PutBucketWebsiteCommand, PutBucketPolicyCommand } from '@aws-sdk/client-s3';
-import { CloudFormationClient, CreateStackCommand, DescribeStacksCommand, ListStackResourcesCommand } from '@aws-sdk/client-cloudformation';
-import { LambdaClient, GetFunctionConfigurationCommand, UpdateFunctionConfigurationCommand, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CloudFormationClient, waitUntilStackCreateComplete, CreateStackCommand, DescribeStacksCommand, ListStackResourcesCommand } from '@aws-sdk/client-cloudformation';
+import { LambdaClient, waitUntilFunctionUpdated, GetFunctionConfigurationCommand, UpdateFunctionConfigurationCommand, InvokeCommand } from '@aws-sdk/client-lambda';
 
 import { ask, replaceText, asyncForEach, makeLambdaPayload } from './tool.mjs';
 import regions from './data/regions.mjs';
@@ -66,21 +66,27 @@ export default async function () {
 
     console.log('Beginning DB instance creation.');
   
-    // Get all available AWS db engines for Postgres
-    const instanceTypeCommand = new DescribeOrderableDBInstanceOptionsCommand({
-      Engine: 'postgres'
-    });
-  
-    const instanceTypeResponse = await rdsClient.send(instanceTypeCommand);
-    
-    // We only want to create a t2.micro standard type DB as this is AWS free tier
-    const { Engine, EngineVersion } = instanceTypeResponse.OrderableDBInstanceOptions.find(o => o.DBInstanceClass == 'db.t2.micro' && o.StorageType == 'standard');
+    // TODO, expand on this to allow customization
 
+    // // Get all available AWS db engines for Postgres
+    // const instanceTypeCommand = new DescribeOrderableDBInstanceOptionsCommand({
+    //   Engine: 'postgres',
+    //   EngineVersion: '13.4',
+    //   DBInstanceClass: 't3micro'
+    // });
+
+    
+    // const instanceTypeResponse = await rdsClient.send(instanceTypeCommand);
+    // console.log(instanceTypeResponse);
+    
+    // // We only want to create a t2.micro standard type DB as this is AWS free tier
+    // const what = instanceTypeResponse.OrderableDBInstanceOptions.find(o => o.DBInstanceClass.includes('micro'));
+    
     const createCommand = new CreateDBInstanceCommand({
-      DBInstanceClass: 'db.t2.micro',
+      DBInstanceClass: 'db.t3.micro',
       DBInstanceIdentifier: id,
-      Engine,
-      EngineVersion,
+      Engine: 'postgres',
+      EngineVersion: '13.4',
       AllocatedStorage: 10,
       MaxAllocatedStorage: 20,
       BackupRetentionPeriod: 0,
@@ -95,15 +101,9 @@ export default async function () {
     // Start DB creation -- will take time to fully generate
     await rdsClient.send(createCommand);
 
-    // console.log('Created a new DB Instance: ' + id + ' \nYou can undo this action with the following command: \n\naws rds delete-db-instance --db-instance-identifier ' + id + ' --skip-final-snapshot');
-
-    // console.log('Waiting for DB creation (~5-10 mins).'); // TODO -- refactor usage of SSM params to avoid "having" to wait for this
-    // await pollDBStatusAvailable(id);
-
   }
 
   await createRdsInstance();
-  // const dbInstance = await pollDBStatusAvailable(id);
 
   // Create SSM Parameters
   // Create the following string parameters in the Parameter Store:
@@ -293,8 +293,7 @@ export default async function () {
   }))
 
   console.log('Deploying CloudFormation stack.');
-
-  await pollStackCreated(id);
+  await waitUntilStackCreateComplete({ client: cfClient, maxWaitTime: 300 }, { StackName: id });
 
   const resourceResponse = await cfClient.send(new ListStackResourcesCommand({ StackName: id }));
 
@@ -421,17 +420,15 @@ export default async function () {
       child_process.execSync(`aws lambda update-function-code --function-name ${config.environment}-${region}-${id}Resource --region ${region} --s3-bucket ${id + '-lambda'} --s3-key lambda.zip`);
       child_process.execSync(`rm lambda.zip`);
 
-      console.log('Checking DB availability.');
-      const dbInstance = await pollDBStatusAvailable(id);
-
-      console.log('Updating DB password.');
-      await rdsClient.send(new ModifyDBInstanceCommand({
-        DBInstanceIdentifier: id,
-        MasterUserPassword: password
-      }));
-
       console.log('Waiting for DB to be ready.');
-      await pollDBStatusAvailable(id);
+      await waitUntilDBInstanceAvailable({ client: rdsClient, maxWaitTime: 60 }, { DBInstanceIdentifier: id });
+
+      const describeCommand = new DescribeDBInstancesCommand({
+        DBInstanceIdentifier: id
+      });
+  
+      const dbInsRes = await rdsClient.send(describeCommand);
+      const dbInstance = dbInsRes.DBInstances[0];
 
       const lamCfgCommand = await lamClient.send(new GetFunctionConfigurationCommand({
         FunctionName: awaytoConfig.functionName
@@ -439,23 +436,30 @@ export default async function () {
   
       let envVars = Object.assign({}, lamCfgCommand.Environment.Variables);
       envVars['PGHOST'] = dbInstance.Endpoint.Address;
-  
+
       await lamClient.send(new UpdateFunctionConfigurationCommand({
         FunctionName: awaytoConfig.functionName,
         Environment: {
           Variables: envVars
+        },
+        VpcConfig: {
+          SubnetIds: [dbInstance.DBSubnetGroup.Subnets[0].SubnetIdentifier],
+          SecurityGroupIds: [dbInstance.VpcSecurityGroups[0].VpcSecurityGroupId]
         }
       }));
+
+      await waitUntilFunctionUpdated({ client: lamClient, maxWaitTime: 180 }, { FunctionName: awaytoConfig.functionName });
 
       await lamClient.send(new InvokeCommand({
         FunctionName: awaytoConfig.functionName,
         InvocationType: 'Event',
         Payload: makeLambdaPayload({
           "httpMethod": "GET",
+          "resource": "/{proxy+}",
           "pathParameters": {
             "proxy": "deploy"
           },
-          "body": {}
+          "body": { }
         })
       }));
 
@@ -473,8 +477,8 @@ export default async function () {
         username: config.username,
         password: config.password,
         email: config.email
-      })
-
+      });
+  
       console.log(`Site available at ${awaytoConfig.website}.`)
       process.exit();
     });

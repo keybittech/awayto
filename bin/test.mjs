@@ -7,13 +7,13 @@ import { URL } from 'url';
 
 
 
-import { RDSClient, ModifyDBInstanceCommand, CreateDBInstanceCommand, DescribeOrderableDBInstanceOptionsCommand, DescribeDBInstancesCommand, RestoreDBClusterFromS3Command, RestoreDBInstanceFromDBSnapshotCommand } from '@aws-sdk/client-rds';
+import { RDSClient, waitUntilDBInstanceAvailable, ModifyDBInstanceCommand, CreateDBInstanceCommand, DescribeOrderableDBInstanceOptionsCommand, DescribeDBInstancesCommand, RestoreDBClusterFromS3Command, RestoreDBInstanceFromDBSnapshotCommand } from '@aws-sdk/client-rds';
 import { EC2Client, DescribeAvailabilityZonesCommand } from '@aws-sdk/client-ec2'
 import { SSMClient, DescribeParametersCommand, PutParameterCommand } from '@aws-sdk/client-ssm';
 import { IAMClient, GetRoleCommand, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
 import { S3Client, CreateBucketCommand, ListBucketsCommand, PutObjectCommand, PutBucketWebsiteCommand, GetBucketWebsiteCommand } from '@aws-sdk/client-s3';
 import { CloudFormationClient, CreateStackCommand, DescribeStacksCommand, ListStackResourcesCommand } from '@aws-sdk/client-cloudformation';
-import { LambdaClient, GetFunctionConfigurationCommand, UpdateFunctionConfigurationCommand, InvokeCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, GetFunctionConfigurationCommand, UpdateFunctionConfigurationCommand, InvokeCommand, GetFunctionCommand } from '@aws-sdk/client-lambda';
 
 import { ask, replaceText, asyncForEach, makeLambdaPayload } from './tool.mjs';
 import regions from './data/regions.mjs';
@@ -31,15 +31,58 @@ const lamClient = new LambdaClient();
 export default async function() {
 
   try {
-    const config = {
-      name: await ask('Project Name (\'awayto\'):\n> ', null, /^[a-zA-Z0-9]*$/) || 'awayto',
-      description: await ask('Project Description (\'Awayto is a workflow enhancing platform, producing great value with minimal investment.\'):\n> ') || 'Awayto is a workflow enhancing platform, producing great value with minimal investment.',
-      environment: await ask('Environment (\'dev\'):\n> ') || 'dev',
-      username: await ask('Admin/DB Username (\'awaytoadmin\'):\n> ') || 'awaytoadmin',
-      password: await ask('Admin/DB Password [8 char min] (\'Tester1!\'):\n> ', /[@"\/]/) || 'Tester1!',
-      email: await ask('Admin Email (\'install@keybittech.com\'):\n> ') || 'install@keybittech.com',
-      regionId: await ask(`${regions.map((r, i) => `${i}. ${r}`).join('\n')}\nChoose a number (0. us-east-1):\n> `) || '0'
-    };
+    
+    process.exit();
+
+    // const id = 'awaytodev1634930427304'
+    
+    // console.log('Updating DB password.');
+    // await rdsClient.send(new ModifyDBInstanceCommand({
+    //   DBInstanceIdentifier: id,
+    //   MasterUserPassword: 'Testerpass4!',
+    //   ApplyImmediately: true,
+      
+    // }));
+    // console.log('Waiting for DB to be ready.');
+    // await waitUntilDBInstanceAvailable({ client: rdsClient, maxWaitTime: 60 }, { DBInstanceIdentifier: id });
+
+    // console.log('This should never be waiting for pass');
+    // await pollDBStatusAvailable(id);
+
+
+    const awaytoConfig = {
+       functionName : 'dev-us-east-1-awaytodev1634926372299Resource'
+    }
+
+    const lamREs = await lamClient.send(new InvokeCommand({
+      FunctionName: awaytoConfig.functionName,
+      InvocationType: 'Event',
+      Payload: makeLambdaPayload({
+        "httpMethod": "GET",
+        "resource": "/{proxy+}",
+        "pathParameters": {
+          "proxy": "deploy"
+        },
+        "body": {}
+      })
+    }));
+
+    console.log(JSON.stringify(lamREs));
+
+
+    const lamFun = await lamClient.send(new UpdateFunctionConfigurationCommand({
+      FunctionName: awaytoConfig.functionName,
+      VpcConfig: {
+        SubnetIds: [res.DBSubnetGroup.Subnets[0].SubnetIdentifier],
+        SecurityGroupIds: [res.VpcSecurityGroups[0].VpcSecurityGroupId]
+      }
+    }));
+
+    console.log(JSON.stringify(await lamClient.send(new GetFunctionCommand({ FunctionName: awaytoConfig.functionName }))));
+    console.log(JSON.stringify(await lamClient.send(new GetFunctionCommand({ FunctionName: awaytoConfig.functionName }))));
+    console.log(JSON.stringify(await lamClient.send(new GetFunctionCommand({ FunctionName: awaytoConfig.functionName }))));
+    console.log(JSON.stringify(await lamClient.send(new GetFunctionCommand({ FunctionName: awaytoConfig.functionName }))));
+
 
     // const content = {
     //   name:  await ask('Name?'),
@@ -179,3 +222,47 @@ export default async function() {
   // console.log(bkweb);
 }
 
+
+
+const pollDBStatusAvailable = (id) => {
+
+  const loader = makeLoader();
+  const describeCommand = new DescribeDBInstancesCommand({
+    DBInstanceIdentifier: id
+  });
+
+  let i = 0;
+
+  const executePoll = async (resolve, reject) => {
+    try {
+      const response = await rdsClient.send(describeCommand);
+      const instance = response.DBInstances[0];
+
+      console.log(instance.DBInstanceStatus);
+
+
+      i++;
+      if (instance.DBInstanceStatus.toLowerCase() == 'resetting-master-credentials') {
+        console.log('it took ', i, 'attempts');
+        clearInterval(loader);
+        process.stdout.write("\r\x1b[K")
+        return resolve(instance);
+      } else {
+        setTimeout(executePoll, 10000, resolve, reject);
+      }
+    } catch (error) {
+      return reject(error);
+    }
+  }
+
+  return new Promise(executePoll);
+};
+
+const makeLoader = () => {
+  let counter = 1;
+  return setInterval(function () {
+    process.stdout.write("\r\x1b[K")
+    process.stdout.write(`${counter % 2 == 0 ? '-' : '|'}`);
+    counter++;
+  }, 250)
+}

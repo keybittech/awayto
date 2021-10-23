@@ -59,7 +59,7 @@ Any versions mentioned are what was used at time of writing. Any AWS tasks are p
 
 - Node 16.3.0
 
-- Postgres 11.9
+- Postgres 13.4
 
 - Python 3.7.9
 

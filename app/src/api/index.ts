@@ -97,7 +97,10 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
 
     event.pathParameters = pathMatch._params;
 
-    await auditRequest({ event, context, client });
+    try {
+      await auditRequest({ event, context, client });
+    } catch (error) { console.log('ERROR AUDITING REQUEST, are you deploying the db?', error) }
+    
     const response = await Objects[pathMatch._route].cmnd({ event, context, client });
 
     if (response === false) {

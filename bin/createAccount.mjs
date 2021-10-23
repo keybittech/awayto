@@ -20,7 +20,7 @@ export default async function(props = {}) {
 
   try {
 
-    await cipClient.send(new SignUpCommand({
+    const adminAccount = await cipClient.send(new SignUpCommand({
       ClientId: props.clientId,
       Username: props.username,
       Password: props.password,
@@ -40,6 +40,8 @@ export default async function(props = {}) {
       UserPoolId: props.poolId,
       Username: props.username
     }));
+
+    return adminAccount;
 
   } catch (error) {
     console.log(error);
