@@ -12,9 +12,10 @@ import { RDSClient, waitUntilDBInstanceAvailable, ModifyDBInstanceCommand, Creat
 import { EC2Client, DescribeAvailabilityZonesCommand, AuthorizeSecurityGroupIngressCommand } from '@aws-sdk/client-ec2'
 import { SSMClient, DescribeParametersCommand, PutParameterCommand } from '@aws-sdk/client-ssm';
 import { IAMClient, GetRoleCommand, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
-import { S3Client, CreateBucketCommand, ListBucketsCommand, PutObjectCommand, PutBucketWebsiteCommand, GetBucketWebsiteCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutBucketPolicyCommand, CreateBucketCommand, ListBucketsCommand, PutObjectCommand, PutBucketWebsiteCommand, GetBucketWebsiteCommand } from '@aws-sdk/client-s3';
 import { CloudFormationClient, CreateStackCommand, DescribeStacksCommand, ListStackResourcesCommand } from '@aws-sdk/client-cloudformation';
 import { LambdaClient, GetFunctionConfigurationCommand, UpdateFunctionConfigurationCommand, InvokeCommand, GetFunctionCommand } from '@aws-sdk/client-lambda';
+import { CloudFrontClient, CreateDistributionCommand, CreateCloudFrontOriginAccessIdentityCommand } from '@aws-sdk/client-cloudfront';
 
 import { ask, replaceText, asyncForEach, makeLambdaPayload } from './tool.mjs';
 import regions from './data/regions.mjs';
@@ -28,35 +29,137 @@ const iamClient = new IAMClient();
 const s3Client = new S3Client();
 const cfClient = new CloudFormationClient();
 const lamClient = new LambdaClient();
+const clClient = new CloudFrontClient();
 
-export default async function() {
+export default async function () {
   const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
+
+  const domain = 'awaytodev1635081399524-webapp';
+
+  let oai;
+  
+  try {
+    oai = await clClient.send(new CreateCloudFrontOriginAccessIdentityCommand({
+      CloudFrontOriginAccessIdentityConfig: {
+        CallerReference: 'AwaytoOAI',
+        Comment: 'AwaytoOAI',
+      }
+    }));
+    console.log('using from create');
+  } catch (error) {
+    console.log('errored out');
+    const oais = await clClient.send(new ListCloudFrontOriginAccessIdentitiesCommand());
+    oai = oais.CloudFrontOriginAccessIdentityList.Items.filter(oai => oai.Comment == 'AwaytoOAI')[0];
+  }
+
+  console.log('you got an OAI of', oai);
 
   try {
 
+    // create this oai
+
+  //   const oai = await clClient.send(new CreateCloudFrontOriginAccessIdentityCommand({
+  //     CloudFrontOriginAccessIdentityConfig: {
+  //       CallerReference: 'awaytodev1635081399524',
+  //       Comment: 'Created by system',
+  //     }
+  //   }))
+
+  //   console.log('got a ting', oai.CloudFrontOriginAccessIdentity);
+
+  //   await new Promise(res => setTimeout(res, 10000));
+
+  //   const policy = `{
+  //     "Version": "2012-10-17",
+  //     "Id": "PolicyForCloudFrontPrivateContent",
+  //     "Statement": [
+  //         {
+  //             "Effect": "Allow",
+  //             "Principal": {
+  //                 "AWS": "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${oai.CloudFrontOriginAccessIdentity.Id}"
+  //             },
+  //             "Action": "s3:GetObject",
+  //             "Resource": "arn:aws:s3:::${domain}/*"
+  //         }
+  //     ]
+  // }`
+
+  //   console.log('were going to push this policy', policy);
+
+  //   // add policy to bucket
+  //   await s3Client.send(new PutBucketPolicyCommand({
+  //     Bucket: domain,
+  //     Policy: policy
+  //   }))
+
+    // console.log('jso', JSON.stringify(oai, null, 2));
+
+    // oai.CloudFrontOriginAccessIdentity.Id
+
+    // await clClient.send(new CreateDistributionCommand({
+    //   DistributionConfig: {
+    //     CallerReference: 'awaytodev1635069027781',
+    //     Comment: "Created by system",
+    //     Enabled: true,
+    //     Origins: {
+    //       Items: [
+    //         {
+    //           Id: 'S3-' + domain,
+    //           DomainName: domain + '.s3.amazonaws.com',
+    //           S3OriginConfig: {
+    //             OriginAccessIdentity: 'origin-access-identity/cloudfront/EZIVZHHRDZ0KO',
+    //           }
+    //         }
+    //       ],
+    //       Quantity: 1
+    //     },
+    //     CustomErrorResponses: {
+    //       Items: [
+    //         {
+    //           ErrorCode: 403,
+    //           ErrorCachingMinTTL: 10,
+    //           ResponseCode: 200,
+    //           ResponsePagePath: '/index.html'
+    //         }
+    //       ],
+    //       Quantity: 1
+    //     },
+    //     DefaultCacheBehavior: {
+    //       AllowedMethods: {
+    //         Items: ['GET', 'HEAD'],
+    //         Quantity: 2
+    //       },
+    //       CachePolicyId: '658327ea-f89d-4fab-a63d-7e88639e58f6', // CachingOptimized ID
+    //       TargetOriginId: 'S3-' + domain,
+    //       TrustedSigners: { Enabled: false, Quantity: 0 },
+    //       ViewerProtocolPolicy: "redirect-to-https"
+    //     },
+    //     DefaultRootObject: "index.html",
+    //   }
+    // }));
 
     // const id = 'booooadskjllsdkfjds'
 
     // fs.copyFileSync(path.join(__dirname, 'data/template.yaml.template'), path.join(__dirname, 'data/template.yaml'))
     // fs.copyFileSync(path.join(__dirname, 'data/template.yaml.template'), path.resolve(process.cwd(), 'template.sam.yaml'))
-    
+
     // await replaceText(path.join(__dirname, 'data/template.yaml'), 'id', id);
     // await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'id', id);
-  
+
     // await replaceText(path.join(__dirname, 'data/template.yaml'), 'storageSite', `'s3://${id}-lambda/lambda.zip'`);
     // await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'storageSite', `'.'`);
 
-    
+
     process.exit();
 
     // const id = 'awaytodev1634930427304'
-    
+
     // console.log('Updating DB password.');
     // await rdsClient.send(new ModifyDBInstanceCommand({
     //   DBInstanceIdentifier: id,
     //   MasterUserPassword: 'Testerpass4!',
     //   ApplyImmediately: true,
-      
+
     // }));
     // console.log('Waiting for DB to be ready.');
     // await waitUntilDBInstanceAvailable({ client: rdsClient, maxWaitTime: 60 }, { DBInstanceIdentifier: id });
@@ -66,7 +169,7 @@ export default async function() {
 
 
     const awaytoConfig = {
-       functionName : 'dev-us-east-1-awaytodev1634926372299Resource'
+      functionName: 'dev-us-east-1-awaytodev1634926372299Resource'
     }
 
     const lamREs = await lamClient.send(new InvokeCommand({
@@ -105,7 +208,7 @@ export default async function() {
     // }
 
     // console.log('boop', content);
-  
+
 
     // const pathName = path.join(__dirname, "tester.mjs");
 
@@ -135,7 +238,7 @@ export default async function() {
     // //   console.log('we responded with', err);
     // //   console.log('we responded wisaddsafth', res);
     // // })
-    
+
     process.exit();
   } catch (error) {
     console.log('err', error);
@@ -152,15 +255,15 @@ export default async function() {
   //     "body": {}
   //   })
   // }));
-  
+
   // console.log(JSON.stringify(resp, null, 2));
-  
+
   // const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
 
   // fs.writeFileSync(path.join(__dirname, `/testerrrrrrrrrr.json`), '{}')
-  
+
   // // http://bucket-name.s3-website.Region.amazonaws.com/object-name
-  
+
 
 
   // const configur = {
@@ -211,10 +314,10 @@ export default async function() {
   // } catch (error) {
   //   console.log('first install failed');
   // }
-  
+
   // console.log(2);
   // const buildChild2 = child_process.execSync(`npm run build`);
-  
+
 
   // process.exit();
 

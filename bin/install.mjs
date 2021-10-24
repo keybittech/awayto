@@ -11,13 +11,16 @@ import { RDSClient, waitUntilDBInstanceAvailable, ModifyDBInstanceCommand, Creat
 import { EC2Client, DescribeAvailabilityZonesCommand, AuthorizeSecurityGroupIngressCommand } from '@aws-sdk/client-ec2'
 import { SSMClient, PutParameterCommand } from '@aws-sdk/client-ssm';
 import { IAMClient, GetRoleCommand, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
-import { S3Client, CreateBucketCommand, PutObjectCommand, PutBucketWebsiteCommand, PutBucketPolicyCommand } from '@aws-sdk/client-s3';
+import { S3Client, CreateBucketCommand, PutObjectCommand, PutBucketWebsiteCommand, PutBucketPolicyCommand, waitUntilBucketExists } from '@aws-sdk/client-s3';
 import { CloudFormationClient, waitUntilStackCreateComplete, CreateStackCommand, DescribeStacksCommand, ListStackResourcesCommand } from '@aws-sdk/client-cloudformation';
 import { LambdaClient, waitUntilFunctionUpdated, GetFunctionConfigurationCommand, UpdateFunctionConfigurationCommand, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CloudFrontClient, CreateDistributionCommand, CreateCloudFrontOriginAccessIdentityCommand, waitUntilDistributionDeployed, ListCloudFrontOriginAccessIdentitiesCommand } from '@aws-sdk/client-cloudfront';
 
 import { ask, replaceText, asyncForEach, makeLambdaPayload } from './tool.mjs';
 import regions from './data/regions.mjs';
 import createAccount from './createAccount.mjs';
+
+const debug = false;
 
 const cipClient = new CognitoIdentityProviderClient();
 const rdsClient = new RDSClient();
@@ -26,6 +29,7 @@ const ssmClient = new SSMClient();
 const iamClient = new IAMClient();
 const s3Client = new S3Client();
 const cfClient = new CloudFormationClient();
+const clClient = new CloudFrontClient();
 const lamClient = new LambdaClient();
 
 export default async function () {
@@ -58,8 +62,63 @@ export default async function () {
   const id = `${config.name}${config.environment}${seed}`;
   const username = config.username;
   const password = config.password;
+  const webBucket = id + '-webapp';
 
   console.log('== Beginning Awayto Install (~5 - 10 minutes): ' + id);
+
+  // Begin Distribution generation
+  await s3Client.send(new CreateBucketCommand({ Bucket: webBucket }));
+
+  await waitUntilBucketExists({ client: s3Client, maxWaitTime: 30 }, { Bucket: webBucket });
+
+  const oai = await clClient.send(new CreateCloudFrontOriginAccessIdentityCommand({
+    CloudFrontOriginAccessIdentityConfig: {
+      CallerReference: 'AwaytoOAI',
+      Comment: 'AwaytoOAI',
+    }
+  }));
+
+  const distributionCmd = await clClient.send(new CreateDistributionCommand({
+    DistributionConfig: {
+      CallerReference: id,
+      Comment: 'Created by system for ' + id,
+      Enabled: true,
+      Origins: {
+        Items: [
+          {
+            Id: 'S3-' + webBucket,
+            DomainName: webBucket + '.s3.amazonaws.com',
+            S3OriginConfig: {
+              OriginAccessIdentity: `origin-access-identity/cloudfront/${oai.CloudFrontOriginAccessIdentity.Id}`,
+            }
+          }
+        ],
+        Quantity: 1
+      },
+      CustomErrorResponses: {
+        Items: [
+          {
+            ErrorCode: 403,
+            ErrorCachingMinTTL: 10,
+            ResponseCode: 200,
+            ResponsePagePath: '/index.html'
+          }
+        ],
+        Quantity: 1
+      },
+      DefaultCacheBehavior: {
+        AllowedMethods: {
+          Items: ['GET', 'HEAD'],
+          Quantity: 2
+        },
+        CachePolicyId: '658327ea-f89d-4fab-a63d-7e88639e58f6', // CachingOptimized ID
+        TargetOriginId: 'S3-' + webBucket,
+        TrustedSigners: { Enabled: false, Quantity: 0 },
+        ViewerProtocolPolicy: "redirect-to-https"
+      },
+      DefaultRootObject: "index.html",
+    }
+  }));
 
   // Create Amazon RDS instance
   const createRdsInstance = async () => {
@@ -252,38 +311,32 @@ export default async function () {
   // s3://<some-name>-webapp
 
   await s3Client.send(new CreateBucketCommand({ Bucket: id + '-lambda' }));
-  await s3Client.send(new CreateBucketCommand({ Bucket: id + '-webapp' }));
+  
   await s3Client.send(new PutObjectCommand({
     Bucket: id + '-lambda',
     Key: 'lambda.zip',
     Body: fs.readFileSync(path.join(__dirname, 'data/lambda.zip'))
   }));
+
   await s3Client.send(new PutObjectCommand({
     Bucket: id + '-lambda',
     Key: 'template.yaml',
     Body: fs.readFileSync(path.join(__dirname, 'data/template.yaml'))
   }));
 
-  await s3Client.send(new PutBucketWebsiteCommand({
-    Bucket: id + '-webapp',
-    WebsiteConfiguration: {
-      IndexDocument: {
-        Suffix: 'index.html'
-      }
-    }
-  }))
-
   await s3Client.send(new PutBucketPolicyCommand({
     Bucket: id + '-webapp',
     Policy: `{
-      "Version": "2008-10-17",
+      "Version": "2012-10-17",
+      "Id": "PolicyForCloudFrontPrivateContent",
       "Statement": [
         {
-          "Sid": "AllowPublicRead",
           "Effect": "Allow",
-          "Principal": "*",
+          "Principal": {
+            "AWS": "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${oai.CloudFrontOriginAccessIdentity.Id}"
+          },
           "Action": "s3:GetObject",
-          "Resource": "arn:aws:s3:::${id + '-webapp'}/*"
+          "Resource": "arn:aws:s3:::${webBucket}/*"
         }
       ]
     }`
@@ -303,7 +356,7 @@ export default async function () {
   }))
 
   console.log('Deploying CloudFormation stack.');
-  await waitUntilStackCreateComplete({ client: cfClient, maxWaitTime: 300 }, { StackName: id });
+  await waitUntilStackCreateComplete({ client: cfClient, maxWaitTime: 600 }, { StackName: id });
 
   const resourceResponse = await cfClient.send(new ListStackResourcesCommand({ StackName: id }));
 
@@ -323,8 +376,10 @@ export default async function () {
     functionName: resources[id + 'Resource'],
     cognitoUserPoolId: resources['CognitoUserPool'],
     cognitoClientId: resources['CognitoUserPoolClient'],
+    distributionId: distributionCmd.Distribution.Id,
+    oaiId: oai.CloudFrontOriginAccessIdentity.Id,
     apiGatewayEndpoint: `https://${resources[id + 'ResourceApi']}.execute-api.${region}.amazonaws.com/${resources[id + 'ResourceApiStage']}/`,
-    website: `http://${id + '-webapp'}.s3-website.${region}.amazonaws.com`
+    website: `https://${distributionCmd.Distribution.DomainName}/` //`http://${id + '-webapp'}.s3-website.${region}.amazonaws.com`
   }
 
   console.log('Adding role attribute to Cognito.');
@@ -390,26 +445,29 @@ export default async function () {
     })
   });
 
-  try {
-    console.log('Performing npm install.')
-    child_process.execSync(`npm i`);
-    child_process.execSync(`npm i --prefix ./apipkg`);
-  } catch (error) {
-    console.log('npm install failed')
-  }
+  if (!debug) {
+      
+    try {
+      console.log('Performing npm install.')
+      child_process.execSync(`npm i`);
+      child_process.execSync(`npm i --prefix ./apipkg`);
+    } catch (error) {
+      console.log('npm install failed')
+    }
 
-  try {
-    console.log('Building webapp and api.')
-    child_process.execSync(`npm run build-deploy`);
-  } catch (error) {
-    console.log('webapp build failed')
-  }
+    try {
+      console.log('Building webapp and api.')
+      child_process.execSync(`npm run build-deploy`);
+    } catch (error) {
+      console.log('webapp build failed')
+    }
 
-  try {
-    console.log('Syncing webapp to S3.')
-    child_process.execSync(`aws s3 sync ./build s3://${id + '-webapp'}`);
-  } catch (error) {
-    console.log('webapp sync failed')
+    try {
+      console.log('Syncing webapp to S3.')
+      child_process.execSync(`aws s3 sync ./build s3://${id + '-webapp'}`);
+    } catch (error) {
+      console.log('webapp sync failed')
+    }
   }
 
   try {
@@ -426,12 +484,14 @@ export default async function () {
     archive.directory('apipkg/', false);
 
     output.on('close', async function () {
-      child_process.execSync(`aws s3 cp ./lambda.zip s3://${id + '-lambda'}`);
-      child_process.execSync(`aws lambda update-function-code --function-name ${config.environment}-${region}-${id}Resource --region ${region} --s3-bucket ${id + '-lambda'} --s3-key lambda.zip`);
+      if (!debug) {
+        child_process.execSync(`aws s3 cp ./lambda.zip s3://${id + '-lambda'}`);
+        child_process.execSync(`aws lambda update-function-code --function-name ${config.environment}-${region}-${id}Resource --region ${region} --s3-bucket ${id + '-lambda'} --s3-key lambda.zip`);
+      }
       child_process.execSync(`rm lambda.zip`);
 
       console.log('Waiting for DB to be ready.');
-      await waitUntilDBInstanceAvailable({ client: rdsClient, maxWaitTime: 60 }, { DBInstanceIdentifier: id });
+      await waitUntilDBInstanceAvailable({ client: rdsClient, maxWaitTime: 600 }, { DBInstanceIdentifier: id });
 
       const describeCommand = new DescribeDBInstancesCommand({
         DBInstanceIdentifier: id
@@ -470,6 +530,7 @@ export default async function () {
       let envVars = Object.assign({}, lamCfgCommand.Environment.Variables);
       envVars['PGHOST'] = dbInstance.Endpoint.Address;
 
+      console.log('Updating lambda security group configuration.');
       await lamClient.send(new UpdateFunctionConfigurationCommand({
         FunctionName: awaytoConfig.functionName,
         Environment: {
@@ -481,8 +542,9 @@ export default async function () {
         }
       }));
 
-      await waitUntilFunctionUpdated({ client: lamClient, maxWaitTime: 180 }, { FunctionName: awaytoConfig.functionName });
+      await waitUntilFunctionUpdated({ client: lamClient, maxWaitTime: 600 }, { FunctionName: awaytoConfig.functionName });
 
+      console.log('Calling DB script deployment API.');
       await lamClient.send(new InvokeCommand({
         FunctionName: awaytoConfig.functionName,
         InvocationType: 'Event',
@@ -520,6 +582,7 @@ export default async function () {
         })
       }
 
+      console.log('Creating admin account.')
       await createAccount({
         poolId: awaytoConfig.cognitoUserPoolId,
         clientId: awaytoConfig.cognitoClientId,
@@ -528,7 +591,10 @@ export default async function () {
         email: config.email
       });
 
-      console.log(`Site available at ${awaytoConfig.website}.`)
+      console.log('Waiting for CloudFront deployment to be available.');
+      await waitUntilDistributionDeployed({ client: clClient, maxWaitTime: 600 }, { Id: distributionCmd.Distribution.Id });
+
+      console.log(`Site available at ${awaytoConfig.website}. Login with the credentials you provided.`)
       console.log('You may also run the project locally with "npm run start-stack". See the package for more options.');
 
       process.exit();
