@@ -40,8 +40,9 @@ export function Login(props: IProps): JSX.Element {
       else
         dispatch(act(LOGIN_USER, { username }));
     } catch (error) {
-      dispatch(act(SET_SNACK, { snackType: 'error', snackOn: `Error while submitting login form ${error as string}.` }))
-      dispatch(act(AUTH_DENIAL, { error: error as string }));
+      const { message } = error as Error;
+      dispatch(act(SET_SNACK, { snackType: 'error', snackOn: `Error while submitting login form: ${message}` }))
+      dispatch(act(AUTH_DENIAL, { error: message }));
     } finally {
       dispatch(act(STOP_LOADING, { isLoading: false }));
     }

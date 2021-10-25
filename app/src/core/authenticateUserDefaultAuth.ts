@@ -116,13 +116,13 @@ export const authenticateUserDefaultAuth = async (authDetails: { [key: string]: 
                 resolve({ AuthenticationResult } as CognitoAuthResponse);
               }
             }).catch(err => {
-              throw err;
+              reject(err);
             })
           }
         );
 
       }).catch(err => {
-        throw err;
+        reject(err);
       });
     });
   })
