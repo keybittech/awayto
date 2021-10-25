@@ -7,7 +7,8 @@ import {
   IPostManageRolesAction, 
   IPutManageRolesAction, 
   IDeleteManageRolesAction, 
-  IManageRolesActions
+  IManageRolesActions,
+  ILogoutTypes
 } from 'awayto';
 
 const initialManageRolesState: IManageRolesState = {};
@@ -42,7 +43,7 @@ function reduceDeleteState(state: IManageRolesState, action: IDeleteManageRolesA
 
 const manageRolesReducer: Reducer<IManageRolesState, IManageRolesActions> = (state = initialManageRolesState, action) => {
   switch (action.type) {
-    case "LOGOUT":
+    case ILogoutTypes.LOGOUT:
       return initialManageRolesState;
     case IManageRolesActionTypes.GET_MANAGE_ROLES:
       return reduceGetManageRoles(state, action);

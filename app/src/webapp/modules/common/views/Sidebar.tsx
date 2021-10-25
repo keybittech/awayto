@@ -8,7 +8,10 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import AppsIcon from '@material-ui/icons/Apps';
 
-import { act, useDispatch, IUtilActionTypes } from 'awayto';
+import { act, useRedux, useDispatch, IUtilActionTypes, ILogoutTypes } from 'awayto';
+
+const { SET_SNACK } = IUtilActionTypes;
+const { LOGOUT } = ILogoutTypes;
 
 export function Sidebar (props: IProps): JSX.Element {
   const { classes = {}, history = {} as History } = props;
@@ -22,8 +25,9 @@ export function Sidebar (props: IProps): JSX.Element {
   const logout = () => {
     sessionStorage.clear();
     localStorage.clear();
-    dispatch(act(IUtilActionTypes.CLEAR_REDUX, null));
+    dispatch(act(LOGOUT, null));
     navigate('/');
+    dispatch(act(SET_SNACK, { snackType: 'info', snackOn: 'Successfully logged out!' }))
   }
 
   return (

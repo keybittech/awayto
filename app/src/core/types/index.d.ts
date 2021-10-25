@@ -101,6 +101,13 @@ export type PayloadAction<Type, Payload, Meta = void> = MetaAction<Type, Meta> &
 /**
  * @category Awayto
  */
+ export enum ILogoutTypes {
+   LOGOUT = "LOGOUT"
+ }
+
+/**
+ * @category Awayto
+ */
 export type LogoutAction = PayloadAction<"LOGOUT", void>;
 
 /**
