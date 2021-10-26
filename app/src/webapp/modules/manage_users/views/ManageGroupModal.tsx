@@ -52,11 +52,14 @@ export function ManageGroupModal ({
   const badName = !checkingName && !isValid && !!group?.name && formatName(group.name) == checkedName;
 
   const handleName = useCallback((event: ChangeEvent<HTMLTextAreaElement>) => {
+    dispatch(act(CHECK_GROUP_NAME, { checkingName: true }));
     const name = event.target.value;
     if (name.length <= 50) {
       setGroup({ ...group, name });
       dispatch(act(CHECK_GROUP_NAME, { checkedName: formatName(name), needCheckName: name != editGroup?.name }, { debounce: { time: 1000 } }))
-    } 
+    } else if (isValid) {
+      dispatch(act(CHECK_GROUP_NAME, { checkingName: false }));
+    }
   }, [group, setGroup])
 
   useEffect(() => {
@@ -101,7 +104,6 @@ export function ManageGroupModal ({
                   fullWidth id="name" label="Name" value={group.name} name="name" onChange={handleName}
                   multiline
                   helperText="Group names can only contain letters, numbers, and underscores. Max 50 characters."
-                  disabled={checkingName}
                   error={badName}
                   InputProps={{
                     endAdornment: group.name && (
@@ -113,7 +115,7 @@ export function ManageGroupModal ({
                         }
                         position="start"
                       >
-                        <Grid item style={{ width: '25px', height: '20px' }}>
+                        <Grid item style={{ alignSelf: 'center' }}>
                           {checkingName ?
                             <CircularProgress size="20px" /> : 
                             badName ? <NotInterestedIcon color="error" /> : <ArrowRightAlt />}

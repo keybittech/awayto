@@ -2,12 +2,13 @@ import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import DataTable from 'react-data-table-component';
 import { Dialog, IconButton, Button, CircularProgress, Checkbox } from '@material-ui/core';
 import CreateIcon from '@material-ui/icons/Create';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import { IGroup, IManageGroupsActionTypes, useRedux, useApi } from 'awayto';
 
 import ManageGroupModal from './ManageGroupModal';
 
-const { GET_MANAGE_GROUPS } = IManageGroupsActionTypes;
+const { GET_MANAGE_GROUPS, DELETE_MANAGE_GROUPS } = IManageGroupsActionTypes;
 
 export function ManageGroups (props: IProps): JSX.Element {
   const api = useApi();
@@ -28,7 +29,7 @@ export function ManageGroups (props: IProps): JSX.Element {
   
   const actions = useMemo(() => {
     const { length } = selected;
-    return length == 1 ? [
+    const actions = length == 1 ? [
       <IconButton key={'manage_group'} onClick={() => {
         setGroup(selected.pop());
         setDialog('manage_group');
@@ -37,6 +38,14 @@ export function ManageGroups (props: IProps): JSX.Element {
         <CreateIcon />
       </IconButton>
     ] : [];
+
+    return [
+      ...actions,
+      <IconButton key={'delete_group'} onClick={() => {
+        void api(DELETE_MANAGE_GROUPS, true, selected.map(u => ({ id: u.id })) as IGroup[]);
+        setToggle(!toggle);
+      }}><DeleteIcon /></IconButton>
+    ];
   }, [selected])
 
   useEffect(() => {

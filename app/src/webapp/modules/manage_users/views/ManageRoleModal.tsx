@@ -24,7 +24,7 @@ export function ManageRoleModal ({
     if (!name) 
       return dispatch(act(IUtilActionTypes.SET_SNACK, {snackType: 'error', snackOn: 'Groups must have a name.' }));
 
-    void api(id ? PUT_MANAGE_ROLES : POST_MANAGE_ROLES, false, role);
+    void api(id ? PUT_MANAGE_ROLES : POST_MANAGE_ROLES, true, role);
 
     closeModal();
   }, [role]);
