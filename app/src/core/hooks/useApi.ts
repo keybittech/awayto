@@ -8,12 +8,16 @@ import { HttpResponse } from '@aws-sdk/types';
 import routeMatch, { RouteMatch } from 'route-match';
 const { Route, RouteCollection, PathGenerator } = routeMatch as RouteMatch;
 
-const ApiActions = Object.assign(
+let ApiActions = Object.assign(
   IManageUsersActionTypes,
   IManageGroupsActionTypes,
   IManageRolesActionTypes,
   IUserProfileActionTypes
 ) as Record<string, string>;
+
+export function registerApi(api: IActionTypes): void {
+  ApiActions = Object.assign(ApiActions, api);
+}
 
 const paths = Object.keys(ApiActions).map(key => {
   return new Route(key, ApiActions[key])
@@ -98,7 +102,7 @@ export function useApi(): (actionType: IActionTypes, load?: boolean, body?: ILoa
     if (method.toLowerCase() == 'get' && body && Object.keys(body).length) {
       // Get the key of the enum from ApiActions based on the path (actionType)
       const pathKey = Object.keys(ApiActions).filter((x) => ApiActions[x] == actionType)[0];
-      path = generator.generate(pathKey, body);
+      path = generator.generate(pathKey, body).split(/\/(.+)/)[1];
       body = undefined;
     }
 
@@ -109,7 +113,7 @@ export function useApi(): (actionType: IActionTypes, load?: boolean, body?: ILoa
       cognitoUser
     })
       .then((response: HttpResponse) => {
-        const body = JSON.parse(response.body) as T;
+        const body = JSON.parse(response.body ? response.body : '{}') as T;
         dispatch(act(actionType || API_SUCCESS, body, meta));
         return body;
       })

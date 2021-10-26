@@ -162,7 +162,7 @@ export function ManageUserModal({
                   label="Roles"
                   multiple
                 >
-                  {g.roles.map((r, i) => <MenuItem key={i} value={r.name}>{r.name}</MenuItem>) ?? <MenuItem />}
+                  {g.roles ? g.roles.map((r, i) => <MenuItem key={i} value={r.name}>{r.name}</MenuItem>) : <MenuItem />}
                 </Select>
               </FormControl>
             </Grid>

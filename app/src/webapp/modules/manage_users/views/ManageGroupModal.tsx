@@ -62,7 +62,7 @@ export function ManageGroupModal ({
   useEffect(() => {
     if (needCheckName && checkedName) {
       dispatch(act(CHECK_GROUP_NAME, { checkingName: true, needCheckName: false, isValid: false }));
-      void api(CHECK_GROUP_NAME, true, { checkedName })
+      void api(CHECK_GROUP_NAME, true, { name: checkedName })
     }
   }, [needCheckName])
 
