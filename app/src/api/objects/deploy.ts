@@ -29,7 +29,7 @@ const deploy: ApiModule = {
             
             CREATE TABLE groups (
               id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-              name VARCHAR ( 50 ) NOT NULL,
+              name VARCHAR ( 50 ) NOT NULL UNIQUE,
               created_on TIMESTAMP NOT NULL DEFAULT NOW(),
               created_sub VARCHAR ( 50 ),
               updated_on TIMESTAMP,
@@ -52,12 +52,13 @@ const deploy: ApiModule = {
               created_sub VARCHAR ( 50 ),
               updated_on TIMESTAMP,
               updated_sub VARCHAR ( 50 ),
-              enabled BOOLEAN NOT NULL DEFAULT true
+              enabled BOOLEAN NOT NULL DEFAULT true,
+              UNIQUE (parent_uuid, group_id)
             );
             
             CREATE TABLE roles (
               id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-              name VARCHAR ( 50 ) NOT NULL,
+              name VARCHAR ( 50 ) NOT NULL UNIQUE,
               created_on TIMESTAMP NOT NULL DEFAULT NOW(),
               created_sub VARCHAR ( 50 ),
               updated_on TIMESTAMP,
@@ -80,12 +81,13 @@ const deploy: ApiModule = {
               created_sub VARCHAR ( 50 ),
               updated_on TIMESTAMP,
               updated_sub VARCHAR ( 50 ),
-              enabled BOOLEAN NOT NULL DEFAULT true
+              enabled BOOLEAN NOT NULL DEFAULT true,
+              UNIQUE (parent_uuid, role_id)
             );
             
             CREATE TABLE file_types (
               id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-              name VARCHAR ( 50 ) NOT NULL,
+              name VARCHAR ( 50 ) NOT NULL UNIQUE,
               created_on TIMESTAMP NOT NULL DEFAULT NOW(),
               created_sub VARCHAR ( 50 ),
               updated_on TIMESTAMP,
@@ -120,7 +122,8 @@ const deploy: ApiModule = {
               created_sub VARCHAR ( 50 ),
               updated_on TIMESTAMP,
               updated_sub VARCHAR ( 50 ),
-              enabled BOOLEAN NOT NULL DEFAULT true
+              enabled BOOLEAN NOT NULL DEFAULT true,
+              UNIQUE (parent_uuid, file_id)
             );
             
             CREATE TABLE uuid_notes (
@@ -131,7 +134,8 @@ const deploy: ApiModule = {
               created_sub VARCHAR ( 50 ),
               updated_on TIMESTAMP,
               updated_sub VARCHAR ( 50 ),
-              enabled BOOLEAN NOT NULL DEFAULT true
+              enabled BOOLEAN NOT NULL DEFAULT true,
+              UNIQUE (parent_uuid, note, created_sub)
             );
             
             CREATE TABLE request_log (

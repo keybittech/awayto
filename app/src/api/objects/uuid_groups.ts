@@ -13,6 +13,7 @@ const uuidGroups: ApiModule = {
         const response = await props.client.query<IUuidGroups>(`
           INSERT INTO uuid_groups (parent_uuid, group_id, created_on, created_sub)
           VALUES ($1, $2, $3, $4)
+          ON CONFLICT (parent_uuid, group_id) DO NOTHING
           RETURNING id
         `, [parentUuid, groupId, new Date(), props.event.userSub]);
         

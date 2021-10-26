@@ -12,6 +12,7 @@ const uuidFiles: ApiModule = {
         const response = await props.client.query<IUuidFiles>(`
           INSERT INTO uuid_files (parent_uuid, file_id, created_on, created_sub)
           VALUES ($1, $2, $3, $4)
+          ON CONFLICT (parent_uuid, file_id) DO NOTHING
           RETURNING id
         `, [parent_uuid, file_id, new Date(), props.event.userSub]);
         

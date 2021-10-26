@@ -17,6 +17,7 @@ const uuidRoles: ApiModule = {
           await props.client.query(`
             INSERT INTO uuid_roles (parent_uuid, role_id, created_on, created_sub)
             VALUES ($1, $2, $3, $4)
+            ON CONFLICT (parent_uuid, role_id) DO NOTHING
             RETURNING id, parent_uuid as "parentUuid", role_id as "roleId"
           `, [parent_uuid, id, new Date(), props.event.userSub])
         });
