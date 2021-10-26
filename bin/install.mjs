@@ -569,12 +569,15 @@ export default async function () {
       if (config.localTesting) {
         fse.copySync(path.resolve(__dirname, 'data/env.json.template'), path.resolve(process.cwd(), 'env.json'));
         const envJson = {
+          "AwaytoId": awaytoConfig.awaytoId,
           "Environment": config.environment,
           "PGDATABASE": 'postgres',
           "PGPASSWORD": config.password,
           "PGHOST": dbInstance.Endpoint.Address,
           "PGPORT": 5432,
-          "PGUSER": config.username
+          "PGUSER": config.username,
+          "CognitoUserPoolId": awaytoConfig.cognitoUserPoolId,
+          "CognitoClientId": awaytoConfig.cognitoClientId
         }
 
         await asyncForEach(Object.keys(envJson), async k => {

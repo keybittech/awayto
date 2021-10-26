@@ -4,6 +4,7 @@ declare module 'route-match' {
     Route: Route;
     RouteCollection: RouteCollection;
     PathMatcher: PathMatcher;
+    PathGenerator: PathGenerator;
   }
 
   export type Route = {
@@ -23,6 +24,12 @@ declare module 'route-match' {
     routeCollection: RouteCollection;
     match(path: string): PathMatch;
   }
+  
+  export type PathGenerator = {
+    new(rc: RouteCollection): PathGenerator;
+    routeCollection: RouteCollection;
+    generate(path: string, params: Record<string, string>): string;
+  }      
 
   export type PathMatch = {
     _route: string;

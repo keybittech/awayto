@@ -1,10 +1,26 @@
 import { useCallback } from 'react';
 
-import { ApiResponseBody, CallApi, IActionTypes, ILoadedState, IUtilActionTypes } from '../types/index.d';
+import { ApiResponseBody, CallApi, IActionTypes, ILoadedState, IUtilActionTypes, IManageUsersActionTypes, IManageGroupsActionTypes, IManageRolesActionTypes, IUserProfileActionTypes } from '../types/index.d';
 import { act } from '../actions';
 import { useDispatch } from './useDispatch';
 import { CognitoUserPool } from '../cognito';
 import { HttpResponse } from '@aws-sdk/types';
+import routeMatch, { RouteMatch } from 'route-match';
+const { Route, RouteCollection, PathGenerator } = routeMatch as RouteMatch;
+
+const ApiActions = Object.assign(
+  IManageUsersActionTypes,
+  IManageGroupsActionTypes,
+  IManageRolesActionTypes,
+  IUserProfileActionTypes
+) as Record<string, string>;
+
+const paths = Object.keys(ApiActions).map(key => {
+  return new Route(key, ApiActions[key])
+});
+
+const routeCollection = new RouteCollection(paths);
+const generator = new PathGenerator(routeCollection);
 
 const { START_LOADING, API_SUCCESS, API_ERROR, STOP_LOADING, SET_SNACK } = IUtilActionTypes;
 
@@ -73,8 +89,18 @@ export function useApi(): (actionType: IActionTypes, load?: boolean, body?: ILoa
     if (!cognitoUser)
       return Promise.reject('No user found with which to call an API.');
 
-    const [method, path] = actionType.valueOf().split(/\/(.+)/);
+    const methodAndPath = actionType.valueOf().split(/\/(.+)/);
+    const method = methodAndPath[0];
+    let path = methodAndPath[1];
+
     if (load) dispatch(act(START_LOADING, { isLoading: true }));
+    
+    if (method.toLowerCase() == 'get' && body && Object.keys(body).length) {
+      // Get the key of the enum from ApiActions based on the path (actionType)
+      const pathKey = Object.keys(ApiActions).filter((x) => ApiActions[x] == actionType)[0];
+      path = generator.generate(pathKey, body);
+      body = undefined;
+    }
 
     return callApi<typeof body>({
       path,

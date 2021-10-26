@@ -476,8 +476,11 @@ Resources:
             Method: POST
       Environment:
         Variables:
+          AwaytoId: '##id##'
           PGHOST: !Ref 'PGHOST'
           PGUSER: !Ref 'PGUSER'
           PGPASSWORD: !Ref 'PGPASSWORD'
           PGDATABASE: !Ref 'PGDATABASE'
           PGPORT: !Ref 'PGPORT'
+          CognitoUserPoolId: !Ref CognitoUserPool
+          CognitoClientId: !Ref CognitoUserPoolClient

@@ -79,7 +79,8 @@ export type IManageUsersState = Partial<IManageUsers>;
  */
 export enum IManageUsersActionTypes {
   GET_MANAGE_USERS = "GET/manage/users",
-  GET_MANAGE_USERS_BY_ID = "GET/manage/users/:id",
+  GET_MANAGE_USERS_BY_ID = "GET/manage/users/id/:id",
+  GET_MANAGE_USERS_BY_SUB = "GET/manage/users/sub/:sub",
   GET_MANAGE_USERS_INFO = "GET/manage/users/info",
   POST_MANAGE_USERS = "POST/manage/users",
   POST_MANAGE_USERS_APP_ACCT = "POST/manage/users",
@@ -99,6 +100,11 @@ export type IGetManageUsersAction = PayloadAction<IManageUsersActionTypes.GET_MA
  * @category ManageUsers
  */
 export type IGetManageUsersByIdAction = PayloadAction<IManageUsersActionTypes.GET_MANAGE_USERS_BY_ID, IUserProfile>;
+
+/**
+ * @category ManageUsers
+ */
+export type IGetManageUsersBySubAction = PayloadAction<IManageUsersActionTypes.GET_MANAGE_USERS_BY_SUB, IUserProfile>;
 
 /**
  * @category ManageUsers
@@ -140,6 +146,7 @@ export type IUnlockManageUsersAction = PayloadAction<IManageUsersActionTypes.UNL
  */
 export type IManageUsersActions = LogoutAction
   | IGetManageUsersAction
+  | IGetManageUsersBySubAction
   | IGetManageUsersByIdAction
   | IGetManageUsersInfoAction
   | IPostManageUsersAction

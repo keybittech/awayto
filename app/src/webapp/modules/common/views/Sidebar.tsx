@@ -8,7 +8,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import AppsIcon from '@material-ui/icons/Apps';
 
-import { act, useRedux, useDispatch, IUtilActionTypes, ILogoutTypes } from 'awayto';
+import { act, useDispatch, IUtilActionTypes, ILogoutTypes } from 'awayto';
 
 const { SET_SNACK } = IUtilActionTypes;
 const { LOGOUT } = ILogoutTypes;

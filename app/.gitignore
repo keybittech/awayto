@@ -13,3 +13,5 @@ settings.prod*.env
 index.js
 env.json
 dist
+
+template.sam.yaml

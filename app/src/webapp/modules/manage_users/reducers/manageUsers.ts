@@ -12,7 +12,9 @@ import {
   IPostManageUsersSubAction,
   IPostManageUsersAppAcctAction,
   IManageUsersActions,
-  ILogoutTypes
+  ILogoutTypes,
+  IGetManageUsersByIdAction,
+  IGetManageUsersBySubAction
 } from 'awayto';
 
 const initialManageUsersState: IManageUsersState = {};
@@ -26,7 +28,7 @@ function reducePostManageUsers(state: IManageUsersState, action: IPostManageUser
   return { ...state };
 }
 
-function reducePutManageUsers(state: IManageUsersState, action: IPutManageUsersAction | IPostManageUsersSubAction | IPostManageUsersAppAcctAction): IManageUsersState {
+function reducePutManageUsers(state: IManageUsersState, action: IPutManageUsersAction | IPostManageUsersSubAction | IPostManageUsersAppAcctAction | IGetManageUsersByIdAction | IGetManageUsersBySubAction): IManageUsersState {
   const payload = action.payload;
   state.users = state.users?.map((user: IUserProfile) => {
     if (user.sub === payload.sub) {
@@ -71,6 +73,8 @@ const manageUsersReducer: Reducer<IManageUsersState, IManageUsersActions> = (sta
       return reduceGetManageUsers(state, action);
     case IManageUsersActionTypes.POST_MANAGE_USERS:
       return reducePostManageUsers(state, action);
+    case IManageUsersActionTypes.GET_MANAGE_USERS_BY_ID:
+    case IManageUsersActionTypes.GET_MANAGE_USERS_BY_SUB:
     case IManageUsersActionTypes.POST_MANAGE_USERS_APP_ACCT:
     case IManageUsersActionTypes.POST_MANAGE_USERS_SUB:
     case IManageUsersActionTypes.PUT_MANAGE_USERS:

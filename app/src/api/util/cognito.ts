@@ -8,7 +8,7 @@ const getProvider = () =>
     apiVersion: '2016-04-18'
   });
 
-const UserPoolId = 'us-east-1_KZuydqQje';
+const UserPoolId = process.env.CognitoUserPoolId as string;
 
 const pool = { UserPoolId };
 

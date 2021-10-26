@@ -71,7 +71,7 @@ export function ManageUsers(props: IProps): JSX.Element {
   return <>
 
     <Dialog open={dialog === 'manage_user'} fullWidth maxWidth="lg">
-      <ManageUserModal {...props} user={user} closeModal={() => setDialog('')} />
+      <ManageUserModal {...props} editUser={user} closeModal={() => setDialog('')} />
     </Dialog>
 
     <DataTable
