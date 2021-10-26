@@ -133,8 +133,19 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
 
   } catch (error) {
     console.log('====== CRITICAL ERROR:', error)
-    errCallback(500, `500_INTERNAL_SERVER_ERROR ${error as string}`); // Return 500 INTERNAL SERVER ERROR
 
+    const { message, detail } = error as { message: string, detail: string };
+
+    if (dev) {
+      callback(null, {
+        statusCode: 500,
+        body: JSON.stringify({ error: message || detail }),
+        headers: { "Access-Control-Allow-Origin": "*" }
+      })
+    } else {
+      errCallback(500, `500_INTERNAL_SERVER_ERROR ${error as string}`); // Return 500 INTERNAL SERVER ERROR
+    }
+    
     // callback(JSON.stringify({
     //   errorType: 'Internal Server Error',
     //   httpStatus: 500,

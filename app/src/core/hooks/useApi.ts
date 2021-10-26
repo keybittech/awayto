@@ -44,8 +44,14 @@ const callApi = async <T>({ path = '', method = 'GET', body, cognitoUser }: Call
 
     if (response.ok)
       return process.env.REACT_APP_DEVELOPMENT ? await response.json() as T : await response.json() as T;
+      
+    const { error } = await response.json() as { error: string };
 
-    throw `CODE ${response.awsRequestId as string} ${response.message as string}`;
+    const awsErr = response.awsRequestId ? `AWS Request Id: ${response.awsRequestId}` : '';
+    const message = response.message ? `Message: ${response.message}` : '';
+    const err = error ? `Error: ${error}` : '';
+
+    throw `${awsErr} ${message} ${err}`;
   } catch (error) {
     throw error;
   }
@@ -118,9 +124,8 @@ export function useApi(): (actionType: IActionTypes, load?: boolean, body?: ILoa
         return body;
       })
       .catch(e => {
-        const error = (e as Error).message;
-        dispatch(act(SET_SNACK, { snackType: 'error', snackOn: error }));
-        dispatch(act(API_ERROR, { error }));
+        dispatch(act(SET_SNACK, { snackType: 'error', snackOn: e as string }));
+        dispatch(act(API_ERROR, { error: e as string }));
       }).finally(() => {
         if (load) dispatch(act(STOP_LOADING, { isLoading: false }));
       });
