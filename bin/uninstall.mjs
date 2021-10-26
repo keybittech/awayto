@@ -28,7 +28,13 @@ export default async function () {
   const delRole = await ask('Delete LambdaTrust role (0)?\n0. No\n1. Yes\n> ') || '0';
   const delOai = await ask('Delete AwaytoOAI distribution OAI (0)?\n0. No\n1. Yes\n> ') || '0';
 
-  let seed = JSON.parse(fs.readFileSync(path.resolve(__dirname, `data/seeds/${id}.json`)));
+  let seedFile;
+
+  try {
+    seedFile = fs.readFileSync(path.resolve(__dirname, `data/seeds/${id}.json`));
+  } catch (error) { }
+
+  let seed = seedFile ? JSON.parse(seedFile) : {};
 
   if (!id) {
     console.log('no id found!');
@@ -47,20 +53,22 @@ export default async function () {
       console.log('Failed to delete db', error);
     }
 
-    try {
-      const getDist = await clClient.send(new GetDistributionCommand({ Id: seed.distributionId }));
-      getDist.Distribution.DistributionConfig.Enabled = false;
-      const disableDist = await clClient.send(new UpdateDistributionCommand({
-        IfMatch: getDist.ETag,
-        Id: seed.distributionId,
-        DistributionConfig: getDist.Distribution.DistributionConfig
-      }));
-      console.log('Disabling CloudFront distribution (~5-10 mins).');
-      await waitUntilDistributionDeployed({ client: clClient, maxWaitTime: 600 }, { Id: seed.distributionId });
-      const delDist = await clClient.send(new DeleteDistributionCommand({ Id: seed.distributionId, IfMatch: disableDist.ETag }));
-      console.log('Dist deletion request-id: ' + delDist.$metadata.requestId);
-    } catch (error) {
-      console.log('Failed to delete distribution', error);
+    if (seed.distributionId) {
+      try {
+        const getDist = await clClient.send(new GetDistributionCommand({ Id: seed.distributionId }));
+        getDist.Distribution.DistributionConfig.Enabled = false;
+        const disableDist = await clClient.send(new UpdateDistributionCommand({
+          IfMatch: getDist.ETag,
+          Id: seed.distributionId,
+          DistributionConfig: getDist.Distribution.DistributionConfig
+        }));
+        console.log('Disabling CloudFront distribution (~5-10 mins).');
+        await waitUntilDistributionDeployed({ client: clClient, maxWaitTime: 600 }, { Id: seed.distributionId });
+        const delDist = await clClient.send(new DeleteDistributionCommand({ Id: seed.distributionId, IfMatch: disableDist.ETag }));
+        console.log('Dist deletion request-id: ' + delDist.$metadata.requestId);
+      } catch (error) {
+        console.log('Failed to delete distribution', error);
+      }
     }
 
     try {
@@ -124,7 +132,7 @@ export default async function () {
       }
     }
 
-    if (delOai == '1') {
+    if (seed.oaiId && delOai == '1') {
       try {
         const getOai = await clClient.send(new GetCloudFrontOriginAccessIdentityCommand({ Id: seed.oaiId }));
         const delOai = await clClient.send(new DeleteCloudFrontOriginAccessIdentityCommand({ Id: seed.oaiId, IfMatch: getOai.ETag }))

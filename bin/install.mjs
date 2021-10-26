@@ -120,6 +120,8 @@ export default async function () {
     }
   }));
 
+  fs.writeFileSync(path.join(__dirname, `data/seeds/${id}.json`), JSON.stringify({ distributionId: distributionCmd.Distribution.Id }));
+
   // Create Amazon RDS instance
   const createRdsInstance = async () => {
 
