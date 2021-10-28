@@ -1,18 +1,18 @@
-import React, { ComponentType } from 'react';
+import React, { ComponentType, ReactElement } from 'react';
 import { RouterState } from 'connected-react-router';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, match } from 'react-router';
 import { Action, ReducersMapObject, Store } from 'redux';
 import { PersistState } from 'redux-persist';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { IStyles } from '../style';
 import { CognitoUser } from '../cognito';
+import { History, Location } from 'history';
 
 declare global {
   /**
    * @category Awayto
    */
   export interface ISharedState {
-    root: ILoadedState;
     components: IBaseComponents;
     _persist: PersistState;
     router: RouterState<unknown>;
@@ -21,7 +21,7 @@ declare global {
   /**
    * @category Awayto
    */
-  export type ISharedActions = ICommonModuleActions | IManageModuleActions | IProfileModuleActions;
+  export type ISharedActions =  ICommonModuleActions | IManageModuleActions | IProfileModuleActions;
 
   /**
    * @category Awayto
@@ -29,8 +29,9 @@ declare global {
   export type IProps = SafeRouteProps & {
     classes?: IStyles;
     closeModal: () => void;
+    contentGroupRoles?: string;
   } & {
-    [prop: string]: boolean | string | number | ILoadedState | (() => void);
+    [prop: string]: ReactElement | match<RouteProps> | Location<unknown> | History<unknown> | undefined | boolean | string | number | ILoadedState | (() => void);
   };
 }
 
@@ -127,7 +128,7 @@ export type ThunkStore = Store<ISharedState, ISharedActions> & {
  * @param {string} n A path name returned from glob.sync
  * @returns An object like `{ 'MyComponent': 'common/views/MyComponent' }`
  */
-export function buildPathObject(path: string): string;
+export declare function buildPathObject(path: string): string;
 
 /**
  * @category Build
@@ -148,7 +149,7 @@ export function buildPathObject(path: string): string;
  * }
  * ```
  */
-export function parseResource(path: string): Record<string, string>;
+export declare function parseResource(path: string): Record<string, string>;
 
 /**
  * <p>This function runs on build and when webpack dev server receives a request.</p>
@@ -182,7 +183,7 @@ export function parseResource(path: string): Record<string, string>;
  * @category Build
  * @param {app.next} next The next function from express app
  */
-export function checkWriteBuildFile(next: () => unknown): void;
+export declare function checkWriteBuildFile(next: () => unknown): void;
 
 
 
@@ -263,8 +264,8 @@ export interface DropFile {
   size?: number;
 }
 
-export * from './cognito.d';
-export * from './common.d';
-export * from './lambda.d';
-export * from './manage.d';
-export * from './profile.d';
+export * from './cognito';
+export * from './common';
+export * from './lambda';
+export * from './manage';
+export * from './profile';

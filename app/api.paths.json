@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "awayto": ["src/core/types/index"]
+      "awayto": ["./src/core/index.ts"]
     }
   }
 }

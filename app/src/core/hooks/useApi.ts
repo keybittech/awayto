@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { ApiResponseBody, CallApi, IActionTypes, ILoadedState, IUtilActionTypes, IManageUsersActionTypes, IManageGroupsActionTypes, IManageRolesActionTypes, IUserProfileActionTypes } from '../types/index.d';
+import { ApiResponseBody, CallApi, IActionTypes, IUtilActionTypes, IManageUsersActionTypes, IManageGroupsActionTypes, IManageRolesActionTypes, IUserProfileActionTypes } from '../types';
 import { act } from '../actions';
 import { useDispatch } from './useDispatch';
 import { CognitoUserPool } from '../cognito';
@@ -28,9 +28,9 @@ const generator = new PathGenerator(routeCollection);
 
 const { START_LOADING, API_SUCCESS, API_ERROR, STOP_LOADING, SET_SNACK } = IUtilActionTypes;
 
-const callApi = async <T>({ path = '', method = 'GET', body, cognitoUser }: CallApi): Promise<T> => {
+const callApi = async ({ path = '', method = 'GET', body, cognitoUser }: CallApi): Promise<HttpResponse> => {
 
-  type ApiResponse = Response & Partial<ApiResponseBody> & T;
+  type ApiResponse = Response & Partial<ApiResponseBody> & HttpResponse;
   try {
     const session = await cognitoUser.getSession();
     const response = await fetch(`${process.env.REACT_APP_API_GATEWAY_ENDPOINT as string}${path}`, {
@@ -43,7 +43,7 @@ const callApi = async <T>({ path = '', method = 'GET', body, cognitoUser }: Call
     console.log('This is whats resolved from fetch ', response, response.ok);
 
     if (response.ok)
-      return process.env.REACT_APP_DEVELOPMENT ? await response.json() as T : await response.json() as T;
+      return await response.json() as HttpResponse;
       
     const { error } = await response.json() as { error: string };
 
@@ -85,10 +85,10 @@ const {
  * 
  * @category Hooks
  */
-export function useApi(): (actionType: IActionTypes, load?: boolean, body?: ILoadedState, meta?: void) => Promise<unknown> {
+export function useApi(): <T = unknown>(actionType: IActionTypes, load?: boolean, body?: T, meta?: void) => Promise<unknown> {
   const dispatch = useDispatch();
 
-  const func = useCallback(<T = unknown>(actionType: IActionTypes, load?: boolean, body?: ILoadedState, meta?: void) => {
+  const func = useCallback(<T = unknown>(actionType: IActionTypes, load?: boolean, body?: T, meta?: void) => {
     
     if (!UserPoolId || !ClientId)
       throw new Error('Configuration error: userPoolId missing during useApi.');
@@ -108,11 +108,11 @@ export function useApi(): (actionType: IActionTypes, load?: boolean, body?: ILoa
     if (method.toLowerCase() == 'get' && body && Object.keys(body).length) {
       // Get the key of the enum from ApiActions based on the path (actionType)
       const pathKey = Object.keys(ApiActions).filter((x) => ApiActions[x] == actionType)[0];
-      path = generator.generate(pathKey, body).split(/\/(.+)/)[1];
+      path = generator.generate(pathKey, body as unknown as Record<string, string>).split(/\/(.+)/)[1];
       body = undefined;
     }
 
-    return callApi<typeof body>({
+    return callApi({
       path,
       method,
       body: !body ? undefined : 'string' == typeof body ? body : JSON.stringify(body),

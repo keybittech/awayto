@@ -15,6 +15,9 @@ module.exports = {
     libraryTarget: 'commonjs2'
   },
   resolve: {
+    alias: {
+      awayto: '/src/core/index'
+    },
     extensions: ['.ts', '.js'],
   },
   module: {

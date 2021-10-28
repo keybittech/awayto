@@ -50,7 +50,7 @@ export type IUtil = {
 /**
  * @category Util
  */
-export type IUtilState = IUtil;
+export type IUtilState = Partial<IUtil>;
 
 
 /**

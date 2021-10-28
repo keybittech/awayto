@@ -7,7 +7,7 @@ import logger from 'redux-logger';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import { persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
-import { ILoadedReducers, ILoadedState, ThunkStore } from './types/index.d';
+import { ILoadedReducers, ILoadedState, ThunkStore } from './types';
 import persistStore from 'redux-persist/es/persistStore';
 
 /**
@@ -20,16 +20,18 @@ const rootReducer: Reducer<ILoadedState, ISharedActions> = (state = initialRootS
   return state as ISharedState;
 }
 
+type RootLoadedReducers = ILoadedReducers & { root: Reducer<ILoadedState, ISharedActions> };
+
 /**
  * @category Redux
  */
-export let initialReducers: ILoadedReducers = {
+export let initialReducers = {
   root: rootReducer,
   router: connectRouter(history)
-};
+} as RootLoadedReducers;
 
 const createRootReducer = (): Reducer<ILoadedState, ISharedActions> => {
-  return combineReducers(initialReducers);
+  return combineReducers(initialReducers) as Reducer;
 };
 
 const persistConfig = {
@@ -66,5 +68,5 @@ export const persistor = persistStore(store);
  */
 export const addReducer = (reducers: ILoadedReducers): void => {
   initialReducers = { ...initialReducers, ...reducers };
-  store.replaceReducer(createRootReducer());
+  store.replaceReducer(createRootReducer() as Reducer);
 }

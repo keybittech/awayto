@@ -1,4 +1,4 @@
-import { ApiModule, IGroup, IUuidRoles } from 'awayto';
+import type { ApiModule, IGroup, IUuidRoles } from 'awayto';
 import { asyncForEach, buildUpdate } from '../util/db';
 
 const manageGroups: ApiModule = {

@@ -50,6 +50,8 @@ const manageRoles: ApiModule = {
 
   get_roles : {
     path : 'GET/manage/roles',
+    roles: 'system:goofball',
+    inclusive: true,
     cmnd : async (props) => {
       try {
 

@@ -20,7 +20,7 @@ import {
   CognitoUserPoolType,
   CognitoUserType,
   ICognitoStorage
-} from './types/index.d';
+} from './types';
 
 
 /**

@@ -18,7 +18,7 @@ const multipleEntry = require('react-app-rewire-multiple-entry')([
   }
 ]);
 
-const { AWAYTO_CORE, AWAYTO_WEBAPP_MODULES } = process.env;
+const { AWAYTO_CORE, AWAYTO_WEBAPP_MODULES, AWAYTO_WEBAPP } = process.env;
 
 /**
  * 
@@ -27,7 +27,7 @@ const { AWAYTO_CORE, AWAYTO_WEBAPP_MODULES } = process.env;
  */
 const buildPathObject = n => ({ [`${n[n.length - 1].split('.')[0]}`]: `${n[n.length - 3]}/${n[n.length - 2]}/${n[n.length - 1].split('.')[0]}` }) // returns { 'MyThing': 'common/views/bla' }
 
-const filePath = path.resolve(__dirname + AWAYTO_CORE + '/build.json');
+const filePath = path.resolve(__dirname + AWAYTO_WEBAPP + '/build.json');
 const globOpts = {
   cache: false,
   statCache: false

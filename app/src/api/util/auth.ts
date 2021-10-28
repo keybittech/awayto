@@ -1,28 +1,11 @@
-import { ApiRequestAuthorizer } from 'awayto';
+import { ApiRequestAuthorizer, getAuthorization } from 'awayto';
 
 export default function authorize(params: ApiRequestAuthorizer): boolean {
-  const { contentGroups, contentRoles } = params;
-
-  if (!contentGroups && !contentRoles) return true;
-
-  const split = params.userToken.split(':');
-  const userGroup = split[0];
-  const userRoles = split[1].split(',');
-
-  let showContent = false;
+  const { roles: requiredRoles, userToken: userRoles, inclusive } = params;
   
-  if (contentGroups && contentGroups.indexOf(userGroup) > -1) {
-    showContent = true;
-  }
+  console.log('gfdshgiudfsg==============s=sss')
 
-  if (contentRoles) {
-    userRoles.forEach(r => {
-      if (contentRoles.indexOf(r) > -1) {
-        showContent = true;
-        return;
-      }
-    });
-  }
+  const { hasRole, hasGroup } = getAuthorization(userRoles, requiredRoles);
 
-  return showContent;
+  return inclusive ? hasRole : hasGroup;
 }

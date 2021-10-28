@@ -19,7 +19,7 @@ import ManageGroups from './objects/manage_groups';
 import ManageUsers from './objects/manage_users';
 import auditRequest from './util/auditor';
 import authorize from './util/auth';
-import { ApiEvent, ApiModule, ApiModulet } from 'awayto';
+import { ApiEvent, ApiModule, ApiModulet, ILoadedState } from 'awayto';
 
 const Objects = Object.assign(
   Deploy,
@@ -55,12 +55,12 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
   const proxyPath = signUp ? 'user' : path;
   const resourcePath = `${method}${proxyPath}`;
   const pathMatch = pathMatcher.match(resourcePath);
-  const { groups, roles } = Objects[pathMatch._route];
+  const { roles, inclusive = false } = Objects[pathMatch._route];
   const dev = sourceIp == 'localhost' || !sourceIp;
 
   if (dev) {
     if (typeof event.body == 'string')
-      event.body = JSON.parse(event.body) as JSON;
+      event.body = JSON.parse(event.body) as ILoadedState;
 
     event.sourceIp = 'localhost';
     event.userSub = 'ecd63d7f-daab-494a-9df2-7e5290120671';
@@ -87,7 +87,7 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
     if (!pathMatch)
       return errCallback(404, "404_NOT_FOUND"); // Return 404 NOT FOUND
 
-    if (roles && !authorize({ userToken: event.userAdmin, contentGroups: groups, contentRoles: roles }))
+    if (roles && !authorize({ userToken: event.userAdmin, roles, inclusive }))
       return errCallback(401, "401_UNAUTHORIZED"); // Return 401 UNAUTHORIZED
 
     console.log('====== Method: ', httpMethod);

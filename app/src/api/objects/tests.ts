@@ -16,7 +16,7 @@ const tests: ApiModule = {
   },
 
   test_return_401: {
-    roles: ['you_dont_have_this_role'],
+    roles: 'you_dont_have_this_role',
     path: 'GET/test/event/401',
     cmnd: () => {
       try {

@@ -13,8 +13,8 @@ export type ApiModule = {
  * @category Lambda
  */
 export type ApiModulet = {
-  groups?: string[];
-  roles?: string[];
+  roles?: string;
+  inclusive?: boolean;
   path: string;
   cmnd(props: ApiProps, meta?: string): LambdaApiResponse | ILoadedState[] | boolean | Promise<LambdaApiResponse | ILoadedState[] | boolean>;
 }
@@ -54,7 +54,7 @@ export type LambdaApiResponse = {
  * @category Lambda
  */
 export type ApiRequestAuthorizer = {
-  userToken: string,
-  contentGroups?: string[],
-  contentRoles?: string[],
+  userToken: string;
+  roles: string;
+  inclusive: boolean;
 }

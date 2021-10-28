@@ -1,25 +1,18 @@
 {
-  "compilerOptions": {
-    "target": "es2017",
-    "module": "commonjs",
-    "outDir": "./dist",
-    "strict": true,
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "types": [
-      "node"
-    ],
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "inlineSourceMap": true,
-    "resolveJsonModule": true
-  },
+  "extends": "./tsconfig.paths.json",
   "include": [
     "src"
   ],
   "exclude": [
     "src/webapp"
   ],
-  "extends": "./api.paths"
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "noEmit": false
+  }
 }

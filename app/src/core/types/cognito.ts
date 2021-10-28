@@ -92,7 +92,7 @@ export type CognitoAuthResponse = RespondToAuthChallengeCommandOutput & {
 /**
  * @category Cognito
  */
-export class AuthenticationHelper {
+export declare class AuthenticationHelper {
   constructor(region: string);
   getNewPasswordRequiredChallengeUserAttributePrefix(): string;
   getPasswordAuthenticationKey(
@@ -160,7 +160,7 @@ export interface IAuthenticationDetailsData {
 /**
  * @category Cognito
  */
-export class AuthenticationDetails {
+export declare class AuthenticationDetails {
   constructor(data: IAuthenticationDetailsData);
 
   public getUsername(): string;

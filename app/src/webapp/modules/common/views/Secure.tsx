@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IGroup, IRole, SiteRoles, getUserPool } from 'awayto';
+import { SiteRoles, getUserPool, parseGroupString } from 'awayto';
 
 export function Secure ({
   contentGroupRoles = SiteRoles.ADMIN,
@@ -20,17 +20,8 @@ export function Secure ({
         const attributes = await cognitoUser.getUserAttributes();
         const groupRoles = attributes.find(a => a.Name == 'custom:admin')?.Value as string;
 
-        const parseGroupString = (value: string) => {
-          const groups = [] as IGroup[];
-          value?.split(';').forEach(set => {
-            const [name, roles] = set.split(':');
-            groups.push({ name, roles: roles.split(',').map(r => ({ name: r })) as IRole[] } as IGroup)
-          });
-          return groups;
-        }
-
-        const userGroups = parseGroupString(groupRoles);
-        const contentGroups = parseGroupString(contentGroupRoles);
+        const userGroups = parseGroupString(groupRoles); //custom:admin
+        const contentGroups = parseGroupString(contentGroupRoles); //customGroupRoles string
 
         contentGroups.forEach(cg => {
           const userGroup = userGroups.find(ug => ug.name == cg.name);

@@ -11,7 +11,7 @@ import AuthenticationHelper from './auth/AuthenticationHelper';
 import BigInteger from './auth/BigInteger';
 import DateHelper from './auth/DateHelper';
 
-import { CognitoAuthResponse, AuthenticationHelper as AuthHelperType } from './types/index.d';
+import { CognitoAuthResponse, AuthenticationHelper as AuthHelperType } from './types';
 
 const {
   REACT_APP_AWS_REGION: region,
