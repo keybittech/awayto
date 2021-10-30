@@ -21,8 +21,10 @@ export function ManageRoleModal ({
   const handleSubmit = useCallback(() => {
     const { id, name } = role;
 
-    if (!name) 
-      return dispatch(act(IUtilActionTypes.SET_SNACK, {snackType: 'error', snackOn: 'Groups must have a name.' }));
+    if (!name) {
+      dispatch(act(IUtilActionTypes.SET_SNACK, {snackType: 'error', snackOn: 'Groups must have a name.' }));
+      return;
+    }
 
     void api(id ? PUT_MANAGE_ROLES : POST_MANAGE_ROLES, true, role);
 

@@ -98,7 +98,7 @@ module.exports = {
 
   webpack: function (config, env) {
 
-    multipleEntry.addMultiEntry(config);
+    // multipleEntry.addMultiEntry(config);
 
     useBabelRc()(config);
 

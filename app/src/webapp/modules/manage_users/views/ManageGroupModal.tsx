@@ -30,8 +30,10 @@ export function ManageGroupModal ({
   const handleSubmit = useCallback(() => {
     const { id, name } = group;
 
-    if (!name || !roleIds.length)
-      return dispatch(act(IUtilActionTypes.SET_SNACK, {snackType: 'error', snackOn: 'Please provide a valid group name and roles.' }));
+    if (!name || !roleIds.length) {
+      dispatch(act(IUtilActionTypes.SET_SNACK, {snackType: 'error', snackOn: 'Please provide a valid group name and roles.' }));
+      return;
+    }
 
     group.name = formatName(name);
     group.roles = roles?.filter(r => roleIds.includes(r.id));

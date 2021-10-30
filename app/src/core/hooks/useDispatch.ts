@@ -1,7 +1,13 @@
 import { AnyAction } from 'redux';
 import { useDispatch as dispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { store } from '../redux';
+import { ThunkStore } from '../types';
+
+let store: ThunkStore;
+
+export const setStore = (newStore: ThunkStore): void => {
+  store = newStore
+}
 
 /**
  * 

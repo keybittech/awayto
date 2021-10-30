@@ -1,12 +1,11 @@
 import React, { ComponentType, ReactElement } from 'react';
 import { RouterState } from 'connected-react-router';
-import { RouteComponentProps, match } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 import { Action, ReducersMapObject, Store } from 'redux';
 import { PersistState } from 'redux-persist';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { IStyles } from '../style';
 import { CognitoUser } from '../cognito';
-import { History, Location } from 'history';
 
 declare global {
   /**
@@ -28,22 +27,18 @@ declare global {
    */
   export type IProps = SafeRouteProps & {
     classes?: IStyles;
-    closeModal: () => void;
-    contentGroupRoles?: string;
-  } & {
-    [prop: string]: ReactElement | match<RouteProps> | Location<unknown> | History<unknown> | undefined | boolean | string | number | ILoadedState | (() => void);
+    closeModal?: () => void;
+    [prop: string]: SiteRoles | ReactElement | SafeRouteProps[keyof SafeRouteProps] | undefined | boolean | string | number | ILoadedState | (() => void);
   };
 }
 
 type RouteProps = { [prop: string]: string }
 type SafeRouteProps = Omit<RouteComponentProps<RouteProps>, "staticContext">;
 
-type Props = IProps & SafeRouteProps;
-
 /**
  * @category Awayto
  */
-export type IBaseComponent = ComponentType<Props>
+export type IBaseComponent = ComponentType<IProps>
 
 /**
  * @category Awayto

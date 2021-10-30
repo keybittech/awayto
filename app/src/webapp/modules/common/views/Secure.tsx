@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ReactElement } from 'react';
 import { SiteRoles, getUserPool, parseGroupString } from 'awayto';
 
-export function Secure ({
-  contentGroupRoles = SiteRoles.ADMIN,
-  disable,
-  inclusive,
-  children 
-}: IProps): JSX.Element {
+export function Secure ({ contentGroupRoles = SiteRoles.ADMIN, disable, inclusive, children }: IProps & {
+  contentGroupRoles?: SiteRoles;
+  children?: ReactElement;
+  inclusive?: boolean;
+  disable?: boolean;
+}): JSX.Element {
 
   const [hasGroup, setHasGroup] = useState<boolean>();
   const [hasRole, setHasRole] = useState<boolean>();
