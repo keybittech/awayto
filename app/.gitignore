@@ -1,6 +1,5 @@
 node_modules
 bundle.js
-package-lock.json
 npm-debug.log
 build
 .eslintcache
