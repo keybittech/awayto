@@ -1,6 +1,5 @@
 import Icon from '../../../img/kbt-icon.png';
 
-import { History } from 'history';
 import React from 'react';
 import { Grid, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
@@ -14,7 +13,8 @@ const { SET_SNACK } = IUtilActionTypes;
 const { LOGOUT } = ILogoutActionTypes;
 
 export function Sidebar (props: IProps): JSX.Element {
-  const { classes = {}, history = {} as History } = props;
+
+  const { classes, history } = props;
 
   const dispatch = useDispatch();
 

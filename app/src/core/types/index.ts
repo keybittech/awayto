@@ -25,7 +25,7 @@ declare global {
    * @category Awayto
    */
   interface IProps extends SafeRouteProps {
-    classes?: Record<string, string>;
+    classes: Record<string, string>;
     closeModal?: () => void;
     // [prop: string]: SiteRoles | ReactElement | SafeRouteProps[keyof SafeRouteProps] | undefined | boolean | string | number | ILoadedState | (() => void);
   }
@@ -37,7 +37,7 @@ type SafeRouteProps = Omit<RouteComponentProps<RouteProps>, "staticContext">;
 /**
  * @category Awayto
  */
-export type IBaseComponent = ComponentType<IProps>
+export type IBaseComponent = ComponentType<Partial<IProps>>
 
 /**
  * @category Awayto

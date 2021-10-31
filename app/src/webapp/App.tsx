@@ -1,11 +1,12 @@
 import Icon from './img/kbt-icon.png';
 
-import { History } from 'history';
 import React, { Suspense, useEffect } from 'react';
 import { Route, Redirect, withRouter, Switch } from 'react-router-dom';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+import { Skeleton } from '@material-ui/lab';
 
 import withStyles from '@material-ui/core/styles/withStyles'
+import Drawer from '@material-ui/core/Drawer';
 import Toggle from '@material-ui/core/Switch'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -28,6 +29,36 @@ function Alert(props: AlertProps): JSX.Element {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
+function Loader({ classes }: IProps): JSX.Element {
+  return <Grid container>
+    <Drawer className={classes.drawer} variant="permanent" classes={{ paper: classes.drawerPaper }} >
+      <Grid container style={{ height: '100vh' }} alignContent="space-between">
+        <Grid item xs={12} style={{ marginTop: '20px' }}>
+          <Grid container justifyContent="center">
+            <img src={Icon} alt="kbt-icon" className={classes.logo} />
+          </Grid>
+          <Grid container style={{ padding: '10px' }}>
+            <Skeleton variant="text" width="100%" />
+            <Skeleton variant="text" width="100%" />
+            <Skeleton variant="text" width="100%" />
+          </Grid>
+        </Grid>
+      </Grid>
+    </Drawer>
+    <AppBar position="fixed" className={classes.appBar}>
+      <Toolbar />
+    </AppBar>
+    <Grid container spacing={4} style={{ marginLeft: '150px', padding: '100px 50px' }}>
+      <Skeleton variant="text" width="100%" />
+      <Skeleton variant="rect" width="100%" height="150px" />
+    </Grid>
+    <Grid container spacing={4} style={{ marginLeft: '150px', padding: '15px 50px' }}>
+      <Skeleton variant="text" width="100%" />
+      <Skeleton variant="rect" width="100%" height="150px" />
+    </Grid>
+  </Grid >
+}
+
 const {
   REACT_APP_COGNITO_USER_POOL_ID: UserPoolId,
   REACT_APP_COGNITO_CLIENT_ID: ClientId
@@ -37,7 +68,9 @@ const { AUTH_DENIAL, AUTH_SUCCESS } = ILoginActionTypes;
 const { SET_SNACK, SET_THEME } = IUtilActionTypes;
 
 const App = (props: IProps): JSX.Element => {
-  const { classes = {}, history = {} as History<unknown> } = props;
+
+  const { classes, history } = props;
+
   const { Sidebar, ConfirmAction, Home, Profile, ChangeNewPassword, Login, Manage, SignUp, CompleteSignUp } = useComponents();
 
   const dispatch = useDispatch();
@@ -68,7 +101,7 @@ const App = (props: IProps): JSX.Element => {
   return <>
     <ThemeProvider theme={theme == 'light' ? lightTheme : darkTheme}>
       <CssBaseline />
-      <Suspense fallback="">
+      <Suspense fallback={<Loader {...props} />}>
         {login.bootstrapped ? <>
           {!!login.username ?
             <div className={classes.root}>
@@ -142,7 +175,7 @@ const App = (props: IProps): JSX.Element => {
               {snackOn}
             </Alert>
           </Snackbar>}
-          {React.createElement(ConfirmAction, props)}
+          <ConfirmAction />
           <Backdrop className={classes.backdrop} open={!!isLoading} >
             <Grid container direction="column" alignItems="center">
               <CircularProgress color="inherit" />
