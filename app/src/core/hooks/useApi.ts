@@ -31,30 +31,29 @@ const { START_LOADING, API_SUCCESS, API_ERROR, STOP_LOADING, SET_SNACK } = IUtil
 const callApi = async ({ path = '', method = 'GET', body, cognitoUser }: CallApi): Promise<HttpResponse> => {
 
   type ApiResponse = Response & Partial<ApiResponseBody> & HttpResponse;
-  try {
-    const session = await cognitoUser.getSession();
-    const response = await fetch(`${process.env.REACT_APP_API_GATEWAY_ENDPOINT as string}${path}`, {
-      method, body, headers: {
-        'Content-Type': 'application/json',
-        'Authorization': session.getIdToken().getToken()
-      }
-    } as RequestInit) as ApiResponse;
+  
+  const session = await cognitoUser.getSession();
+  const response = await fetch(`${process.env.REACT_APP_API_GATEWAY_ENDPOINT as string}${path}`, {
+    method, body, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': session.getIdToken().getToken()
+    }
+  } as RequestInit) as ApiResponse;
 
-    console.log('This is whats resolved from fetch ', response, response.ok);
+  console.log('This is whats resolved from fetch ', response, response.ok);
 
-    if (response.ok)
-      return await response.json() as HttpResponse;
-      
-    const { error } = await response.json() as { error: string };
+  if (response.ok)
+    return await response.json() as HttpResponse;
+    
+  const { error } = await response.json() as { error: string };
 
-    const awsErr = response.awsRequestId ? `AWS Request Id: ${response.awsRequestId}` : '';
-    const message = response.message ? `Message: ${response.message}` : '';
-    const err = error ? `Error: ${error}` : '';
+  const awsErr = response.awsRequestId ? `AWS Request Id: ${response.awsRequestId}` : '';
+  const message = response.message ? `Message: ${response.message}` : '';
+  const err = error ? `Error: ${error}` : '';
 
-    throw `${awsErr} ${message} ${err}`;
-  } catch (error) {
-    throw error;
-  }
+  const errStr = `${awsErr} ${message} ${err}`;
+
+  throw errStr.length ? errStr : response;
 };
 
 const {
@@ -88,7 +87,7 @@ const {
 export function useApi(): <T = unknown>(actionType: IActionTypes, load?: boolean, body?: T, meta?: void) => Promise<unknown> {
   const dispatch = useDispatch();
 
-  const func = useCallback(<T = unknown>(actionType: IActionTypes, load?: boolean, body?: T, meta?: void) => {
+  const func = useCallback(async <T = unknown>(actionType: IActionTypes, load?: boolean, body?: T, meta?: void) => {
     
     if (!UserPoolId || !ClientId)
       throw new Error('Configuration error: userPoolId missing during useApi.');
@@ -112,23 +111,24 @@ export function useApi(): <T = unknown>(actionType: IActionTypes, load?: boolean
       body = undefined;
     }
 
-    return callApi({
-      path,
-      method,
-      body: !body ? undefined : 'string' == typeof body ? body : JSON.stringify(body),
-      cognitoUser
-    })
-      .then((response: HttpResponse) => {
-        const body = JSON.parse(response.body ? response.body : '{}') as T;
-        dispatch(act(actionType || API_SUCCESS, body, meta));
-        return body;
-      })
-      .catch(e => {
-        dispatch(act(SET_SNACK, { snackType: 'error', snackOn: e as string }));
-        dispatch(act(API_ERROR, { error: e as string }));
-      }).finally(() => {
-        if (load) dispatch(act(STOP_LOADING, { isLoading: false }));
+    try {
+      const response = await callApi({
+        path,
+        method,
+        body: !body ? undefined : 'string' == typeof body ? body : JSON.stringify(body),
+        cognitoUser
       });
+
+      const responseBody = JSON.parse(response.body ? response.body : '{}') as T;
+      dispatch(act(actionType || API_SUCCESS, responseBody, meta));
+      return responseBody;
+      
+    } catch (error) { 
+      dispatch(act(SET_SNACK, { snackType: 'error', snackOn: 'Critical API error. Check network activity or report to system administrator.' }));
+      dispatch(act(API_ERROR, { error: 'Critical API error. Check network activity or report to system administrator.' }));
+    } finally {
+      if (load) dispatch(act(STOP_LOADING, { isLoading: false }));
+    }
 
   }, [])
 

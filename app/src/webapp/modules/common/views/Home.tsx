@@ -2,9 +2,9 @@ import React, { useState, useCallback } from 'react';
 import { Button, Input, Grid, Typography, TextField, InputAdornment, FormControl } from '@material-ui/core';
 import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
 
-import { IGroup, IManageUsersActionTypes, IUtilActionTypes, SiteRoles, useApi, useRedux, useComponents } from 'awayto';
+import { IGroup, IUtilActionTypes, SiteRoles, useApi, useRedux, useComponents, IManageRolesActionTypes } from 'awayto';
 
-const { GET_MANAGE_USERS } = IManageUsersActionTypes;
+const { GET_MANAGE_ROLES } = IManageRolesActionTypes;
 const { TEST_API } = IUtilActionTypes;
 
 export function Home(props: IProps): JSX.Element {
@@ -76,7 +76,7 @@ export function Home(props: IProps): JSX.Element {
           <Input type="text" value={getPath} onChange={e => setGetPath(e.target.value)} />
           <Button onClick={() => {
 
-            void api(GET_MANAGE_USERS, true);
+            void api(GET_MANAGE_ROLES, true);
 
           }}>GET</Button>
           <pre>{JSON.stringify(test, null, '\t')}</pre>
