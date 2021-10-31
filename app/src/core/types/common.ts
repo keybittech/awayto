@@ -54,7 +54,7 @@ export type IUtilState = Partial<IUtil>;
 
 
 /**
- * @category Util
+ * @category Action Types
  */
 export enum IUtilActionTypes {
   CLEAR_REDUX = "util/CLEAR_REDUX",
@@ -172,7 +172,7 @@ export type ILogin = {
 export type ILoginState = Partial<ILogin>;
 
 /**
- * @category Login
+ * @category Action Types
  */
 export enum ILoginActionTypes {
   LOGIN_USER = "login/LOGIN_USER",
@@ -247,7 +247,7 @@ export type IUuidNotes = {
 export type IUuidNotesState = Partial<IUuidNotes>;
 
 /**
- * @category Notes
+ * @category Action Types
  */
 export enum IUuidNotesActionTypes {
   UUID_NOTES = "common/UUID_NOTES"
@@ -279,7 +279,7 @@ export type IUuidFiles = {
 export type IUuidFilesState = Partial<IUuidFiles>;
 
 /**
- * @category File
+ * @category Action Types
  */
 export enum IUuidFilesActionTypes {
   UUID_FILES = "common/UUID_FILES"
@@ -312,7 +312,7 @@ export type IFile = {
 export type IFileState = Partial<IFile>;
 
 /**
- * @category File
+ * @category Action Types
  */
 export enum IFileActionTypes {
   FILES = "common/FILES"

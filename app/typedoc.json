@@ -1,5 +1,4 @@
 {
-  "entryPoints": ["src/core/index.ts"],
-  "out": "docs",
-  "categorizeByGroup": false
+  "entryPoints": ["src/api/index.ts", "src/core/index.ts", "src/webapp/index.tsx"],
+  "out": "docs"
 }

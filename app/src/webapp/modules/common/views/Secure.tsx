@@ -1,8 +1,8 @@
 import React, { useEffect, useState, ReactElement } from 'react';
-import { SiteRoles, getUserPool, getAuthorization, act, useDispatch, IUtilActionTypes, ILogoutTypes } from 'awayto';
+import { SiteRoles, getUserPool, getAuthorization, act, useDispatch, IUtilActionTypes, ILogoutActionTypes } from 'awayto';
 
 const { SET_SNACK } = IUtilActionTypes;
-const { LOGOUT } = ILogoutTypes;
+const { LOGOUT } = ILogoutActionTypes;
 
 declare global {
   interface IProps {

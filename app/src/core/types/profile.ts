@@ -51,7 +51,7 @@ export type IUserProfile = {
 export type IUserProfileState = Partial<IUserProfile>;
 
 /**
- * @category UserProfile
+ * @category Action Types
  */
 export enum IUserProfileActionTypes {
   SIGNUP_USER = "login/SIGNUP_USER",
@@ -122,7 +122,7 @@ export type IUuidGroups = {
 export type IUuidGroupsState = Partial<IUuidGroups>;
 
 /**
- * @category Group
+ * @category Action Types
  */
 export enum IUuidGroupsActionTypes {
   UUID_GROUPS = "UuidGroups/UUID_GROUPS"
@@ -163,7 +163,7 @@ export type IManageUuidRoles = {
 }
 
 /**
- * @category Role
+ * @category Action Types
  */
 export enum IUuidRolesActionTypes {
   UUID_ROLES = "common/UUID_ROLES"

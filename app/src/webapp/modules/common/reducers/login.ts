@@ -3,7 +3,7 @@ import {
   ILoginState,
   ILoginActions,
   ILoginActionTypes,
-  ILogoutTypes
+  ILogoutActionTypes
 } from 'awayto';
 
 const initialLoginState: ILoginState = {
@@ -16,7 +16,7 @@ function reduceLogin(state: ILoginState, action: ILoginActions): ILoginState {
 
 const loginReducer: Reducer<ILoginState, ILoginActions> = (state = initialLoginState, action) => {
   switch (action.type) {
-    case ILogoutTypes.LOGOUT:
+    case ILogoutActionTypes.LOGOUT:
       return  { ...initialLoginState, ...{ bootstrapped: true } };
     case ILoginActionTypes.LOGIN_USER:
     case ILoginActionTypes.AUTH_USER:

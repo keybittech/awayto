@@ -94,9 +94,9 @@ export type PayloadAction<Type, Payload, Meta = void> = MetaAction<Type, Meta> &
 };
 
 /**
- * @category Awayto
+ * @category Action Types
  */
- export enum ILogoutTypes {
+ export enum ILogoutActionTypes {
    LOGOUT = "LOGOUT"
  }
 
@@ -201,7 +201,7 @@ export declare function checkWriteBuildFile(next: () => unknown): void;
 
 
 /**
- * @category Awayto
+ * @category Authorization
  */
 export enum SiteRoles {
   ADMIN = "system:admin",

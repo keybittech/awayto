@@ -43,7 +43,7 @@ export type IManage = {
 export type IManageState = Partial<IManage>;
 
 /**
- * @category Manage
+ * @category Action Types
  */
 export enum IManageActionTypes {
   GET_MODULES = "manage/GET_MODULES"
@@ -75,7 +75,7 @@ export type IManageUsers = {
 export type IManageUsersState = Partial<IManageUsers>;
 
 /**
- * @category ManageUsers
+ * @category Action Types
  */
 export enum IManageUsersActionTypes {
   GET_MANAGE_USERS = "GET/manage/users",
@@ -186,7 +186,7 @@ export type IManageRoles = {
 export type IManageRolesState = Partial<IManageRoles>;
 
 /**
- * @category Role
+ * @category Action Types
  */
 export enum IManageRolesActionTypes {
   GET_MANAGE_ROLES = "GET/manage/roles",
@@ -262,7 +262,7 @@ export type IManageGroups = {
 export type IManageGroupsState = Partial<IManageGroups>;
 
 /**
- * @category Group
+ * @category Action Types
  */
 export enum IManageGroupsActionTypes {
   GET_MANAGE_GROUPS = "GET/manage/groups",

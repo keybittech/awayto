@@ -12,7 +12,7 @@ import {
   IPostManageUsersSubAction,
   IPostManageUsersAppAcctAction,
   IManageUsersActions,
-  ILogoutTypes,
+  ILogoutActionTypes,
   IGetManageUsersByIdAction,
   IGetManageUsersBySubAction
 } from 'awayto';
@@ -67,7 +67,7 @@ function reduceLockState(state: IManageUsersState, action: ILockManageUsersActio
 
 const manageUsersReducer: Reducer<IManageUsersState, IManageUsersActions> = (state = initialManageUsersState, action) => {
   switch (action.type) {
-    case ILogoutTypes.LOGOUT:
+    case ILogoutActionTypes.LOGOUT:
       return initialManageUsersState;
     case IManageUsersActionTypes.GET_MANAGE_USERS:
       return reduceGetManageUsers(state, action);

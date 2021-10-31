@@ -2,6 +2,9 @@ import { ApiModule } from 'awayto';
 
 const deploy: ApiModule = {
 
+  /**
+   * @category Awayto Deploy
+   */
   get_deploy : {
     path : 'GET/deploy',
     cmnd : async (props) => {

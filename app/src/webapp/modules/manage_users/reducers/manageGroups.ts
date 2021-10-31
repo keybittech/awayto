@@ -8,7 +8,7 @@ import {
   IPutManageGroupsAction, 
   IDeleteManageGroupsAction,
   IManageGroupsActions,
-  ILogoutTypes
+  ILogoutActionTypes
 } from 'awayto';
 
 const initialManageGroupsState: IManageGroupsState = {
@@ -45,7 +45,7 @@ function reduceDeleteState(state: IManageGroupsState, action: IDeleteManageGroup
 
 const manageGroupsReducer: Reducer<IManageGroupsState, IManageGroupsActions> = (state = initialManageGroupsState, action) => {
   switch (action.type) {
-    case ILogoutTypes.LOGOUT:
+    case ILogoutActionTypes.LOGOUT:
       return initialManageGroupsState;
     case IManageGroupsActionTypes.GET_MANAGE_GROUPS:
       return reduceGetManageGroups(state, action);

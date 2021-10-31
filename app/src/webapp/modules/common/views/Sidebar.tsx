@@ -8,10 +8,10 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import AppsIcon from '@material-ui/icons/Apps';
 
-import { act, useDispatch, IUtilActionTypes, ILogoutTypes } from 'awayto';
+import { act, useDispatch, IUtilActionTypes, ILogoutActionTypes } from 'awayto';
 
 const { SET_SNACK } = IUtilActionTypes;
-const { LOGOUT } = ILogoutTypes;
+const { LOGOUT } = ILogoutActionTypes;
 
 export function Sidebar (props: IProps): JSX.Element {
   const { classes = {}, history = {} as History } = props;
