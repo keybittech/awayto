@@ -4,12 +4,16 @@ import { SiteRoles, getUserPool, getAuthorization, act, useDispatch, IUtilAction
 const { SET_SNACK } = IUtilActionTypes;
 const { LOGOUT } = ILogoutTypes;
 
-export function Secure ({ contentGroupRoles = SiteRoles.ADMIN, disable, inclusive, children, history }: IProps & {
-  contentGroupRoles?: SiteRoles;
-  children?: ReactElement;
-  inclusive?: boolean;
-  disable?: boolean;
-}): JSX.Element {
+declare global {
+  interface IProps {
+    contentGroupRoles?: SiteRoles;
+    children?: ReactElement;
+    inclusive?: boolean;
+    disable?: boolean;
+  }
+}
+
+export function Secure ({ contentGroupRoles = SiteRoles.ADMIN, disable, inclusive, children, history }: IProps): JSX.Element {
 
   const [hasGroup, setHasGroup] = useState<boolean>();
   const [hasRole, setHasRole] = useState<boolean>();
@@ -33,7 +37,8 @@ export function Secure ({ contentGroupRoles = SiteRoles.ADMIN, disable, inclusiv
           setHasRole(hasRole);
         } catch (error) {
           dispatch(act(SET_SNACK, { snackType: 'error', snackOn: 'Could not validate session. Please log back in.' }));
-          dispatch(act(LOGOUT, null)); 
+          dispatch(act(LOGOUT, null));
+          history.push('/');
         }
 
         // const userGroups = parseGroupString(groupRoles); //custom:admin

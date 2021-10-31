@@ -6,7 +6,7 @@ declare global {
   /**
    * @category Awayto
    */
-  export interface ISharedState {
+  interface ISharedState {
     util: IUtilState,
     login: ILoginState
   }
@@ -14,12 +14,12 @@ declare global {
   /**
    * @category Awayto
    */
-  export type ICommonModuleActions = IUtilActions | ILoginActions;
+  type ICommonModuleActions = IUtilActions | ILoginActions;
 
   /**
    * @category Awayto
    */
-  export interface ISharedActionTypes {
+  interface ISharedActionTypes {
     util: IUtilActionTypes;
     login: ILoginActionTypes;
     uuidNotes: IUuidNotesActionTypes;

@@ -1,4 +1,4 @@
-import React, { ComponentType, ReactElement } from 'react';
+import React, { ComponentType } from 'react';
 import { RouterState } from 'connected-react-router';
 import { RouteComponentProps } from 'react-router';
 import { Action, ReducersMapObject, Store } from 'redux';
@@ -10,7 +10,7 @@ declare global {
   /**
    * @category Awayto
    */
-  export interface ISharedState {
+  interface ISharedState {
     components: IBaseComponents;
     _persist: PersistState;
     router: RouterState<unknown>;
@@ -19,16 +19,16 @@ declare global {
   /**
    * @category Awayto
    */
-  export type ISharedActions =  ICommonModuleActions | IManageModuleActions | IProfileModuleActions;
+  type ISharedActions =  ICommonModuleActions | IManageModuleActions | IProfileModuleActions;
 
   /**
    * @category Awayto
    */
-  export type IProps = SafeRouteProps & {
+  interface IProps extends SafeRouteProps {
     classes?: Record<string, string>;
     closeModal?: () => void;
-    [prop: string]: SiteRoles | ReactElement | SafeRouteProps[keyof SafeRouteProps] | undefined | boolean | string | number | ILoadedState | (() => void);
-  };
+    // [prop: string]: SiteRoles | ReactElement | SafeRouteProps[keyof SafeRouteProps] | undefined | boolean | string | number | ILoadedState | (() => void);
+  }
 }
 
 type RouteProps = { [prop: string]: string }

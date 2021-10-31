@@ -30,7 +30,7 @@ export function Manage(props: IProps): JSX.Element {
     <h1>Manage</h1>
     <Grid container direction="row" spacing={1}>
       <Grid item xs={12}>
-        <Secure {...props} contentSiteRole={SiteRoles.ADMIN} inclusive>
+        <Secure {...props} contentGroupRoles={SiteRoles.ADMIN} inclusive>
           <Card>
             <CardContent>
               <CardActions>

@@ -5,7 +5,7 @@ declare global {
   /**
    * @category Awayto
    */
-  export interface ISharedState { 
+  interface ISharedState { 
     manage: IManageState
     manageUsers: IManageUsersState;
     manageRoles: IManageRolesState;
@@ -15,12 +15,12 @@ declare global {
   /**
    * @category Awayto
    */
-  export type IManageModuleActions = IManageActions | IManageUsersActions | IManageRolesActions | IManageGroupsActions;
+  type IManageModuleActions = IManageActions | IManageUsersActions | IManageRolesActions | IManageGroupsActions;
 
   /**
    * @category Awayto
    */
-  export interface ISharedActionTypes {
+  interface ISharedActionTypes {
     manage: IManageActionTypes;
     manageUsers: IManageUsersActionTypes;
     manageRoles: IManageRolesActionTypes;

@@ -13,6 +13,12 @@ import { Avatar } from '@material-ui/core';
 //   someString: string,
 // }
 
+declare global {
+  interface IProps {
+    image?: string;
+  }
+}
+
 export function AsyncAvatar (): JSX.Element {
   const [url, setUrl] = useState('');
   setUrl('')

@@ -6,17 +6,17 @@ declare global {
   /**
    * @category Awayto
    */
-  export interface ISharedState { 
+  interface ISharedState { 
     profile: IUserProfileState
   }
   /**
    * @category Awayto
    */
-  export type IProfileModuleActions = IUserProfileActions | IUuidGroupsActions | IUuidRolesActions;
+  type IProfileModuleActions = IUserProfileActions | IUuidGroupsActions | IUuidRolesActions;
   /**
    * @category Awayto
    */
-  export interface ISharedActionTypes {
+  interface ISharedActionTypes {
     userProfile: IUserProfileActionTypes;
     uuidGroups: IUuidGroupsActionTypes;
     uuidRoles: IUuidRolesActionTypes

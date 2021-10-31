@@ -17,7 +17,13 @@ import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, useDispatch, a
 const { SIGNUP_USER } = IUserProfileActionTypes;
 const { HAS_CODE } = IUtilActionTypes;
 
-export function SignUp(props: IProps & { signUpButton?: boolean }): JSX.Element {
+declare global {
+  interface IProps {
+    signUpButton?: boolean;
+  }
+}
+
+export function SignUp(props: IProps): JSX.Element {
   const { signUpButton = false } = props;
 
   const dispatch = useDispatch();
