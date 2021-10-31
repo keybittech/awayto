@@ -30,7 +30,7 @@ export function Home(props: IProps): JSX.Element {
     , []);
 
   return <>
-    <Secure {...props} contentGroupRoles={SiteRoles.ADMIN}>
+    <Secure {...props} inclusive contentGroupRoles={SiteRoles.ADMIN}>
       <Grid container>
         <Grid item xs={12}>
           <Grid container direction="column" spacing={4} justifyContent="space-evenly" >

@@ -284,29 +284,29 @@ export class CognitoUser implements CognitoUserType {
     const authParameters = {} as { [key: string]: string; };
     authParameters.REFRESH_TOKEN = refreshToken.getToken();
 
-    const { AuthenticationResult } = await this.client.send(new InitiateAuthCommand({
-      ClientId: this.pool.getClientId(),
-      AuthFlow: 'REFRESH_TOKEN_AUTH',
-      AuthParameters: authParameters
-    }))
-
-    if (!AuthenticationResult) {
-      this.cache('clear');
-      throw new Error('User is not authorized.');
-    }
-
-    if (!Object.prototype.hasOwnProperty.call(AuthenticationResult, 'RefreshToken')) {
-      AuthenticationResult.RefreshToken = refreshToken.getToken();
-    }
-
     try {
+      const { AuthenticationResult } = await this.client.send(new InitiateAuthCommand({
+        ClientId: this.pool.getClientId(),
+        AuthFlow: 'REFRESH_TOKEN_AUTH',
+        AuthParameters: authParameters
+      }))
+
+      if (!AuthenticationResult) {
+        this.cache('clear');
+        throw new Error('User is not authorized.');
+      }
+
+      if (!Object.prototype.hasOwnProperty.call(AuthenticationResult, 'RefreshToken')) {
+        AuthenticationResult.RefreshToken = refreshToken.getToken();
+      }
+
       this.signInUserSession = this.getCognitoUserSession(AuthenticationResult);
   
       this.cache('session');
   
       return this.signInUserSession;
     } catch (error) {
-      throw error;
+      throw new Error(`Cannot refresh session: ${error as string}`);
     }
   }
 

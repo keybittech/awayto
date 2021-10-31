@@ -16,7 +16,7 @@ export const parseGroupString = (value: string): IGroup[] => {
   const groups = [] as IGroup[];
   value?.split(';').forEach(set => {
     const [name, roles] = set.split(':');
-    groups.push({ name, roles: roles.split(',').map(r => ({ name: r })) as IRole[] } as IGroup)
+    groups.push({ name, roles: roles.split(',').map(r => ({ name: r.trim() })) as IRole[] } as IGroup)
   });
   return groups;
 }
@@ -25,17 +25,15 @@ export const parseGroupString = (value: string): IGroup[] => {
 /**
  * @category Util
  */
- export const getAuthorization = (ug: string, rg: string): Record<string, boolean> => {
+ export const getAuthorization = (ug: string, rg: string): { hasGroup: boolean, hasRole: boolean } => {
   const userGroups = parseGroupString(ug); // IGroup[]
   const requiredGroups = parseGroupString(rg); // IGroup[]
 
-  console.log('============================== grops', userGroups, requiredGroups);
-
-  const match = userGroups.filter(ug => !requiredGroups.map(cg => cg.name).includes(ug.name)) || [];
+  const match = requiredGroups.filter(rg => userGroups.map(ug => ug.name).includes(rg.name)) || [];
   const hasGroup = !!match.length;
-  const hasRole = match.some(ug => ug.roles.some(r => requiredGroups.find(rg => rg.name == ug.name)?.roles.map(r => r.name).includes(r.name)))
-
-  console.log('i have the roles', hasGroup, hasRole);
+  const hasRole = match.some(m => {
+    return !!m.roles.filter(mr => userGroups.find(g => g.name == m.name)?.roles.map(r => r.name).includes(mr.name)).length
+  });
 
   return {
     hasGroup,

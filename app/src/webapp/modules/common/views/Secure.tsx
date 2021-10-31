@@ -1,7 +1,10 @@
 import React, { useEffect, useState, ReactElement } from 'react';
-import { SiteRoles, getUserPool, parseGroupString } from 'awayto';
+import { SiteRoles, getUserPool, getAuthorization, act, useDispatch, IUtilActionTypes, ILogoutTypes } from 'awayto';
 
-export function Secure ({ contentGroupRoles = SiteRoles.ADMIN, disable, inclusive, children }: IProps & {
+const { SET_SNACK } = IUtilActionTypes;
+const { LOGOUT } = ILogoutTypes;
+
+export function Secure ({ contentGroupRoles = SiteRoles.ADMIN, disable, inclusive, children, history }: IProps & {
   contentGroupRoles?: SiteRoles;
   children?: ReactElement;
   inclusive?: boolean;
@@ -11,30 +14,43 @@ export function Secure ({ contentGroupRoles = SiteRoles.ADMIN, disable, inclusiv
   const [hasGroup, setHasGroup] = useState<boolean>();
   const [hasRole, setHasRole] = useState<boolean>();
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     async function getUser() {
       const pool = getUserPool();
       const cognitoUser = pool.getCurrentUser();
       if (cognitoUser) {
-        await cognitoUser.getSession();
-        const attributes = await cognitoUser.getUserAttributes();
-        const groupRoles = attributes.find(a => a.Name == 'custom:admin')?.Value as string;
+        try {
+          await cognitoUser.getSession();
 
-        const userGroups = parseGroupString(groupRoles); //custom:admin
-        const contentGroups = parseGroupString(contentGroupRoles); //customGroupRoles string
+          const attributes = await cognitoUser.getUserAttributes();
+          const userGroupRoles = attributes.find(a => a.Name == 'custom:admin')?.Value as string;
+  
+          const { hasGroup, hasRole } = getAuthorization(userGroupRoles, contentGroupRoles);
+  
+          setHasGroup(hasGroup);
+          setHasRole(hasRole);
+        } catch (error) {
+          dispatch(act(SET_SNACK, { snackType: 'error', snackOn: 'Could not validate session. Please log back in.' }));
+          dispatch(act(LOGOUT, null)); 
+        }
 
-        contentGroups.forEach(cg => {
-          const userGroup = userGroups.find(ug => ug.name == cg.name);
+        // const userGroups = parseGroupString(groupRoles); //custom:admin
+        // const contentGroups = parseGroupString(contentGroupRoles); //customGroupRoles string
 
-          if (userGroup) {
-            setHasGroup(true)
+        // contentGroups.forEach(cg => {
+        //   const userGroup = userGroups.find(ug => ug.name == cg.name);
 
-            cg.roles.forEach(cgr => {
-              if (userGroup.roles.map(ugr => ugr.name).includes(cgr.name))
-                setHasRole(true);
-            })
-          }
-        })
+        //   if (userGroup) {
+        //     setHasGroup(true)
+
+        //     cg.roles.forEach(cgr => {
+        //       if (userGroup.roles.map(ugr => ugr.name).includes(cgr.name))
+        //         setHasRole(true);
+        //     })
+        //   }
+        // })
       }
     }
     void getUser();
