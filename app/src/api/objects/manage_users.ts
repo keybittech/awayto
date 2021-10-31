@@ -9,14 +9,16 @@ const manageUsers: ApiModule = {
   create_manage_users_sub: {
     path: 'POST/manage/users/sub',
     cmnd: async (props) => {
+
+      let user = props.event.body as IUserProfile & { password: string };
       
-      const { username, email, password, groups } = props.event.body as IUserProfile & { password: string };
+      const { username, email, password, groups } = user;
       try {
 
         const awsUser = await adminCreateUser({ username, email, password, groupRoles: parseGroupArray(groups) }) as UserType;
-        const sub = awsUser.Attributes?.find(a => a.Name == 'sub')?.Value;
+        user.sub = awsUser.Attributes?.find(a => a.Name == 'sub')?.Value as string;
 
-        return { sub };
+        return user as IUserProfile;
       } catch (error) {
         throw error;
       }

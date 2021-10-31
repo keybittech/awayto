@@ -29,36 +29,6 @@ function Alert(props: AlertProps): JSX.Element {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-function Loader({ classes }: IProps): JSX.Element {
-  return <Grid container>
-    <Drawer className={classes.drawer} variant="permanent" classes={{ paper: classes.drawerPaper }} >
-      <Grid container style={{ height: '100vh' }} alignContent="space-between">
-        <Grid item xs={12} style={{ marginTop: '20px' }}>
-          <Grid container justifyContent="center">
-            <img src={Icon} alt="kbt-icon" className={classes.logo} />
-          </Grid>
-          <Grid container style={{ padding: '10px' }}>
-            <Skeleton variant="text" width="100%" />
-            <Skeleton variant="text" width="100%" />
-            <Skeleton variant="text" width="100%" />
-          </Grid>
-        </Grid>
-      </Grid>
-    </Drawer>
-    <AppBar position="fixed" className={classes.appBar}>
-      <Toolbar />
-    </AppBar>
-    <Grid container spacing={4} style={{ marginLeft: '150px', padding: '100px 50px' }}>
-      <Skeleton variant="text" width="100%" />
-      <Skeleton variant="rect" width="100%" height="150px" />
-    </Grid>
-    <Grid container spacing={4} style={{ marginLeft: '150px', padding: '15px 50px' }}>
-      <Skeleton variant="text" width="100%" />
-      <Skeleton variant="rect" width="100%" height="150px" />
-    </Grid>
-  </Grid >
-}
-
 const {
   REACT_APP_COGNITO_USER_POOL_ID: UserPoolId,
   REACT_APP_COGNITO_CLIENT_ID: ClientId
@@ -101,16 +71,48 @@ const App = (props: IProps): JSX.Element => {
   return <>
     <ThemeProvider theme={theme == 'light' ? lightTheme : darkTheme}>
       <CssBaseline />
-      <Suspense fallback={<Loader {...props} />}>
-        {login.bootstrapped ? <>
-          {!!login.username ?
-            <div className={classes.root}>
-              <AppBar position="fixed" className={classes.appBar}>
-                <Toolbar />
-              </AppBar>
+
+      {login.bootstrapped ? <>
+        {!!login.username ?
+          <div className={classes.root}>
+            <AppBar position="fixed" className={classes.appBar}>
+              <Toolbar />
+            </AppBar>
+            <Suspense fallback={
+              <Drawer className={classes.drawer} variant="permanent" classes={{ paper: classes.drawerPaper }} >
+                <Grid container style={{ height: '100vh' }} alignContent="space-between">
+                  <Grid item xs={12} style={{ marginTop: '20px' }}>
+                    <Grid container justifyContent="center">
+                      <img src={Icon} alt="kbt-icon" className={classes.logo} />
+                    </Grid>
+                    <Grid container style={{ padding: '10px' }}>
+                      <Skeleton variant="text" width="100%" />
+                      <Skeleton variant="text" width="100%" />
+                      <Skeleton variant="text" width="100%" />
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Drawer>
+            }>
               <Sidebar {...props} />
-              <main className={classes.content}>
-                <div className={classes.toolbar} />
+            </Suspense>
+            <main className={classes.content}>
+              <div className={classes.toolbar} />
+              <Suspense fallback={
+                <Grid container>
+                  <AppBar position="fixed" className={classes.appBar}>
+                    <Toolbar />
+                  </AppBar>
+                  <Grid container spacing={4} style={{ padding: '20px 20px 40px' }}>
+                    <Skeleton variant="text" width="100%" />
+                    <Skeleton variant="rect" width="100%" height="150px" animation="pulse" />
+                  </Grid>
+                  <Grid container spacing={4} style={{ padding: '20px' }}>
+                    <Skeleton variant="text" width="100%" />
+                    <Skeleton variant="rect" width="100%" height="150px" animation="pulse" />
+                  </Grid>
+                </Grid >
+              }>
                 <Switch>
                   {login.newPassRequired && <Redirect to="/" />}
                   {history.location.pathname === '/' && <Redirect to="/home" />}
@@ -118,76 +120,85 @@ const App = (props: IProps): JSX.Element => {
                   <Route exact path="/profile" component={Profile} />
                   <Route exact path="/manage/:component" component={Manage} />
                 </Switch>
-              </main>
-            </div> :
-            <main>
-              <Grid container alignItems="center" direction="column">
-                <Grid item>
-                  <Grid container className={classes.loginWrap} alignItems="center" direction="column">
+              </Suspense>
+            </main>
+          </div> :
+          <main>
+            <Grid container alignItems="center" direction="column">
+              <Grid item>
+                <Grid container className={classes.loginWrap} alignItems="center" direction="column">
 
-                    <Grid item xs={8}>
-                      <Grid container alignItems="center" direction="row">
-                        <img src={Icon} alt="keybit tech logo" className={classes.appLogo} />
-                        <Typography variant="h3">&nbsp;AWAYTO</Typography>
-                      </Grid>
+                  <Grid item xs={8}>
+                    <Grid container alignItems="center" direction="row">
+                      <img src={Icon} alt="keybit tech logo" className={classes.appLogo} />
+                      <Typography variant="h3">&nbsp;AWAYTO</Typography>
+                    </Grid>
 
-                      <Grid container>
-                        <Grid item xs={12}>
-                          <Grid container justifyContent="space-between">
-                            <Typography><Link href="https://github.com/keybittech/awayto">View on GitHub</Link></Typography>
-                            <Typography><Link href="https://awayto.dev/docs/index.html">Typedoc</Link></Typography>
-                            <Typography><Link href="https://keybittech.com">KeyBit Tech</Link></Typography>
-                            <Typography><Link href="https://discord.gg/KzpcTrn5DQ">Discord</Link></Typography>
-                            <Typography><Link href="https://twitch.tv/awayto">Twitch</Link></Typography>
-                            <Typography><Link href="https://twitter.com/awaytodev">Twitter</Link></Typography>
-                            <Typography><Link href="mailto:joe@keybittech.com">Contact</Link></Typography>
-                          </Grid>
+                    <Grid container>
+                      <Grid item xs={12}>
+                        <Grid container justifyContent="space-between">
+                          <Typography><Link href="https://github.com/keybittech/awayto">View on GitHub</Link></Typography>
+                          <Typography><Link href="https://awayto.dev/docs/index.html">Typedoc</Link></Typography>
+                          <Typography><Link href="https://keybittech.com">KeyBit Tech</Link></Typography>
+                          <Typography><Link href="https://discord.gg/KzpcTrn5DQ">Discord</Link></Typography>
+                          <Typography><Link href="https://twitch.tv/awayto">Twitch</Link></Typography>
+                          <Typography><Link href="https://twitter.com/awaytodev">Twitter</Link></Typography>
+                          <Typography><Link href="mailto:joe@keybittech.com">Contact</Link></Typography>
                         </Grid>
                       </Grid>
+                    </Grid>
+                    <Suspense fallback={
+                      <Grid container style={{ padding: '15px 50px' }}>
+                        <Skeleton variant="text" width="100%" />
+                        <Skeleton variant="rect" width="100%" height="150px" />
+                      </Grid>
+                    }>
                       <Switch>
                         {!['/', '/signup'].includes(history.location.pathname) && <Redirect to="/" />}
                         <Route exact path="/" component={login.newPassRequired ? ChangeNewPassword : Login} />
                         <Route exact path="/signup" component={hasSignUpCode ? CompleteSignUp : SignUp} />
                       </Switch>
-                    </Grid>
+                    </Suspense>
                   </Grid>
                 </Grid>
               </Grid>
-
-              <div style={{ position: 'fixed', bottom: 0, right: 0 }}>
-                <FormControlLabel
-                  value="darkmode"
-                  control={
-                    <Toggle
-                      onClick={() => { dispatch(act(SET_THEME, { theme: theme === 'dark' ? 'light' : 'dark' })) }}
-                      checked={theme === 'dark'}
-                      color="primary"
-                    />
-                  }
-                  label="Dark Mode"
-                  labelPlacement="end"
-                />
-              </div>
-            </main>
-          }
-          {!!snackOn && <Snackbar open={!!snackOn} autoHideDuration={6000} onClose={hideSnack}>
-            <Alert onClose={hideSnack} severity={snackType || "info"}>
-              {snackOn}
-            </Alert>
-          </Snackbar>}
-          <ConfirmAction />
-          <Backdrop className={classes.backdrop} open={!!isLoading} >
-            <Grid container direction="column" alignItems="center">
-              <CircularProgress color="inherit" />
-              {loadingMessage ?? ''}
             </Grid>
-          </Backdrop>
-        </> :
-          <Backdrop className={classes.backdrop} open={true} >
-            <CircularProgress color="inherit" />
-          </Backdrop>
+
+            <div style={{ position: 'fixed', bottom: 0, right: 0 }}>
+              <FormControlLabel
+                value="darkmode"
+                control={
+                  <Toggle
+                    onClick={() => { dispatch(act(SET_THEME, { theme: theme === 'dark' ? 'light' : 'dark' })) }}
+                    checked={theme === 'dark'}
+                    color="primary"
+                  />
+                }
+                label="Dark Mode"
+                labelPlacement="end"
+              />
+            </div>
+          </main>
         }
-      </Suspense>
+        {!!snackOn && <Snackbar open={!!snackOn} autoHideDuration={6000} onClose={hideSnack}>
+          <Alert onClose={hideSnack} severity={snackType || "info"}>
+            {snackOn}
+          </Alert>
+        </Snackbar>}
+        <Suspense fallback="">
+          <ConfirmAction />
+        </Suspense>
+        <Backdrop className={classes.backdrop} open={!!isLoading} >
+          <Grid container direction="column" alignItems="center">
+            <CircularProgress color="inherit" />
+            {loadingMessage ?? ''}
+          </Grid>
+        </Backdrop>
+      </> :
+        <Backdrop className={classes.backdrop} open={true} >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      }
     </ThemeProvider>
   </>
 }
