@@ -108,7 +108,7 @@ export function ManageUserModal({
 
   const groupSelectComp = useMemo(() => {
     return <Grid item xs={12}>
-      <Grid container justify="flex-end">
+      <Grid container justifyContent="flex-end">
 
         <FormControl fullWidth variant="outlined">
           <InputLabel id="group-selection-label">Groups</InputLabel>
@@ -174,11 +174,11 @@ export function ManageUserModal({
   return <>
     <DialogTitle>{profile.username ? `Manage ${profile.username}` : 'CREATE USER'}</DialogTitle>
     <DialogContent>
-      <Grid container direction="row" spacing={2} justify="space-evenly">
+      <Grid container direction="row" spacing={2} justifyContent="space-evenly">
 
         {!editUser && (
           <Grid item xs>
-            <Grid container direction="column" justify="space-evenly" spacing={4}>
+            <Grid container direction="column" justifyContent="space-evenly" spacing={4}>
               <Grid item xs={12}>
                 <Typography variant="h6">Account</Typography>
               </Grid>
@@ -203,7 +203,7 @@ export function ManageUserModal({
         )}
 
         <Grid item xs>
-          <Grid container direction="column" justify="space-evenly" spacing={4}>
+          <Grid container direction="column" justifyContent="space-evenly" spacing={4}>
             <Grid item>
               <Typography variant="h6">Profile</Typography>
             </Grid>
@@ -221,7 +221,7 @@ export function ManageUserModal({
 
         {groups ?
           <Grid item xs>
-            <Grid container direction="column" justify="space-evenly" spacing={4}>
+            <Grid container direction="column" justifyContent="space-evenly" spacing={4}>
               <Grid item>
                 <Typography variant="h6">Groups</Typography>
               </Grid>
@@ -234,7 +234,7 @@ export function ManageUserModal({
             </Grid>
           </Grid> :
           <Grid item xs={12}>
-            <Grid container justify="center">
+            <Grid container justifyContent="center">
               <CircularProgress />
             </Grid>
           </Grid>
@@ -243,7 +243,7 @@ export function ManageUserModal({
       </Grid>
     </DialogContent>
     <DialogActions>
-      <Grid container justify="space-between">
+      <Grid container justifyContent="space-between">
         <Button onClick={closeModal}>Cancel</Button>
         <Button onClick={handleSubmit}>{profile.sub ? 'update' : 'create'}</Button>
       </Grid>

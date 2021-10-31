@@ -86,7 +86,7 @@ export function ManageGroupModal ({
         {roles.map((b, i) => <MenuItem key={i} value={b.id}>{b.name}</MenuItem>)}
       </Select>
     </FormControl> :
-    <Grid container justify="center"><CircularProgress /></Grid>
+    <Grid container justifyContent="center"><CircularProgress /></Grid>
     , [roles, roleIds, setRoleIds]);
 
   return <>
@@ -97,7 +97,7 @@ export function ManageGroupModal ({
       <CardContent>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
-            <Grid container direction="column" spacing={4} justify="space-evenly" >
+            <Grid container direction="column" spacing={4} justifyContent="space-evenly" >
               <Grid item>
                 <Typography variant="h6">Group</Typography>
               </Grid>
@@ -140,7 +140,7 @@ export function ManageGroupModal ({
             </Grid>
           </Grid>
           <Grid item xs={12}>
-            <Grid container direction="column" spacing={4} justify="space-evenly">
+            <Grid container direction="column" spacing={4} justifyContent="space-evenly">
               <Grid item>
                 <Typography variant="h6">Roles</Typography>
               </Grid>
@@ -152,7 +152,7 @@ export function ManageGroupModal ({
         </Grid>
       </CardContent>
       <CardActions>
-        <Grid container justify="flex-end">
+        <Grid container justifyContent="flex-end">
           <Button onClick={closeModal}>Cancel</Button>
           <Button disabled={checkingName || badName} onClick={handleSubmit}>Submit</Button>
         </Grid>

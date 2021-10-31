@@ -34,7 +34,7 @@ export function Manage(props: IProps): JSX.Element {
           <Card>
             <CardContent>
               <CardActions>
-                <Grid container justify="flex-start" alignItems="center">
+                <Grid container justifyContent="flex-start" alignItems="center">
                   <Typography variant="button">Identity:</Typography> {menu}
                 </Grid>
               </CardActions>

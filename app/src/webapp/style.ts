@@ -1,4 +1,4 @@
-import { createMuiTheme, createStyles, StyleRules, Theme } from '@material-ui/core';
+import { createTheme, createStyles, StyleRules, Theme } from '@material-ui/core';
 import { green, red } from '@material-ui/core/colors';
 
 const drawerWidth = 150;
@@ -131,7 +131,7 @@ const theme = {
 /**
  * @category Style
  */
-export const lightTheme = createMuiTheme({
+export const lightTheme = createTheme({
   ...theme,
   palette: {
     ...theme.palette,
@@ -143,7 +143,7 @@ export const lightTheme = createMuiTheme({
 /**
  * @category Style
  */
-export const darkTheme = createMuiTheme({
+export const darkTheme = createTheme({
   ...theme,
   palette: {
     ...theme.palette,
@@ -152,9 +152,3 @@ export const darkTheme = createMuiTheme({
   },
   ...styles
 });
-
-
-/**
- * @category Style
- */
-export type IStyles = Record<keyof ReturnType<typeof styles>, string>

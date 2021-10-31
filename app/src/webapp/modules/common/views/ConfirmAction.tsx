@@ -21,7 +21,7 @@ export function ConfirmAction (): JSX.Element {
             dispatch(act(IUtilActionTypes.CLOSE_CONFIRM, { isConfirming: false }));
           }}>
             <CardContent>
-              <Grid container direction="column" alignItems="center" justify="space-evenly">
+              <Grid container direction="column" alignItems="center" justifyContent="space-evenly">
                 <Typography variant="h6" style={{ wordBreak: 'break-all' }}>{util.message}</Typography>
                 <Typography variant="subtitle1">Click to confirm.</Typography>
               </Grid>

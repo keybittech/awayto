@@ -51,7 +51,7 @@ export function SignUp(props: IProps & { signUpButton?: boolean }): JSX.Element 
             <CardContent>
               <Grid container spacing={4}>
                 <Grid item xs={12} md={6}>
-                  <Grid container direction="column" justify="flex-start" alignItems="stretch" spacing={2}>
+                  <Grid container direction="column" justifyContent="flex-start" alignItems="stretch" spacing={2}>
                     <Grid item>
                       <TextField fullWidth id="firstName" label="First Name" value={profile.firstName} name="firstName" onChange={e => setProfile({ ...profile, firstName: e.target.value })} />
                     </Grid>
@@ -67,7 +67,7 @@ export function SignUp(props: IProps & { signUpButton?: boolean }): JSX.Element 
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                  <Grid container direction="column" justify="flex-start" alignItems="stretch" spacing={2}>
+                  <Grid container direction="column" justifyContent="flex-start" alignItems="stretch" spacing={2}>
                     <Grid item>
                       <TextField fullWidth id="username" label="Username" value={profile.username} name="username" onChange={e => setProfile({ ...profile, username: e.target.value })} />
                     </Grid>
@@ -95,7 +95,7 @@ export function SignUp(props: IProps & { signUpButton?: boolean }): JSX.Element 
             <CardActions>
 
               <Grid item xs={12}>
-                <Grid container justify="space-between">
+                <Grid container justifyContent="space-between">
                   <Grid item>
                     <Button onClick={() => props.history.push('/')} color="primary">Back</Button>
                   </Grid>

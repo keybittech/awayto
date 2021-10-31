@@ -91,7 +91,7 @@ export function Profile (props: IProps): JSX.Element {
                   }} accept="image/*" maxSize={maxFileSize}>
 
                     {({ getRootProps, getInputProps }) => (
-                      <Grid {...getRootProps} container direction="column" alignItems="center" justify="space-evenly" style={{ flexGrow: 1 }} className={classes.dropzone}>
+                      <Grid {...getRootProps} container direction="column" alignItems="center" justifyContent="space-evenly" style={{ flexGrow: 1 }} className={classes.dropzone}>
                         <input {...getInputProps()} />
                         <Avatar>
                           <PersonIcon />
@@ -100,7 +100,7 @@ export function Profile (props: IProps): JSX.Element {
                         <Typography variant="caption">Max size: 1MB</Typography>
                       </Grid>
                     )}
-                  </Dropzone> : <Grid container direction="column" alignItems="center" justify="space-evenly" style={{ flexGrow: 1 }} className={classes.dropzone} onClick={deleteFile}>
+                  </Dropzone> : <Grid container direction="column" alignItems="center" justifyContent="space-evenly" style={{ flexGrow: 1 }} className={classes.dropzone} onClick={deleteFile}>
                     {profile.image && AsyncAvatar ? <AsyncAvatar {...props} image={profile.image} /> : file ? <Avatar src={file.preview} /> : <div />}
                     <Typography variant="h6" style={{ wordBreak: 'break-all' }}>{profile.image ? "Current profile image." : file ? `${file.name || ''} added.` : ''}</Typography>
                     <Typography variant="subtitle1">Click to remove, then submit.</Typography>

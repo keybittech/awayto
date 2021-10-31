@@ -47,7 +47,7 @@ export function CompleteSignUp (props: IProps): JSX.Element {
         </Grid>
 
         <Grid item style={{ width: '100%' }} xs={user.signedUp ? 6 : 12}>
-          <Grid container justify="space-between">
+          <Grid container justifyContent="space-between">
             <Button onClick={() => dispatch(act(HAS_CODE, { hasSignUpCode: false }))} color="primary">Back</Button>
             <Button type="submit" color="primary">Submit Code</Button>
           </Grid>

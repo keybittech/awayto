@@ -33,7 +33,7 @@ export function Home(props: IProps): JSX.Element {
     <Secure {...props} contentGroupRoles={SiteRoles.ADMIN}>
       <Grid container>
         <Grid item xs={12}>
-          <Grid container direction="column" spacing={4} justify="space-evenly" >
+          <Grid container direction="column" spacing={4} justifyContent="space-evenly" >
             <Grid item>
               <Typography variant="h6">Group</Typography>
             </Grid>
@@ -105,7 +105,7 @@ export default Home;
   // component('Secure', { ...props, contentRoleGroups: SiteRoles.ADMIN },
   //   <Grid container>
   //     <Grid item xs={12}>
-  //       <Grid container direction="column" spacing={4} justify="space-evenly" >
+  //       <Grid container direction="column" spacing={4} justifyContent="space-evenly" >
   //         <Grid item>
   //           <Typography variant="h6">Group</Typography>
   //         </Grid>

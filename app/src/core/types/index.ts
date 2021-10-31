@@ -4,7 +4,6 @@ import { RouteComponentProps } from 'react-router';
 import { Action, ReducersMapObject, Store } from 'redux';
 import { PersistState } from 'redux-persist';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
-import { IStyles } from '../style';
 import { CognitoUser } from '../cognito';
 
 declare global {
@@ -26,7 +25,7 @@ declare global {
    * @category Awayto
    */
   export type IProps = SafeRouteProps & {
-    classes?: IStyles;
+    classes?: Record<string, string>;
     closeModal?: () => void;
     [prop: string]: SiteRoles | ReactElement | SafeRouteProps[keyof SafeRouteProps] | undefined | boolean | string | number | ILoadedState | (() => void);
   };

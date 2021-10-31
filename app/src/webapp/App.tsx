@@ -17,11 +17,12 @@ import Backdrop from '@material-ui/core/Backdrop'
 import AppBar from '@material-ui/core/AppBar'
 import Link from '@material-ui/core/Link'
 
-import { darkTheme, lightTheme, ILoginActionTypes, IUtilActionTypes, act, CognitoUserPool, styles, useRedux, useDispatch, useComponents } from 'awayto';
+import { ILoginActionTypes, IUtilActionTypes, act, CognitoUserPool, useRedux, useDispatch, useComponents } from 'awayto';
 
 import './App.css';
 import { ThemeProvider } from '@material-ui/styles';
 import { CssBaseline } from '@material-ui/core';
+import { darkTheme, lightTheme, styles } from './style';
 
 function Alert(props: AlertProps): JSX.Element {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -99,7 +100,7 @@ const App = (props: IProps): JSX.Element => {
 
                       <Grid container>
                         <Grid item xs={12}>
-                          <Grid container justify="space-between">
+                          <Grid container justifyContent="space-between">
                             <Typography><Link href="https://github.com/keybittech/awayto">View on GitHub</Link></Typography>
                             <Typography><Link href="https://awayto.dev/docs/index.html">Typedoc</Link></Typography>
                             <Typography><Link href="https://keybittech.com">KeyBit Tech</Link></Typography>

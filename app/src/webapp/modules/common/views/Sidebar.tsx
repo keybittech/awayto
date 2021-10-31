@@ -40,7 +40,7 @@ export function Sidebar (props: IProps): JSX.Element {
     >
       <Grid container style={{ height: '100vh' }} alignContent="space-between">
         <Grid item xs={12} style={{ marginTop: '20px' }}>
-          <Grid container justify="center">
+          <Grid container justifyContent="center">
             <img src={Icon} alt="kbt-icon" className={classes.logo} />
           </Grid>
           <List>

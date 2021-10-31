@@ -112,7 +112,7 @@ export function Login(props: IProps): JSX.Element {
       <Grid container spacing={4} direction="row-reverse">
 
         <Grid item xs={12} md={3}>
-          <Grid container direction="column" justify="flex-start" alignItems="stretch" spacing={4}>
+          <Grid container direction="column" justifyContent="flex-start" alignItems="stretch" spacing={4}>
             <Grid item>
               <TextField
                 fullWidth
@@ -148,7 +148,7 @@ export function Login(props: IProps): JSX.Element {
               />
             </Grid>
             <Grid item>
-              <Grid container justify="space-between">
+              <Grid container justifyContent="space-between">
                 <SignUp {...props} signUpButton />
                 <Button type="submit" color="primary">Login</Button>
               </Grid>

@@ -39,7 +39,7 @@ export function ManageRoleModal ({
       <CardContent>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
-            <Grid container direction="column" spacing={4} justify="space-evenly" >
+            <Grid container direction="column" spacing={4} justifyContent="space-evenly" >
               <Grid item>
                 <Typography variant="h6">Role</Typography>
               </Grid>
@@ -51,7 +51,7 @@ export function ManageRoleModal ({
         </Grid>
       </CardContent>
       <CardActions>
-        <Grid container justify="space-between">
+        <Grid container justifyContent="space-between">
           <Button onClick={closeModal}>Cancel</Button>
           <Button onClick={handleSubmit}>Submit</Button>
         </Grid>
