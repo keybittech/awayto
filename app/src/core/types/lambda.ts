@@ -3,14 +3,14 @@ import { PoolClient } from 'pg'
 import { ILoadedState } from '.'
 
 /**
- * @category Lambda
+ * @category API
  */
 export type ApiModule = {
   [name: string]: ApiModulet;
 }
 
 /**
- * @category Lambda
+ * @category API
  */
 export type ApiModulet = {
   roles?: string;
@@ -20,7 +20,7 @@ export type ApiModulet = {
 }
 
 /**
- * @category Lambda
+ * @category API
  */
 export type ApiProps = {
   event: ApiEvent;
@@ -29,7 +29,7 @@ export type ApiProps = {
 }
 
 /**
- * @category Lambda
+ * @category API
  */
 export type ApiEvent = {
   [name: string]: unknown;
@@ -44,14 +44,14 @@ export type ApiEvent = {
 };
 
 /**
- * @category Lambda
+ * @category API
  */
 export type LambdaApiResponse = {
   [name: string]: Record<string, unknown> | unknown[] | unknown;
 }
 
 /**
- * @category Lambda
+ * @category API
  */
 export type ApiRequestAuthorizer = {
   userToken: string;

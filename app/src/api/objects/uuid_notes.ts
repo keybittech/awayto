@@ -1,4 +1,4 @@
-import { ApiModule, IUuidNotes } from 'awayto';
+import { ApiModule, asyncForEach, IUuidNotes } from 'awayto';
 import { buildUpdate } from '../util/db';
 
 const uuidNotes: ApiModule = {
@@ -106,18 +106,20 @@ const uuidNotes: ApiModule = {
   },
 
   disable_uuid_notes : {
-    path : 'PUT/uuid_notes/:id/disable',
+    path : 'PUT/uuid_notes/disable',
     cmnd : async (props) => {
       try {
-        const { id } = props.event.pathParameters;
+        const notes = props.event.body as IUuidNotes[];
 
-        await props.client.query(`
-          UPDATE uuid_notes
-          SET enabled = false
-          WHERE id = $1
-        `, [id]);
+        await asyncForEach(notes, async note => {
+          await props.client.query(`
+            UPDATE uuid_notes
+            SET enabled = false
+            WHERE id = $1
+          `, [note.id]);
+        });
 
-        return { id };
+        return notes;
         
       } catch (error) {
         throw error;

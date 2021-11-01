@@ -116,9 +116,9 @@ const App = (props: IProps): JSX.Element => {
                 <Switch>
                   {login.newPassRequired && <Redirect to="/" />}
                   {history.location.pathname === '/' && <Redirect to="/home" />}
-                  <Route exact path="/home" component={Home} />
-                  <Route exact path="/profile" component={Profile} />
-                  <Route exact path="/manage/:component" component={Manage} />
+                  <Route exact path="/home" render={() => <Home {...props} />} />
+                  <Route exact path="/profile" render={() => <Profile {...props} />} />
+                  <Route exact path="/manage/:component" render={({ match }) => <Manage {...props} view={match.params.component} />} />
                 </Switch>
               </Suspense>
             </main>
@@ -155,8 +155,8 @@ const App = (props: IProps): JSX.Element => {
                     }>
                       <Switch>
                         {!['/', '/signup'].includes(history.location.pathname) && <Redirect to="/" />}
-                        <Route exact path="/" component={login.newPassRequired ? ChangeNewPassword : Login} />
-                        <Route exact path="/signup" component={hasSignUpCode ? CompleteSignUp : SignUp} />
+                        <Route exact path="/" render={() => login.newPassRequired ? <ChangeNewPassword {...props} /> : <Login {...props} />} />
+                        <Route exact path="/signup" render={() => hasSignUpCode ? <CompleteSignUp {...props} /> : <SignUp {...props} />} />
                       </Switch>
                     </Suspense>
                   </Grid>
@@ -186,7 +186,7 @@ const App = (props: IProps): JSX.Element => {
           </Alert>
         </Snackbar>}
         <Suspense fallback="">
-          <ConfirmAction />
+          <ConfirmAction {...props} />
         </Suspense>
         <Backdrop className={classes.backdrop} open={!!isLoading} >
           <Grid container direction="column" alignItems="center">

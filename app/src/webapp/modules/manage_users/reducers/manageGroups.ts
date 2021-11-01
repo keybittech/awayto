@@ -1,14 +1,15 @@
 import { Reducer } from 'redux';
 import {
-  IGroup, 
-  IGetManageGroupsAction, 
-  IManageGroupsActionTypes, 
-  IManageGroupsState, 
-  IPostManageGroupsAction, 
-  IPutManageGroupsAction, 
+  IGroup,
+  IGetManageGroupsAction,
+  IManageGroupsActionTypes,
+  IManageGroupsState,
+  IPostManageGroupsAction,
+  IPutManageGroupsAction,
   IDeleteManageGroupsAction,
   IManageGroupsActions,
-  ILogoutActionTypes
+  ILogoutActionTypes,
+  IDisableManageGroupsAction
 } from 'awayto';
 
 const initialManageGroupsState: IManageGroupsState = {
@@ -16,7 +17,7 @@ const initialManageGroupsState: IManageGroupsState = {
 };
 
 function reduceGetManageGroups(state: IManageGroupsState, action: IGetManageGroupsAction): IManageGroupsState {
-  return { ...state, groups: [ ...action.payload as IGroup[] ] };
+  return { ...state, groups: [...action.payload as IGroup[]] };
 }
 
 function reducePostManageGroups(state: IManageGroupsState, action: IPostManageGroupsAction): IManageGroupsState {
@@ -43,6 +44,14 @@ function reduceDeleteState(state: IManageGroupsState, action: IDeleteManageGroup
   return state;
 }
 
+function reduceDisableState(state: IManageGroupsState, action: IDisableManageGroupsAction): IManageGroupsState {
+  const { groups } = state;
+  if (groups) {
+    state.groups = groups.filter(g => !action.payload.some(gr => gr.id == g.id))
+  }
+  return state;
+}
+
 const manageGroupsReducer: Reducer<IManageGroupsState, IManageGroupsActions> = (state = initialManageGroupsState, action) => {
   switch (action.type) {
     case ILogoutActionTypes.LOGOUT:
@@ -55,6 +64,8 @@ const manageGroupsReducer: Reducer<IManageGroupsState, IManageGroupsActions> = (
       return reducePutManageGroups(state, action);
     case IManageGroupsActionTypes.DELETE_MANAGE_GROUPS:
       return reduceDeleteState(state, action);
+    case IManageGroupsActionTypes.DISABLE_MANAGE_GROUPS:
+      return reduceDisableState(state, action);
     case IManageGroupsActionTypes.CHECK_GROUP_NAME:
       return { ...state, ...action.payload }
     default:

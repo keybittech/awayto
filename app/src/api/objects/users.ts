@@ -59,8 +59,8 @@ const users: ApiModule = {
     }
   },
 
-  get_user_profile: {
-    path: 'GET/users/profile',
+  get_user_details: {
+    path: 'GET/users/details',
     cmnd: async (props) => {
       try {
         const response = await props.client.query<IUserProfile>(`
@@ -78,8 +78,8 @@ const users: ApiModule = {
     }
   },
 
-  get_user_by_sub: {
-    path: 'GET/users/sub/:sub',
+  get_user_details_by_sub: {
+    path: 'GET/users/details/sub/:sub',
     cmnd: async (props) => {
       const { sub } = props.event.pathParameters;
 
@@ -98,8 +98,8 @@ const users: ApiModule = {
     }
   },
 
-  get_user_by_id: {
-    path: 'GET/users/:id',
+  get_user_details_by_id: {
+    path: 'GET/users/details/id/:id',
     cmnd: async (props) => {
       try {
         const { id } = props.event.pathParameters;

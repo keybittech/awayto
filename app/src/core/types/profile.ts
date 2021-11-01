@@ -4,17 +4,19 @@ import { PayloadAction, IGroup } from '.';
 
 declare global {
   /**
-   * @category Awayto
+   * @category Awayto Redux
    */
   interface ISharedState { 
     profile: IUserProfileState
   }
+
   /**
-   * @category Awayto
+   * @category Awayto Redux
    */
   type IProfileModuleActions = IUserProfileActions | IUuidGroupsActions | IUuidRolesActions;
+
   /**
-   * @category Awayto
+   * @category Awayto Redux
    */
   interface ISharedActionTypes {
     userProfile: IUserProfileActionTypes;
@@ -24,7 +26,7 @@ declare global {
 }
 
 /**
- * @category UserProfile
+ * @category Awayto
  */
 export type IUserProfile = {
   id: string;
@@ -46,7 +48,7 @@ export type IUserProfile = {
 
 
 /**
- * @category UserProfile
+ * @category User Profile
  */
 export type IUserProfileState = Partial<IUserProfile>;
 
@@ -55,60 +57,67 @@ export type IUserProfileState = Partial<IUserProfile>;
  */
 export enum IUserProfileActionTypes {
   SIGNUP_USER = "login/SIGNUP_USER",
-  POST_USERS = "POST/users",
-  PUT_USERS = "PUT/users",
-  GET_USER_PROFILE = "GET/users/profile",
-  GET_USER_BY_SUB = "GET/users/profile/sub/:id",
-  DELETE_USER = "DELETE/users"
+  POST_USER_PROFILE = "POST/users",
+  PUT_USER_PROFILE = "PUT/users",
+  GET_USER_PROFILE_DETAILS = "GET/users/details",
+  GET_USER_PROFILE_DETAILS_BY_SUB = "GET/users/details/sub/:sub",
+  GET_USER_PROFILE_DETAILS_BY_ID = "GET/users/details/id/:id",
+  DISABLE_USER_PROFILE = "PUT/users/:id/disable"
 }
 
 
 /**
- * @category UserProfile
+ * @category User Profile
  */
-export type IPostUserProfileAction = PayloadAction<IUserProfileActionTypes.POST_USERS, IUserProfile>;
+export type IPostUserProfileAction = PayloadAction<IUserProfileActionTypes.POST_USER_PROFILE, IUserProfile>;
 
 /**
- * @category UserProfile
+ * @category User Profile
  */
-export type IPutUserProfileAction = PayloadAction<IUserProfileActionTypes.PUT_USERS, IUserProfile>;
+export type IPutUserProfileAction = PayloadAction<IUserProfileActionTypes.PUT_USER_PROFILE, IUserProfile>;
 
 /**
- * @category UserProfile
+ * @category User Profile
  */
-export type IGetUserProfileAction = PayloadAction<IUserProfileActionTypes.GET_USER_PROFILE, IUserProfile>;
+export type IGetUserProfileDetailsAction = PayloadAction<IUserProfileActionTypes.GET_USER_PROFILE_DETAILS, IUserProfile>;
 
 /**
- * @category UserProfile
+ * @category User Profile
  */
-export type IGetUserProfileBySubAction = PayloadAction<IUserProfileActionTypes.GET_USER_BY_SUB, IUserProfile>;
+export type IGetUserProfileDetailsBySubAction = PayloadAction<IUserProfileActionTypes.GET_USER_PROFILE_DETAILS_BY_SUB, IUserProfile>;
 
 /**
- * @category UserProfile
+ * @category User Profile
  */
-export type IDeleteUserProfileAction = PayloadAction<IUserProfileActionTypes.DELETE_USER, IUserProfileState>;
+export type IGetUserProfileDetailsByIdAction = PayloadAction<IUserProfileActionTypes.GET_USER_PROFILE_DETAILS_BY_ID, IUserProfile>;
 
 /**
- * @category UserProfile
+ * @category User Profile
+ */
+export type IDisableUserProfileAction = PayloadAction<IUserProfileActionTypes.DISABLE_USER_PROFILE, IUserProfileState>;
+
+/**
+ * @category User Profile
  */
 export type ISignUpUserAction = PayloadAction<IUserProfileActionTypes.SIGNUP_USER, IUserProfile>;
 
 
 /**
- * @category UserProfile
+ * @category User Profile
  */
 export type IUserProfileActions = LogoutAction
   | IPostUserProfileAction 
   | IPutUserProfileAction 
-  | IGetUserProfileAction 
-  | IGetUserProfileBySubAction 
-  | IDeleteUserProfileAction
+  | IGetUserProfileDetailsAction 
+  | IGetUserProfileDetailsBySubAction 
+  | IGetUserProfileDetailsByIdAction
+  | IDisableUserProfileAction
   | ISignUpUserAction;
 
 
 
 /**
- * @category Group
+ * @category Awayto
  */
 export type IUuidGroups = {
   id?: string;
@@ -117,7 +126,7 @@ export type IUuidGroups = {
 };
 
 /**
- * @category Group
+ * @category Uuid Groups
  */
 export type IUuidGroupsState = Partial<IUuidGroups>;
 
@@ -129,19 +138,19 @@ export enum IUuidGroupsActionTypes {
 }
 
 /**
- * @category Group
+ * @category Uuid Groups
  */
 export type IPostUuidGroupsAction = PayloadAction<IUuidGroupsActionTypes.UUID_GROUPS, IUuidGroups>;
 
 /**
- * @category Group
+ * @category Uuid Groups
  */
 export type IUuidGroupsActions = IPostUuidGroupsAction;
 
 
 
 /**
- * @category Role
+ * @category Awayto
  */
 export type IUuidRoles = {
   id?: string;
@@ -150,12 +159,12 @@ export type IUuidRoles = {
 }
 
 /**
- * @category Role
+ * @category Uuid Roles
  */
 export type IUuidRolesState = Partial<IUuidRoles>;
 
 /**
- * @category Role
+ * @category Awayto
  */
 export type IManageUuidRoles = {
   roles?: IUuidRoles[];
@@ -170,11 +179,11 @@ export enum IUuidRolesActionTypes {
 }
 
 /**
- * @category Role
+ * @category Uuid Roles
  */
 export type IUuidRolesUserAction = PayloadAction<IUuidRolesActionTypes.UUID_ROLES, IUuidRolesState>;
 
 /**
- * @category Role
+ * @category Uuid Roles
  */
 export type IUuidRolesActions = IUuidRolesUserAction;

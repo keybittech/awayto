@@ -7,10 +7,10 @@ import PersonIcon from '@material-ui/icons/Person';
 import { DropFile, IUserProfile, IUserProfileActionTypes, useRedux, useDispatch, IUtilActionTypes, useApi, act, useComponents } from 'awayto';
 
 const { SET_SNACK, SET_THEME } = IUtilActionTypes;
-const { GET_USER_PROFILE } = IUserProfileActionTypes;
+const { GET_USER_PROFILE_DETAILS, POST_USER_PROFILE, PUT_USER_PROFILE } = IUserProfileActionTypes;
 
 export function Profile (props: IProps): JSX.Element {
-  const { classes = {} } = props;
+  const { classes } = props;
   
   const api = useApi();
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ export function Profile (props: IProps): JSX.Element {
   const maxFileSize = 1000000;
 
   useEffect(() => {
-    void api(GET_USER_PROFILE);
+    void api(GET_USER_PROFILE_DETAILS, true);
   }, []);
 
   useEffect(() => {
@@ -47,11 +47,9 @@ export function Profile (props: IProps): JSX.Element {
 
   const handleSubmit = () => {
     if (profile) {
-      // TODO Fix
-      // const payload = profile as IUserProfile;
-      // payload.id ? dispatch(putUsersAction(payload)) : dispatch(postUsersAction(payload));
+      void api(profile.id ? PUT_USER_PROFILE : POST_USER_PROFILE, true, profile);
+      dispatch(act(SET_SNACK, { snackType: 'success', snackOn: 'Profile updated!' }));
     }
-    dispatch(act(SET_SNACK, { snackType: 'success', snackOn: 'Profile updated!' }));
   }
 
   return <div>

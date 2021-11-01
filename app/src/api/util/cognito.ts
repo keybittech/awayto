@@ -3,28 +3,25 @@ import { AttributeType, ListUsersResponse, UserType, AdminCreateUserRequest, Adm
 
 import { IGroup, IRole, IUserProfile } from 'awayto';
 
-const getProvider = () =>
-  new AWS.CognitoIdentityServiceProvider({
-    apiVersion: '2016-04-18'
-  });
+const client = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18' });
 
 const UserPoolId = process.env.CognitoUserPoolId as string;
 
 const pool = { UserPoolId };
 
-export const getUserInfo = async (Username: string) => await getProvider().adminGetUser({ Username, ...pool }).promise();
+export const getUserInfo = async (Username: string) => await client.adminGetUser({ Username, ...pool }).promise();
 
 export const adminDisableUser = async (Username: string) =>
-  await getProvider().adminDisableUser({ Username, ...pool }).promise();
+  await client.adminDisableUser({ Username, ...pool }).promise();
 
 export const adminEnableUser = async (Username: string) =>
-  await getProvider().adminEnableUser({ Username, ...pool }).promise();
+  await client.adminEnableUser({ Username, ...pool }).promise();
 
 export const deleteEnableUser = async (Username: string) =>
-  await getProvider().adminEnableUser({ Username, ...pool }).promise();
+  await client.adminEnableUser({ Username, ...pool }).promise();
 
 // export const listUsers = async () =>
-//   await getProvider().listUsers({ ...pool }).promise();
+//   await client.listUsers({ ...pool }).promise();
 
 export const listUsers = async (params: ListUsersResponse = {}): Promise<ListUsersResponse> => {
   
@@ -33,7 +30,7 @@ export const listUsers = async (params: ListUsersResponse = {}): Promise<ListUse
 
   const listUserParams = { ...pool, ...(token ? { PaginationToken: token } : {}) };
 
-  const { Users: users, PaginationToken } = await getProvider().listUsers(listUserParams).promise();
+  const { Users: users, PaginationToken } = await client.listUsers(listUserParams).promise();
 
   if (users?.length) {
     
@@ -54,7 +51,7 @@ export const listUsers = async (params: ListUsersResponse = {}): Promise<ListUse
 }
 
 export const updateUserAdmin = async (Username: string) =>
-  await getProvider().adminUpdateUserAttributes({
+  await client.adminUpdateUserAttributes({
     UserAttributes: [
       {
         Name: 'custom:admin',
@@ -73,7 +70,7 @@ export const updateUserAttributesAdmin = async (Username: string, UserAttributes
   };
 
   try {
-    return getProvider().adminUpdateUserAttributes(params as AWS.CognitoIdentityServiceProvider.AdminUpdateUserAttributesRequest).promise();
+    return client.adminUpdateUserAttributes(params as AWS.CognitoIdentityServiceProvider.AdminUpdateUserAttributesRequest).promise();
   } catch (error) {
     throw error;
   }
@@ -111,7 +108,7 @@ export const adminCreateUser = async ({ username = '', email = '', password = ''
   }
 
   try {
-    return getProvider().adminCreateUser(params as AWS.CognitoIdentityServiceProvider.AdminCreateUserRequest).promise().then(response => {
+    return client.adminCreateUser(params as AWS.CognitoIdentityServiceProvider.AdminCreateUserRequest).promise().then(response => {
       if (!response.User)
         return false;
       return response.User;

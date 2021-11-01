@@ -139,18 +139,20 @@ const manageGroups: ApiModule = {
   },
 
   disable_manage_groups : {
-    path : 'GET/manage/groups/:id/disable',
+    path : 'PUT/manage/groups/disable',
     cmnd : async (props) => {
       try {
-        const { id } = props.event.pathParameters;
+        const groups = props.event.body as IGroup[];
 
-        await props.client.query(`
-          UPDATE groups
-          SET enabled = false
-          WHERE id = $1
-        `, [id]);
+        await asyncForEach(groups, async group => {
+          await props.client.query(`
+            UPDATE groups
+            SET enabled = false
+            WHERE id = $1
+          `, [group.id]);
+        });
 
-        return { id };
+        return groups;
         
       } catch (error) {
         throw error;

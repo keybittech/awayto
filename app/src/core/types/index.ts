@@ -1,4 +1,4 @@
-import React, { ComponentType } from 'react';
+import React, { FunctionComponent } from 'react';
 import { RouterState } from 'connected-react-router';
 import { RouteComponentProps } from 'react-router';
 import { Action, ReducersMapObject, Store } from 'redux';
@@ -8,7 +8,7 @@ import { CognitoUser } from '../cognito';
 
 declare global {
   /**
-   * @category Awayto
+   * @category Awayto Redux
    */
   interface ISharedState {
     components: IBaseComponents;
@@ -17,12 +17,12 @@ declare global {
   }
 
   /**
-   * @category Awayto
+   * @category Awayto Redux
    */
   type ISharedActions =  ICommonModuleActions | IManageModuleActions | IProfileModuleActions;
 
   /**
-   * @category Awayto
+   * @category Awayto React
    */
   interface IProps extends SafeRouteProps {
     classes: Record<string, string>;
@@ -35,83 +35,66 @@ type RouteProps = { [prop: string]: string }
 type SafeRouteProps = Omit<RouteComponentProps<RouteProps>, "staticContext">;
 
 /**
- * @category Awayto
+ * @category Awayto React
  */
-export type IBaseComponent = ComponentType<Partial<IProps>>
+export type IBaseComponent = FunctionComponent<IProps>
 
 /**
- * @category Awayto
+ * @category Awayto React
  */
 export type IBaseComponents = { [component: string]: IBaseComponent }
 
 /**
- * @category Awayto
+ * @category Awayto React
  */
 export type TempComponent = IBaseComponent | string | undefined
 
 /**
- * @category Awayto
+ * @category Awayto React
  */
 export type LazyComponentPromise = Promise<{ default: IBaseComponent }>
 
 /**
- * @category Awayto
- */
-export type IEmpty = undefined | null | void;
-
-/**
- * @category Awayto
+ * @category Awayto Redux
  */
 export type ILoadedState = ISharedState[keyof ISharedState];
 
 /**
- * @category Awayto
+ * @category Awayto Redux
  */
 export type IReducers = ReducersMapObject<ISharedState, ISharedActions>;
 
 /**
- * @category Awayto
+ * @category Awayto Redux
  */
 export type ILoadedReducers = Partial<IReducers>;
 
 /**
- * @category Awayto
+ * @category Action Types
  */
 export type IActionTypes = ISharedActionTypes[keyof ISharedActionTypes];
 
 /**
- * @category Awayto
+ * @category Awayto Redux
  */
 export type MetaAction<Type, Meta> = Action<Type> & {
   meta?: Meta;
 };
 
 /**
- * @category Awayto
+ * @category Awayto Redux
  */
 export type PayloadAction<Type, Payload, Meta = void> = MetaAction<Type, Meta> & {
   readonly payload: Payload;
 };
 
 /**
- * @category Action Types
- */
- export enum ILogoutActionTypes {
-   LOGOUT = "LOGOUT"
- }
-
-/**
- * @category Awayto
- */
-export type LogoutAction = PayloadAction<"LOGOUT", void>;
-
-/**
- * @category Awayto
+ * @category Awayto Redux
  */
 export type ThunkResult = ThunkAction<void, ISharedState, unknown | undefined, ISharedActions>
 
 /**
- * @category Awayto
+ * @category Awayto Redux
  */
 export type ThunkStore = Store<ISharedState, ISharedActions> & {
   dispatch: ThunkDispatch<ISharedState, undefined, ISharedActions>;

@@ -1,10 +1,9 @@
-import { LogoutAction } from 'awayto';
 import { LocationChangeAction } from 'connected-react-router';
 import { PayloadAction } from '.';
 
 declare global {
   /**
-   * @category Awayto
+   * @category Awayto Redux
    */
   interface ISharedState {
     util: IUtilState,
@@ -12,12 +11,12 @@ declare global {
   }
 
   /**
-   * @category Awayto
+   * @category Awayto Redux
    */
-  type ICommonModuleActions = IUtilActions | ILoginActions;
+  type ICommonModuleActions = IUtilActions | ILoginActions | ILogoutActions | IUuidNotesActions | IUuidFilesActions | IFileActions;
 
   /**
-   * @category Awayto
+   * @category Awayto Redux
    */
   interface ISharedActionTypes {
     util: IUtilActionTypes;
@@ -29,7 +28,7 @@ declare global {
 }
 
 /**
- * @category Util
+ * @category Awayto
  */
 export type IUtil = {
   action(): Promise<void>;
@@ -156,7 +155,7 @@ export type IUtilActions = LocationChangeAction
 
 
 /**
- * @category Login
+ * @category Awayto
  */
 export type ILogin = {
   bootstrapped: boolean;
@@ -231,9 +230,22 @@ export type ILoginActions = LogoutAction
   | IResetPasswordAction
   | IForcePassChangeAction;
 
+/**
+ * @category Action Types
+ */
+export enum ILogoutActionTypes {
+  LOGOUT = "LOGOUT"
+}
 
 /**
- * @category Notes
+* @category Logout
+*/
+export type LogoutAction = PayloadAction<"LOGOUT", void>;
+
+export type ILogoutActions = LogoutAction;
+
+/**
+ * @category Awayto
  */
 export type IUuidNotes = {
   id: string;
@@ -242,7 +254,7 @@ export type IUuidNotes = {
 }
 
 /**
- * @category Notes
+ * @category Uuid Notes
  */
 export type IUuidNotesState = Partial<IUuidNotes>;
 
@@ -250,22 +262,58 @@ export type IUuidNotesState = Partial<IUuidNotes>;
  * @category Action Types
  */
 export enum IUuidNotesActionTypes {
-  UUID_NOTES = "common/UUID_NOTES"
+  POST_UUID_NOTES = "POST/uuid_notes",
+  PUT_UUID_NOTES = "PUT/uuid_notes",
+  GET_UUID_NOTES = "GET/uuid_notes",
+  GET_UUID_NOTES_BY_ID = "GET/uuid_notes/:id",
+  DELETE_UUID_NOTES = "DELETE/uuid_notes/:id",
+  DISABLE_UUID_NOTES = "PUT/uuid_notes/disable"
 }
 
 /**
- * @category Notes
+ * @category Uuid Notes
  */
-export type IUuidNotesUserAction = PayloadAction<IUuidNotesActionTypes.UUID_NOTES, IUuidNotesState>;
+export type IPostUuidNotesAction = PayloadAction<IUuidNotesActionTypes.POST_UUID_NOTES, IUuidNotesState>;
 
 /**
- * @category Notes
+ * @category Uuid Notes
  */
-export type IUuidNotesActions = IUuidNotesUserAction;
+export type IPutUuidNotesAction = PayloadAction<IUuidNotesActionTypes.PUT_UUID_NOTES, IUuidNotesState>;
+
+/**
+ * @category Uuid Notes
+ */
+export type IGetUuidNotesAction = PayloadAction<IUuidNotesActionTypes.GET_UUID_NOTES, IUuidNotesState>;
+
+/**
+ * @category Uuid Notes
+ */
+export type IGetUuidNotesByIdAction = PayloadAction<IUuidNotesActionTypes.GET_UUID_NOTES_BY_ID, IUuidNotesState>;
+
+/**
+ * @category Uuid Notes
+ */
+export type IDeleteUuidNotesAction = PayloadAction<IUuidNotesActionTypes.DELETE_UUID_NOTES, IUuidNotesState>;
+
+/**
+ * @category Uuid Notes
+ */
+export type IDisableUuidNotesAction = PayloadAction<IUuidNotesActionTypes.DISABLE_UUID_NOTES, IUuidNotesState[]>;
+
+/**
+ * @category Uuid Notes
+ */
+export type IUuidNotesActions = ILogoutUserAction
+  | IPostUuidNotesAction
+  | IPutUuidNotesAction
+  | IGetUuidNotesAction
+  | IGetUuidNotesByIdAction
+  | IDeleteUuidNotesAction
+  | IDisableUuidNotesAction;
 
 
 /**
- * @category File
+ * @category Awayto
  */
 export type IUuidFiles = {
   id: string;
@@ -274,7 +322,7 @@ export type IUuidFiles = {
 }
 
 /**
- * @category File
+ * @category Uuid Files
  */
 export type IUuidFilesState = Partial<IUuidFiles>;
 
@@ -282,18 +330,54 @@ export type IUuidFilesState = Partial<IUuidFiles>;
  * @category Action Types
  */
 export enum IUuidFilesActionTypes {
-  UUID_FILES = "common/UUID_FILES"
+  POST_UUID_FILES = "POST/uuid_files",
+  PUT_UUID_FILES = "PUT/uuid_files",
+  GET_UUID_FILES = "GET/uuid_files",
+  GET_UUID_FILES_BY_ID = "GET/uuid_files/:id",
+  DELETE_UUID_FILES = "DELETE/uuid_files/:id",
+  DISABLE_UUID_FILES = "PUT/uuid_files/disable"
 }
 
 /**
- * @category File
+ * @category Uuid Files
  */
-export type IUuidFilesUserAction = PayloadAction<IUuidFilesActionTypes.UUID_FILES, IUuidFilesState>;
+export type IPostUuidFilesAction = PayloadAction<IUuidFilesActionTypes.POST_UUID_FILES, IUuidFilesState>;
 
 /**
- * @category File
+ * @category Uuid Files
  */
-export type IUuidFilesActions = IUuidFilesUserAction;
+export type IPutUuidFilesAction = PayloadAction<IUuidFilesActionTypes.PUT_UUID_FILES, IUuidFilesState>;
+
+/**
+ * @category Uuid Files
+ */
+export type IGetUuidFilesAction = PayloadAction<IUuidFilesActionTypes.GET_UUID_FILES, IUuidFilesState>;
+
+/**
+ * @category Uuid Files
+ */
+export type IGetUuidFilesByIdAction = PayloadAction<IUuidFilesActionTypes.GET_UUID_FILES_BY_ID, IUuidFilesState>;
+
+/**
+ * @category Uuid Files
+ */
+export type IDeleteUuidFilesAction = PayloadAction<IUuidFilesActionTypes.DELETE_UUID_FILES, IUuidFilesState>;
+
+/**
+ * @category Uuid Files
+ */
+export type IDisableUuidFilesAction = PayloadAction<IUuidFilesActionTypes.DISABLE_UUID_FILES, IUuidFilesState>;
+
+/**
+ * @category Uuid Files
+ */
+export type IUuidFilesActions = ILogoutUserAction
+  | IPostUuidFilesAction
+  | IPutUuidFilesAction
+  | IGetUuidFilesAction
+  | IGetUuidFilesByIdAction
+  | IDeleteUuidFilesAction
+  | IDisableUuidFilesAction;
 
 
 /**
@@ -315,15 +399,31 @@ export type IFileState = Partial<IFile>;
  * @category Action Types
  */
 export enum IFileActionTypes {
-  FILES = "common/FILES"
+  POST_FILES = "POST/files",
+  PUT_FILES = "PUT/files",
+  GET_FILES = "GET/files",
+  GET_FILES_BY_ID = "GET/files/:id",
+  DELETE_FILES = "DELETE/files/:id",
+  DISABLE_FILES = "PUT/files/disable"
 }
 
 /**
  * @category File
  */
-export type IFileUserAction = PayloadAction<IFileActionTypes.FILES, IFileState>;
+export type IPostFileAction = PayloadAction<IFileActionTypes.POST_FILES, IFileState>;
+export type IPutFileAction = PayloadAction<IFileActionTypes.PUT_FILES, IFileState>;
+export type IGetFileAction = PayloadAction<IFileActionTypes.GET_FILES, IFileState>;
+export type IGetFileByIdAction = PayloadAction<IFileActionTypes.GET_FILES_BY_ID, IFileState>;
+export type IDeleteFileAction = PayloadAction<IFileActionTypes.DELETE_FILES, IFileState>;
+export type IDisableFileAction = PayloadAction<IFileActionTypes.DISABLE_FILES, IFileState>;
 
 /**
  * @category File
  */
-export type IFileActions = IFileUserAction;
+export type IFileActions = ILogoutUserAction
+  | IPostFileAction
+  | IPutFileAction
+  | IGetFileAction
+  | IGetFileByIdAction
+  | IDeleteFileAction
+  | IDisableFileAction;

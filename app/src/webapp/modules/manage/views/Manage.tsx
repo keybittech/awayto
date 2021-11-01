@@ -2,17 +2,23 @@ import React from 'react';
 import { Button, Card, CardActions, CardContent, Grid, Typography } from '@material-ui/core';
 import { SiteRoles, useComponents } from 'awayto';
 
+declare global {
+  interface IProps {
+    view?: string;
+  }
+}
+
 export function Manage(props: IProps): JSX.Element {
   const { ManageUsers, ManageGroups, ManageRoles, ManageRoleActions, Secure } = useComponents();
 
   const menu = ['users', 'groups', 'roles', 'matrix'].map(comp =>
-    <Button key={`menu_${comp}`} style={comp == props.match?.params.component ? { textDecoration: 'underline' } : undefined} onClick={() => props.history.push(`/manage/${comp}`)}>
+    <Button key={`menu_${comp}`} style={comp == props.view ? { textDecoration: 'underline' } : undefined} onClick={() => props.history.push(`/manage/${comp}`)}>
       {comp}
     </Button>
   );
 
   const viewPage = () => {
-    switch (props.match?.params.component) {
+    switch (props.view) {
       case 'users':
         return <ManageUsers {...props} />
       case 'groups':

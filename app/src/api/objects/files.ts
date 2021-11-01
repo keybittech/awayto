@@ -109,7 +109,7 @@ const files: ApiModule = {
   },
 
   disable_files : {
-    path : 'PUT/files/:id/disable',
+    path : 'PUT/files/disable',
     cmnd : async (props) => {
       try {
         const { id } = props.event.pathParameters;

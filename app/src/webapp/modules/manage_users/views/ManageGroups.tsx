@@ -8,7 +8,7 @@ import { IGroup, IManageGroupsActionTypes, useRedux, useApi } from 'awayto';
 
 import ManageGroupModal from './ManageGroupModal';
 
-const { GET_MANAGE_GROUPS, DELETE_MANAGE_GROUPS } = IManageGroupsActionTypes;
+const { GET_MANAGE_GROUPS, DISABLE_MANAGE_GROUPS } = IManageGroupsActionTypes;
 
 export function ManageGroups (props: IProps): JSX.Element {
   const api = useApi();
@@ -42,7 +42,7 @@ export function ManageGroups (props: IProps): JSX.Element {
     return [
       ...actions,
       <IconButton key={'delete_group'} onClick={() => {
-        void api(DELETE_MANAGE_GROUPS, true, selected.map(u => ({ id: u.id })) as IGroup[]);
+        void api(DISABLE_MANAGE_GROUPS, true, selected.map(u => ({ id: u.id })) as IGroup[]);
         setToggle(!toggle);
       }}><DeleteIcon /></IconButton>
     ];
