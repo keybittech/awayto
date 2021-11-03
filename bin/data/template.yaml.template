@@ -142,6 +142,28 @@ Resources:
                   - authenticated
       Path: /
       Policies:
+        - PolicyName: ##id##S3BucketSelfAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: 'SelfListObjects'
+                Effect: Allow
+                Action: 's3:ListBucket'
+                Resource:
+                  - 'arn:aws:s3:::##id##-files'
+                Condition:
+                  StringLike: 
+                    's3:prefix': 
+                      - 'cognito/##id##/${cognito-identity.amazonaws.com:sub}'
+              - Sid: 'SelfCRUDObjects'
+                Effect: Allow
+                Action:
+                  - 's3:GetObject'
+                  - 's3:PutObject'
+                  - 's3:DeleteObject'
+                Resource:
+                  - 'arn:aws:s3:::##id##-files/cognito/##id##/${cognito-identity.amazonaws.com:sub}'
+                  - 'arn:aws:s3:::##id##-files/cognito/##id##/${cognito-identity.amazonaws.com:sub}/*'
         - PolicyName: ##id##ResourceApiAccess
           PolicyDocument:
             Version: 2012-10-17

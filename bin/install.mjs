@@ -11,7 +11,7 @@ import { RDSClient, waitUntilDBInstanceAvailable, ModifyDBInstanceCommand, Creat
 import { EC2Client, DescribeAvailabilityZonesCommand, AuthorizeSecurityGroupIngressCommand } from '@aws-sdk/client-ec2'
 import { SSMClient, PutParameterCommand } from '@aws-sdk/client-ssm';
 import { IAMClient, GetRoleCommand, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
-import { S3Client, CreateBucketCommand, PutObjectCommand, PutBucketWebsiteCommand, PutBucketPolicyCommand, waitUntilBucketExists } from '@aws-sdk/client-s3';
+import { S3Client, CreateBucketCommand, PutObjectCommand, PutBucketCorsCommand, PutBucketWebsiteCommand, PutBucketPolicyCommand, waitUntilBucketExists } from '@aws-sdk/client-s3';
 import { CloudFormationClient, waitUntilStackCreateComplete, CreateStackCommand, DescribeStacksCommand, ListStackResourcesCommand } from '@aws-sdk/client-cloudformation';
 import { LambdaClient, waitUntilFunctionUpdated, GetFunctionConfigurationCommand, UpdateFunctionConfigurationCommand, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CloudFrontClient, CreateDistributionCommand, CreateCloudFrontOriginAccessIdentityCommand, waitUntilDistributionDeployed, ListCloudFrontOriginAccessIdentitiesCommand } from '@aws-sdk/client-cloudfront';
@@ -63,12 +63,34 @@ export default async function () {
   const username = config.username;
   const password = config.password;
   const webBucket = id + '-webapp';
+  const lambdaBucket = id + '-lambda';
+  const fileBucket = id + '-files';
 
   console.log('== Beginning Awayto Install (~5 - 10 minutes): ' + id);
 
-  // Begin Distribution generation
+
+  // Create Bucket to store files and webapp
+  await s3Client.send(new CreateBucketCommand({ Bucket: fileBucket }));
   await s3Client.send(new CreateBucketCommand({ Bucket: webBucket }));
 
+  // Configure file bucket
+  await waitUntilBucketExists({ client: s3Client, maxWaitTime: 30 }, { Bucket: fileBucket });
+  
+  await s3Client.send(new PutBucketCorsCommand({
+    Bucket: fileBucket,
+    CORSConfiguration: {
+      CORSRules: [
+        {
+          AllowedHeaders: ["*"],
+          AllowedMethods: ["HEAD", "GET", "PUT", "POST", "DELETE"],
+          AllowedOrigins: ["*"],
+          ExposeHeaders: ["ETag"]
+        }
+      ]
+    }
+  }));
+
+  // Begin Distribution generation
   await waitUntilBucketExists({ client: s3Client, maxWaitTime: 30 }, { Bucket: webBucket });
 
   const oai = await clClient.send(new CreateCloudFrontOriginAccessIdentityCommand({
@@ -305,29 +327,29 @@ export default async function () {
   await replaceText(path.join(__dirname, 'data/template.yaml'), 'id', id);
   await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'id', id);
 
-  await replaceText(path.join(__dirname, 'data/template.yaml'), 'storageSite', `'s3://${id}-lambda/lambda.zip'`);
+  await replaceText(path.join(__dirname, 'data/template.yaml'), 'storageSite', `'s3://${lambdaBucket}/lambda.zip'`);
   await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'storageSite', `'./apipkg'`);
 
   // Create two S3 buckets and put src/api/scripts/lambda.zip in one:
   // s3://<some-name>-lambda/lambda.zip
   // s3://<some-name>-webapp
 
-  await s3Client.send(new CreateBucketCommand({ Bucket: id + '-lambda' }));
-  
+  await s3Client.send(new CreateBucketCommand({ Bucket: lambdaBucket }));
+
   await s3Client.send(new PutObjectCommand({
-    Bucket: id + '-lambda',
+    Bucket: lambdaBucket,
     Key: 'lambda.zip',
     Body: fs.readFileSync(path.join(__dirname, 'data/lambda.zip'))
   }));
 
   await s3Client.send(new PutObjectCommand({
-    Bucket: id + '-lambda',
+    Bucket: lambdaBucket,
     Key: 'template.yaml',
     Body: fs.readFileSync(path.join(__dirname, 'data/template.yaml'))
   }));
 
   await s3Client.send(new PutBucketPolicyCommand({
-    Bucket: id + '-webapp',
+    Bucket: webBucket,
     Policy: `{
       "Version": "2012-10-17",
       "Id": "PolicyForCloudFrontPrivateContent",
@@ -448,7 +470,7 @@ export default async function () {
   });
 
   if (!debug) {
-      
+
     try {
       console.log('Performing npm install.')
       child_process.execSync(`npm i`);
@@ -466,7 +488,7 @@ export default async function () {
 
     try {
       console.log('Syncing webapp to S3.')
-      child_process.execSync(`aws s3 sync ./build s3://${id + '-webapp'}`);
+      child_process.execSync(`aws s3 sync ./build s3://${webBucket}`);
     } catch (error) {
       console.log('webapp sync failed')
     }
@@ -487,8 +509,8 @@ export default async function () {
 
     output.on('close', async function () {
       if (!debug) {
-        child_process.execSync(`aws s3 cp ./lambda.zip s3://${id + '-lambda'}`);
-        child_process.execSync(`aws lambda update-function-code --function-name ${config.environment}-${region}-${id}Resource --region ${region} --s3-bucket ${id + '-lambda'} --s3-key lambda.zip`);
+        child_process.execSync(`aws s3 cp ./lambda.zip s3://${lambdaBucket}`);
+        child_process.execSync(`aws lambda update-function-code --function-name ${config.environment}-${region}-${id}Resource --region ${region} --s3-bucket ${lambdaBucket} --s3-key lambda.zip`);
       }
       child_process.execSync(`rm lambda.zip`);
 
