@@ -235,10 +235,8 @@ export interface ApiResponseBody {
 /**
  * @category Awayto
  */
-export interface DropFile {
-  preview?: string;
-  name?: string;
-  size?: number;
+export interface IPreviewFile extends File {
+  preview: string;
 }
 
 export * from './cognito';

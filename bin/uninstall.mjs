@@ -96,8 +96,15 @@ export default async function () {
         await s3Client.send(new DeleteObjectCommand({ Bucket: id + '-webapp', Key: c.Key }));
       })
 
+      const filesBucket = await s3Client.send(new ListObjectsCommand({ Bucket: id + '-files' }));
+
+      await asyncForEach(filesBucket.Contents, async c => {
+        await s3Client.send(new DeleteObjectCommand({ Bucket: id + '-files', Key: c.Key }));
+      })
+
       await s3Client.send(new DeleteBucketCommand({ Bucket: id + '-lambda' }));
       await s3Client.send(new DeleteBucketCommand({ Bucket: id + '-webapp' }));
+      await s3Client.send(new DeleteBucketCommand({ Bucket: id + '-files' }));
 
     } catch (error) {
       console.log('Failed to delete s3 buckets.', error);

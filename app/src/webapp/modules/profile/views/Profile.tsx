@@ -1,25 +1,39 @@
-import React, { useState, useEffect, createRef } from 'react';
-import Dropzone, { DropzoneRef } from 'react-dropzone';
+import React, { useState, useEffect } from 'react';
+import { useDropzone } from 'react-dropzone';
 import { Grid, Typography, Button, TextField, Avatar, CardActionArea, FormControlLabel, Switch } from '@material-ui/core';
 
 import PersonIcon from '@material-ui/icons/Person';
 
-import { DropFile, IUserProfile, IUserProfileActionTypes, useRedux, useDispatch, IUtilActionTypes, useApi, act, useComponents } from 'awayto';
+import { IUserProfile, IUserProfileActionTypes, IPreviewFile, useRedux, useDispatch, useCognitoUser, IUtilActionTypes, useApi, act, useComponents, FileStoreContext, AWSS3FileStoreStrategy } from 'awayto';
 
 const { SET_SNACK, SET_THEME } = IUtilActionTypes;
 const { GET_USER_PROFILE_DETAILS, POST_USER_PROFILE, PUT_USER_PROFILE } = IUserProfileActionTypes;
 
-export function Profile (props: IProps): JSX.Element {
+export function Profile(props: IProps): JSX.Element {
   const { classes } = props;
-  
+
+  const cu = useCognitoUser();
+
   const api = useApi();
   const dispatch = useDispatch();
+  const [file, setFile] = useState<IPreviewFile>();
+  const [ctx, setCtx] = useState<FileStoreContext>();
+
+  const { getRootProps, getInputProps } = useDropzone({
+    maxSize: 1000000,
+    maxFiles: 1,
+    accept: 'image/*',
+    onDrop: acceptedFiles => {
+      setFile(acceptedFiles.map(file => Object.assign(file, {
+        preview: URL.createObjectURL(file)
+      })).pop());
+    }
+  });
+
   // const login = useRedux(state => state.login);
   const util = useRedux(state => state.util);
   const user = useRedux(state => state.profile);
   const { AsyncAvatar } = useComponents();
-
-  const dropzoneRef = createRef<DropzoneRef>();
 
   const [profile, setProfile] = useState<Partial<IUserProfile>>({
     firstName: '',
@@ -28,12 +42,18 @@ export function Profile (props: IProps): JSX.Element {
     image: ''
   });
 
-  const [file, setFile] = useState<DropFile>();
-  const maxFileSize = 1000000;
 
   useEffect(() => {
-    void api(GET_USER_PROFILE_DETAILS, true);
+    cu.signInUserSession && setCtx(new FileStoreContext(new AWSS3FileStoreStrategy(cu)));
+  }, [cu.signInUserSession])
+
+  useEffect(() => {
+    // void api(GET_USER_PROFILE_DETAILS, true);
   }, []);
+
+  useEffect(() => () => {
+    file && URL.revokeObjectURL(file.preview);
+  }, [file]);
 
   useEffect(() => {
     if (user) setProfile({ ...profile, ...user });
@@ -45,11 +65,17 @@ export function Profile (props: IProps): JSX.Element {
     }
   }
 
-  const handleSubmit = () => {
-    if (profile) {
-      void api(profile.id ? PUT_USER_PROFILE : POST_USER_PROFILE, true, profile);
-      dispatch(act(SET_SNACK, { snackType: 'success', snackOn: 'Profile updated!' }));
+  const handleSubmit = async () => {
+    if (ctx && file) {
+      const location = await ctx.postFile(file, 'testkey.png');
+
+      console.log('i uploaded a file to', location);
     }
+
+    // if (profile) {
+    //   void api(profile.id ? PUT_USER_PROFILE : POST_USER_PROFILE, true, profile);
+    //   dispatch(act(SET_SNACK, { snackType: 'success', snackOn: 'Profile updated!' }));
+    // }
   }
 
   return <div>
@@ -77,31 +103,32 @@ export function Profile (props: IProps): JSX.Element {
               <Typography variant="h6">Image</Typography>
             </Grid>
             <Grid item>
-              <CardActionArea>
+              <CardActionArea style={{ padding: '12px' }}>
                 {!file && !profile.image ?
-
-                  <Dropzone ref={dropzoneRef} onDrop={(acceptedFiles, fileRejections) => {
-                    if (fileRejections.length && fileRejections[0].errors[0].message) {
-                      dispatch(act(SET_SNACK, { snackType: 'error', snackOn: 'File size is too big. Please select a file under 1MB.' }));
-                    } else {
-                      setFile(acceptedFiles.pop() as DropFile);
-                    }
-                  }} accept="image/*" maxSize={maxFileSize}>
-
-                    {({ getRootProps, getInputProps }) => (
-                      <Grid {...getRootProps} container direction="column" alignItems="center" justifyContent="space-evenly" style={{ flexGrow: 1 }} className={classes.dropzone}>
-                        <input {...getInputProps()} />
-                        <Avatar>
-                          <PersonIcon />
-                        </Avatar>
-                        <Typography variant="subtitle1">Click or drag and drop to add a profile pic.</Typography>
-                        <Typography variant="caption">Max size: 1MB</Typography>
-                      </Grid>
-                    )}
-                  </Dropzone> : <Grid container direction="column" alignItems="center" justifyContent="space-evenly" style={{ flexGrow: 1 }} className={classes.dropzone} onClick={deleteFile}>
-                    {profile.image && AsyncAvatar ? <AsyncAvatar {...props} image={profile.image} /> : file ? <Avatar src={file.preview} /> : <div />}
-                    <Typography variant="h6" style={{ wordBreak: 'break-all' }}>{profile.image ? "Current profile image." : file ? `${file.name || ''} added.` : ''}</Typography>
-                    <Typography variant="subtitle1">Click to remove, then submit.</Typography>
+                  <Grid {...getRootProps({ refKey: 'innerRef' })} container alignItems="center" direction="column">
+                    <input {...getInputProps()} />
+                    <Grid item>
+                      <Avatar>
+                        <PersonIcon />
+                      </Avatar>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="subtitle1">Click or drag and drop to add a profile pic.</Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="caption">Max size: 1MB</Typography>
+                    </Grid>
+                  </Grid> :
+                  <Grid onClick={deleteFile} container alignItems="center" direction="column">
+                    <Grid item>
+                      {profile.image ? <AsyncAvatar {...props} image={profile.image} /> : file ? <Avatar src={file.preview} /> : <div />}
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="h6" style={{ wordBreak: 'break-all' }}>{profile.image ? "Current profile image." : file ? `${file.name || ''} added.` : ''}</Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="subtitle1">To remove, click here then submit.</Typography>
+                    </Grid>
                   </Grid>
                 }
               </CardActionArea>
@@ -113,7 +140,7 @@ export function Profile (props: IProps): JSX.Element {
               <FormControlLabel
                 value="darkmode"
                 control={
-                  <Switch onClick={() => dispatch(act(SET_THEME, { theme: util.theme === 'dark' ? 'light' : 'dark'}))} checked={util.theme === 'dark'} color="primary" />
+                  <Switch onClick={() => dispatch(act(SET_THEME, { theme: util.theme === 'dark' ? 'light' : 'dark' }))} checked={util.theme === 'dark'} color="primary" />
                 }
                 label="Dark Mode"
                 labelPlacement="end"

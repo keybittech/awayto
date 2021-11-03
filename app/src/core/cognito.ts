@@ -22,6 +22,7 @@ import {
   ICognitoStorage
 } from './types';
 
+import { CognitoIdentityCredentials } from '@aws-sdk/credential-provider-cognito-identity';
 
 /**
  * @category Cognito
@@ -165,10 +166,15 @@ export class CognitoUser implements CognitoUserType {
   storage: ICognitoStorage;
   keyPrefix: string;
   userDataKey: string;
+  attributes: AttributeType[];
+  credentials: CognitoIdentityCredentials;
 
   constructor({ Username, Pool, Storage }: ICognitoUserData) {
     if (Username == null || Pool == null)
       throw new Error('Username and Pool information are required.');
+
+    this.attributes = [];
+    this.credentials = {} as CognitoIdentityCredentials;
 
     this.username = Username;
     this.pool = Pool;
@@ -182,6 +188,7 @@ export class CognitoUser implements CognitoUserType {
 
     this.keyPrefix = `CognitoIdentityServiceProvider.${this.pool.getClientId()}`;
     this.userDataKey = `${this.keyPrefix}.${this.username}.userData`;
+
   }
 
   cacheUserData(userData: Record<string, unknown>): void {

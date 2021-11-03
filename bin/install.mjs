@@ -400,6 +400,7 @@ export default async function () {
     functionName: resources[id + 'Resource'],
     cognitoUserPoolId: resources['CognitoUserPool'],
     cognitoClientId: resources['CognitoUserPoolClient'],
+    cognitoIdentityPoolId: resources['CognitoIdPool'],
     distributionId: distributionCmd.Distribution.Id,
     oaiId: oai.CloudFrontOriginAccessIdentity.Id,
     apiGatewayEndpoint: `https://${resources[id + 'ResourceApi']}.execute-api.${region}.amazonaws.com/${resources[id + 'ResourceApiStage']}/`,
@@ -601,7 +602,8 @@ export default async function () {
           "PGPORT": 5432,
           "PGUSER": config.username,
           "CognitoUserPoolId": awaytoConfig.cognitoUserPoolId,
-          "CognitoClientId": awaytoConfig.cognitoClientId
+          "CognitoClientId": awaytoConfig.cognitoClientId,
+          "CognitoIdentityPoolId": awaytoConfig.cognitoIdentityPoolId,
         }
 
         await asyncForEach(Object.keys(envJson), async k => {
