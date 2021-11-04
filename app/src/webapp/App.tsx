@@ -23,7 +23,7 @@ import { ILoginActionTypes, IUtilActionTypes, act, CognitoUserPool, useRedux, us
 import './App.css';
 import { ThemeProvider } from '@material-ui/styles';
 import { CssBaseline } from '@material-ui/core';
-import { darkTheme, lightTheme, styles } from './style';
+import { themes, styles } from './style';
 
 function Alert(props: AlertProps): JSX.Element {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -41,7 +41,7 @@ const App = (props: IProps): JSX.Element => {
 
   const { classes, history } = props;
 
-  const { Sidebar, ConfirmAction, Home, Profile, ChangeNewPassword, Login, Manage, SignUp, CompleteSignUp } = useComponents();
+  const { Sidebar, ConfirmAction, Home, Profile, ChangeNewPassword, Login, Manage, SignUp, CompleteSignUp, PickTheme } = useComponents();
 
   const dispatch = useDispatch();
   const login = useRedux(state => state.login);
@@ -69,7 +69,7 @@ const App = (props: IProps): JSX.Element => {
   }, []);
 
   return <>
-    <ThemeProvider theme={theme == 'light' ? lightTheme : darkTheme}>
+    <ThemeProvider theme={themes[theme || 'dark']}>
       <CssBaseline />
 
       {login.bootstrapped ? <>
@@ -163,21 +163,11 @@ const App = (props: IProps): JSX.Element => {
                 </Grid>
               </Grid>
             </Grid>
-
-            <div style={{ position: 'fixed', bottom: 0, right: 0 }}>
-              <FormControlLabel
-                value="darkmode"
-                control={
-                  <Toggle
-                    onClick={() => { dispatch(act(SET_THEME, { theme: theme === 'dark' ? 'light' : 'dark' })) }}
-                    checked={theme === 'dark'}
-                    color="primary"
-                  />
-                }
-                label="Dark Mode"
-                labelPlacement="end"
-              />
-            </div>
+            <Suspense fallback="">
+              <div style={{ position: 'fixed', bottom: 0, right: 0 }}>
+                <PickTheme {...props} showTitle={false} />
+              </div>
+            </Suspense>
           </main>
         }
         {!!snackOn && <Snackbar open={!!snackOn} autoHideDuration={6000} onClose={hideSnack}>

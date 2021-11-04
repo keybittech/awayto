@@ -4,14 +4,14 @@ import { Grid, Typography, Button, TextField, Avatar, CardActionArea, FormContro
 
 import PersonIcon from '@material-ui/icons/Person';
 
-import { IUserProfile, IUserProfileActionTypes, IPreviewFile, useRedux, useDispatch, useCognitoUser, IUtilActionTypes, useApi, act, useComponents, FileStoreContext, AWSS3FileStoreStrategy } from 'awayto';
+import { IUserProfile, IUserProfileActionTypes, IPreviewFile, useRedux, useDispatch, useCognitoUser, useApi, act, useComponents, FileStoreContext, AWSS3FileStoreStrategy } from 'awayto';
 
-const { SET_SNACK, SET_THEME } = IUtilActionTypes;
 const { GET_USER_PROFILE_DETAILS, POST_USER_PROFILE, PUT_USER_PROFILE } = IUserProfileActionTypes;
 
 export function Profile(props: IProps): JSX.Element {
   const { classes } = props;
 
+  const { AsyncAvatar, PickTheme } = useComponents();
   const cu = useCognitoUser();
 
   const api = useApi();
@@ -33,7 +33,6 @@ export function Profile(props: IProps): JSX.Element {
   // const login = useRedux(state => state.login);
   const util = useRedux(state => state.util);
   const user = useRedux(state => state.profile);
-  const { AsyncAvatar } = useComponents();
 
   const [profile, setProfile] = useState<Partial<IUserProfile>>({
     firstName: '',
@@ -95,6 +94,12 @@ export function Profile(props: IProps): JSX.Element {
             <Grid item>
               <TextField fullWidth id="email" label="Email" value={profile.email} name="email" onChange={e => setProfile({ ...profile, email: e.target.value })} />
             </Grid>
+            <Grid item>
+              <Typography variant="h6">Settings</Typography>
+            </Grid>
+            <Grid item>
+              <PickTheme {...props} />
+            </Grid>
           </Grid>
         </Grid>
         <Grid item>
@@ -132,19 +137,6 @@ export function Profile(props: IProps): JSX.Element {
                   </Grid>
                 }
               </CardActionArea>
-            </Grid>
-            <Grid item>
-              <Typography variant="h6">Settings</Typography>
-            </Grid>
-            <Grid item>
-              <FormControlLabel
-                value="darkmode"
-                control={
-                  <Switch onClick={() => dispatch(act(SET_THEME, { theme: util.theme === 'dark' ? 'light' : 'dark' }))} checked={util.theme === 'dark'} color="primary" />
-                }
-                label="Dark Mode"
-                labelPlacement="end"
-              />
             </Grid>
           </Grid>
         </Grid>

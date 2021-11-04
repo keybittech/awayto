@@ -19,6 +19,8 @@ export const styles = ({ mixins, spacing }: Theme): StyleRules => createStyles({
 
   menuText: { fontSize: '.75rem', margin: '0' },
 
+  colorBox: { width: '30px', height:'30px', display: 'block', margin: '12px', border: '1px solid #333', cursor: 'pointer', '&:hover': { opacity: .5 } },
+
   appBar: { width: `calc(100% - ${drawerWidth}px)`, marginLeft: drawerWidth, backgroundColor: '#666' },
   drawer: { width: drawerWidth },
   drawerPaper: {
@@ -57,9 +59,9 @@ const theme = {
       main: '#fff',
       light: '#fff',
       dark: '#121f31',
-      contrastText: '#000',
+      contrastText: '#aaa',
     },
-    secondary: { main: '#aaa' }
+    secondary: { main: '#009cc8' }
   },
 
   typography: {
@@ -70,6 +72,13 @@ const theme = {
   },
 
   overrides: {
+    // MuiDrawer: {
+    //   root :{
+    //     '& .MuiList-padding': {
+    //       paddingLeft: 'none !important'
+    //     }
+    //   }
+    // },
     MuiTableCell: {
       root: {
         padding: '4px 8px !important'
@@ -137,7 +146,7 @@ export const lightTheme = createTheme({
     ...theme.palette,
     type: 'light',
     primary: { main: '#000' }
-  },
+  }
 });
 
 /**
@@ -152,3 +161,44 @@ export const darkTheme = createTheme({
   },
   ...styles
 });
+
+/**
+ * @category Style
+ */
+export const blueTheme = createTheme({
+  ...theme,
+  palette: {
+    ...theme.palette,
+    primary: { main: '#000' },
+    secondary: { main: '#fff' }
+  },
+  overrides: {
+    ...theme.overrides,
+    ... {
+      MuiDrawer: {
+        paper: {
+          backgroundColor: '#009cc8'
+        },
+        root: {
+          '& .MuiTypography-root': {
+            color: '#fff'
+          },
+          '& .MuiSvgIcon-colorPrimary': {
+            color: '#fff'
+          },
+          '& .MuiSvgIcon-colorSecondary': {
+            color: '#aaa'
+          }
+        }
+      }
+    }
+  },
+  ...styles
+});
+
+
+export const themes: Record<string, Theme> = {
+  light: lightTheme,
+  dark: darkTheme,
+  blue: blueTheme
+}

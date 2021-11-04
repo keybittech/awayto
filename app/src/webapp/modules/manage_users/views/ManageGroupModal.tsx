@@ -124,7 +124,6 @@ export function ManageGroupModal ({
                         </Grid>
                         <Grid item xs style={{ wordBreak: 'break-all' }}>
                           <Typography style={{
-                            backgroundColor: 'rgb(38 42 43)',
                             padding: '2px 4px',
                             border: `1px solid #666`,
                             lineHeight: '1.15em'

@@ -1,7 +1,7 @@
 import Icon from '../../../img/kbt-icon.png';
 
 import React from 'react';
-import { Grid, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Grid, Drawer, List, ListItem, ListItemIcon, ListItemText, Button } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
@@ -41,9 +41,11 @@ export function Sidebar (props: IProps): JSX.Element {
       <Grid container style={{ height: '100vh' }} alignContent="space-between">
         <Grid item xs={12} style={{ marginTop: '20px' }}>
           <Grid container justifyContent="center">
-            <img src={Icon} alt="kbt-icon" className={classes.logo} />
+            <Button onClick={() => navigate('/')}>
+              <img src={Icon} alt="kbt-icon" className={classes.logo} />
+            </Button>
           </Grid>
-          <List>
+          <List component="nav">
             <ListItem className={classes.menuIcon} onClick={() => navigate('/home')} button key={'home'}>
               <ListItemIcon><VpnKeyIcon color={history.location.pathname === '/home' ? "secondary" : "primary"} /></ListItemIcon>
               <ListItemText classes={{ primary: classes.menuText }}>Home</ListItemText>
@@ -55,7 +57,7 @@ export function Sidebar (props: IProps): JSX.Element {
           </List>
         </Grid>
         <Grid item xs={12}>
-          <List>
+          <List component="nav">
             <ListItem className={classes.menuIcon} onClick={() => navigate('/profile')} button key={'profile'}>
               <ListItemIcon><AccountBoxIcon color={history.location.pathname === '/profile' ? "secondary" : "primary"} /></ListItemIcon>
               <ListItemText classes={{ primary: classes.menuText }}>Profile</ListItemText>
