@@ -22,7 +22,7 @@ export class AWSS3FileStoreStrategy implements FileStoreStrategy {
       region: Region,
       apiVersion: '2006-03-01',
       credentials: cognitoUser.credentials
-    });;
+    });
   }
 
   public async postFile(file: File, name: string) {
