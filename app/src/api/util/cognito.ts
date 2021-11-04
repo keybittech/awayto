@@ -120,27 +120,6 @@ export const adminCreateUser = async ({ username = '', email = '', password = ''
   }
 }
 
-const sets = [
-  'abcdefghijklmnopqrstuvwxyz',
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-  '0123456789',
-  '!@#$%^&*'
-];
-
-const passwordGen = (): string => {
-  const chars = 4;
-  const pass: string[] = [];
-
-  sets.forEach(set => {
-    for (let i = 0, n = set.length; i < chars; i++) {
-      const seed = Math.floor(Math.random() * n);
-      pass.splice(seed + i * chars, 0, set.charAt(seed));
-    }
-  });
-
-  return pass.join('');
-}
-
 export function parseGroupString(value: string) {
   const groups = [] as IGroup[];
   value?.split(';').forEach(set => {

@@ -18,7 +18,7 @@ import Backdrop from '@material-ui/core/Backdrop'
 import AppBar from '@material-ui/core/AppBar'
 import Link from '@material-ui/core/Link'
 
-import { ILoginActionTypes, IUtilActionTypes, act, CognitoUserPool, useRedux, useDispatch, useComponents } from 'awayto';
+import { ILoginActionTypes, IUtilActionTypes, act, CognitoUserPool, useRedux, useAct, useComponents } from 'awayto';
 
 import './App.css';
 import { ThemeProvider } from '@material-ui/styles';
@@ -43,13 +43,13 @@ const App = (props: IProps): JSX.Element => {
 
   const { Sidebar, ConfirmAction, Home, Profile, ChangeNewPassword, Login, Manage, SignUp, CompleteSignUp, PickTheme } = useComponents();
 
-  const dispatch = useDispatch();
+  const act = useAct();
   const login = useRedux(state => state.login);
   const util = useRedux(state => state.util);
   const { snackOn, snackType, isLoading, loadingMessage, theme, hasSignUpCode } = util;
 
   const hideSnack = (): void => {
-    dispatch(act(SET_SNACK, { snackOn: '' }));
+    act(SET_SNACK, { snackOn: '' });
   }
 
   useEffect(() => {
@@ -62,9 +62,9 @@ const App = (props: IProps): JSX.Element => {
     const cognitoUser = pool.getCurrentUser();
 
     if (!cognitoUser)
-      dispatch(act(AUTH_DENIAL, { bootstrapped }));
+      act(AUTH_DENIAL, { bootstrapped });
     else
-      dispatch(act(AUTH_SUCCESS, { bootstrapped, username: cognitoUser.getUsername() }))
+      act(AUTH_SUCCESS, { bootstrapped, username: cognitoUser.getUsername() });
 
   }, []);
 

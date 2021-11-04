@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
 
 import { ApiResponseBody, CallApi, IActionTypes, IUtilActionTypes, IManageUsersActionTypes, IManageGroupsActionTypes, IManageRolesActionTypes, IUserProfileActionTypes } from '../types';
-import { act } from '../actions';
-import { useDispatch } from './useDispatch';
+import { useAct } from './useAct';
 import { CognitoUserPool } from '../cognito';
 import { HttpResponse } from '@aws-sdk/types';
 import routeMatch, { RouteMatch } from 'route-match';
@@ -84,10 +83,10 @@ const {
  * 
  * @category Hooks
  */
-export function useApi(): <T = unknown>(actionType: IActionTypes, load?: boolean, body?: T, meta?: void) => Promise<unknown> {
-  const dispatch = useDispatch();
+export function useApi(): <T = unknown>(actionType: IActionTypes, load?: boolean, body?: T, meta?: unknown) => Promise<unknown> {
+  const act = useAct();
 
-  const func = useCallback(async <T = unknown>(actionType: IActionTypes, load?: boolean, body?: T, meta?: void) => {
+  const func = useCallback(async <T = unknown>(actionType: IActionTypes, load?: boolean, body?: T, meta?: unknown) => {
     
     if (!UserPoolId || !ClientId)
       throw new Error('Configuration error: userPoolId missing during useApi.');
@@ -102,7 +101,7 @@ export function useApi(): <T = unknown>(actionType: IActionTypes, load?: boolean
     const method = methodAndPath[0];
     let path = methodAndPath[1];
 
-    if (load) dispatch(act(START_LOADING, { isLoading: true }));
+    if (load) act(START_LOADING, { isLoading: true });
     
     if (method.toLowerCase() == 'get' && body && Object.keys(body).length) {
       // Get the key of the enum from ApiActions based on the path (actionType)
@@ -120,14 +119,14 @@ export function useApi(): <T = unknown>(actionType: IActionTypes, load?: boolean
       });
 
       const responseBody = JSON.parse(response.body ? response.body : '{}') as T;
-      dispatch(act(actionType || API_SUCCESS, responseBody, meta));
+      act(actionType || API_SUCCESS, responseBody, meta);
       return responseBody;
       
     } catch (error) { 
-      dispatch(act(SET_SNACK, { snackType: 'error', snackOn: 'Critical API error. Check network activity or report to system administrator.' }));
-      dispatch(act(API_ERROR, { error: 'Critical API error. Check network activity or report to system administrator.' }));
+      act(SET_SNACK, { snackType: 'error', snackOn: 'Critical API error. Check network activity or report to system administrator.' });
+      act(API_ERROR, { error: 'Critical API error. Check network activity or report to system administrator.' });
     } finally {
-      if (load) dispatch(act(STOP_LOADING, { isLoading: false }));
+      if (load) act(STOP_LOADING, { isLoading: false });
     }
 
   }, [])

@@ -12,7 +12,7 @@ import CardActions from '@material-ui/core/CardActions'
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, useDispatch, act, cognitoPoolSignUp } from 'awayto';
+import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, useAct, cognitoPoolSignUp } from 'awayto';
 
 const { SIGNUP_USER } = IUserProfileActionTypes;
 const { HAS_CODE } = IUtilActionTypes;
@@ -26,7 +26,7 @@ declare global {
 export function SignUp(props: IProps): JSX.Element {
   const { signUpButton = false } = props;
 
-  const dispatch = useDispatch();
+  const act = useAct();
   const [confirmPassword, setConfirmPassword] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
@@ -49,8 +49,8 @@ export function SignUp(props: IProps): JSX.Element {
 
           profile.signedUp = true;
 
-          dispatch(act(SIGNUP_USER, profile as IUserProfile));
-          dispatch(act(HAS_CODE, { hasSignUpCode: true }))
+          act(SIGNUP_USER, profile as IUserProfile);
+          act(HAS_CODE, { hasSignUpCode: true })
         }}>
 
           <Card>
@@ -106,7 +106,7 @@ export function SignUp(props: IProps): JSX.Element {
                     <Button onClick={() => props.history.push('/')} color="primary">Back</Button>
                   </Grid>
                   <Grid item>
-                    <Button onClick={() => dispatch(act(HAS_CODE, { hasSignUpCode: true }))} color="primary">I have a code</Button>
+                    <Button onClick={() => act(HAS_CODE, { hasSignUpCode: true })} color="primary">I have a code</Button>
                     <Button type="submit" color="primary">Create</Button>
                   </Grid>
                 </Grid>

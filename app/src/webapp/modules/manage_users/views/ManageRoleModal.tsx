@@ -1,18 +1,22 @@
 import React, { useState } from "react";
 import { Card, CardContent, Grid, Typography, TextField, CardActions, Button } from "@material-ui/core";
 
-import { act, IManageRolesActionTypes, IRole, IUtilActionTypes, useApi, useDispatch } from "awayto";
+import { IManageRolesActionTypes, IRole, IUtilActionTypes, useApi, useAct } from "awayto";
 import { useCallback } from "react";
 
 const { POST_MANAGE_ROLES, PUT_MANAGE_ROLES } = IManageRolesActionTypes;
+const { SET_SNACK } = IUtilActionTypes;
 
-export function ManageRoleModal ({
-  editRole,
-  closeModal = () => { return; }
-}: IProps & { editRole?: IRole }): JSX.Element {
+declare global {
+  interface IProps {
+    editRole?: IRole;
+  }
+}
+
+export function ManageRoleModal ({ editRole, closeModal }: IProps): JSX.Element {
 
   const api = useApi();
-  const dispatch = useDispatch();
+  const act = useAct();
   const [role, setRole] = useState<Partial<IRole>>({
     name: '',
     ...editRole
@@ -22,13 +26,15 @@ export function ManageRoleModal ({
     const { id, name } = role;
 
     if (!name) {
-      dispatch(act(IUtilActionTypes.SET_SNACK, {snackType: 'error', snackOn: 'Groups must have a name.' }));
+      act(SET_SNACK, {snackType: 'error', snackOn: 'Groups must have a name.' });
       return;
     }
 
     void api(id ? PUT_MANAGE_ROLES : POST_MANAGE_ROLES, true, role);
-
-    closeModal();
+    
+    if (closeModal)
+      closeModal();
+      
   }, [role]);
 
   return <>

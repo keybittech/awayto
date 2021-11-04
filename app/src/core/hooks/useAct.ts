@@ -7,10 +7,10 @@ import { IActionTypes } from '../types';
  * 
  * @category Hooks
  */
-export function useAct(): (actionType: IActionTypes, state: ILoadedState) => void {
+export function useAct(): (actionType: IActionTypes, state: ILoadedState, meta?: unknown) => void {
   const dispatch = useDispatch();
-  return (actionType: IActionTypes, state: ILoadedState) => {
-    dispatch(act(actionType, state));
+  return (actionType: IActionTypes, state: ILoadedState, meta?: unknown) => {
+    dispatch(act(actionType, state, meta));
   };
 }
 

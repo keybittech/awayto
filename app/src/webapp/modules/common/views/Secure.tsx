@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ReactElement } from 'react';
-import { SiteRoles, getUserPool, getAuthorization, act, useDispatch, IUtilActionTypes, ILogoutActionTypes } from 'awayto';
+import { SiteRoles, getUserPool, getAuthorization, act, useAct, IUtilActionTypes, ILogoutActionTypes } from 'awayto';
 
 const { SET_SNACK } = IUtilActionTypes;
 const { LOGOUT } = ILogoutActionTypes;
@@ -18,47 +18,39 @@ export function Secure ({ contentGroupRoles = SiteRoles.ADMIN, disable, inclusiv
   const [hasGroup, setHasGroup] = useState<boolean>();
   const [hasRole, setHasRole] = useState<boolean>();
 
-  const dispatch = useDispatch();
+  const act = useAct();
 
   useEffect(() => {
+    let ignore = false;
     async function getUser() {
       const pool = getUserPool();
       const cognitoUser = pool.getCurrentUser();
       if (cognitoUser) {
         try {
           await cognitoUser.getSession();
-
           const attributes = await cognitoUser.getUserAttributes();
-          const userGroupRoles = attributes.find(a => a.Name == 'custom:admin')?.Value as string;
-  
-          const { hasGroup, hasRole } = getAuthorization(userGroupRoles, contentGroupRoles);
-  
-          setHasGroup(hasGroup);
-          setHasRole(hasRole);
+
+          if (!ignore) {
+            const userGroupRoles = attributes.find(a => a.Name == 'custom:admin')?.Value as string;
+    
+            const { hasGroup, hasRole } = getAuthorization(userGroupRoles, contentGroupRoles);
+    
+            setHasGroup(hasGroup);
+            setHasRole(hasRole);
+          }
         } catch (error) {
-          dispatch(act(SET_SNACK, { snackType: 'error', snackOn: 'Could not validate session. Please log back in.' }));
-          dispatch(act(LOGOUT, null));
-          history.push('/');
+          if (!ignore) {
+            act(SET_SNACK, { snackType: 'error', snackOn: 'Could not validate session. Please log back in.' });
+            act(LOGOUT, {});
+            history.push('/');
+          }
         }
-
-        // const userGroups = parseGroupString(groupRoles); //custom:admin
-        // const contentGroups = parseGroupString(contentGroupRoles); //customGroupRoles string
-
-        // contentGroups.forEach(cg => {
-        //   const userGroup = userGroups.find(ug => ug.name == cg.name);
-
-        //   if (userGroup) {
-        //     setHasGroup(true)
-
-        //     cg.roles.forEach(cgr => {
-        //       if (userGroup.roles.map(ugr => ugr.name).includes(cgr.name))
-        //         setHasRole(true);
-        //     })
-        //   }
-        // })
       }
     }
     void getUser();
+    return () => {
+      ignore = true;
+    }
   }, [])
 
   const showContent = disable || inclusive ? hasRole : hasGroup;

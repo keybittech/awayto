@@ -11,7 +11,7 @@ export const setStore = (newStore: ThunkStore): void => {
 
 /**
  * 
- * This will soon be overtaken by a useAction.
+ * Deprecated: Use the `useAct` hook instead!
  * 
  * Typical dispatch.
  * 
@@ -20,6 +20,7 @@ export const setStore = (newStore: ThunkStore): void => {
  * dispatch(act(...));
  * ```
  * 
+ * @deprecated
  * @category Hooks
  */
 export const useDispatch = (): ThunkDispatch<ISharedState, undefined, AnyAction> => dispatch<typeof store.dispatch>();

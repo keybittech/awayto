@@ -158,6 +158,7 @@ export class CognitoUserPool implements CognitoUserPoolType {
  * @category Cognito
  */
 export class CognitoUser implements CognitoUserType {
+  isLoggedIn: boolean;
   username: string;
   pool: CognitoUserPoolType;
   client: CognitoIdentityProviderClient;
@@ -181,6 +182,7 @@ export class CognitoUser implements CognitoUserType {
 
     this.client = Pool.client;
 
+    this.isLoggedIn = false;
     this.signInUserSession = undefined;
     this.authenticationFlowType = 'USER_SRP_AUTH';
 
@@ -456,4 +458,25 @@ export const cognitoPoolSignUp = async (username: string, password: string, emai
     }
   ];
   await getUserPool().signUp(username, password, userAttributes);
+}
+
+const sets = [
+  'abcdefghijklmnopqrstuvwxyz',
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+  '0123456789',
+  '!@#$%^&*'
+];
+
+export const passwordGen = (): string => {
+  const chars = 4;
+  const pass: string[] = [];
+
+  sets.forEach(set => {
+    for (let i = 0, n = set.length; i < chars; i++) {
+      const seed = Math.floor(Math.random() * n);
+      pass.splice(seed + i * chars, 0, set.charAt(seed));
+    }
+  });
+
+  return pass.join('');
 }

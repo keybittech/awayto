@@ -1,17 +1,21 @@
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { DialogContent, Grid, Typography, TextField, DialogActions, Button, FormHelperText, FormControl, CircularProgress, InputLabel, Input, InputAdornment, Select, MenuItem, DialogTitle } from "@material-ui/core";
 
-import { IGroup, IUserProfile, IManageUsersActionTypes, IChangeEvent, IManageGroupsActionTypes, useApi, act, IUtilActionTypes, useDispatch, useRedux } from "awayto";
+import { IGroup, IUserProfile, IManageUsersActionTypes, IChangeEvent, IManageGroupsActionTypes, useApi, IUtilActionTypes, useAct, useRedux, passwordGen } from "awayto";
 
 const { PUT_MANAGE_USERS, POST_MANAGE_USERS, GET_MANAGE_USERS_BY_ID, POST_MANAGE_USERS_SUB, POST_MANAGE_USERS_APP_ACCT } = IManageUsersActionTypes;
 const { GET_MANAGE_GROUPS } = IManageGroupsActionTypes;
+const { SET_SNACK } = IUtilActionTypes;
 
-export function ManageUserModal({
-  editUser,
-  closeModal = () => { return; }
-}: IProps & { editUser?: IUserProfile }): JSX.Element {
+declare global {
+  interface IProps {
+    editUser?: IUserProfile;
+  }
+}
+
+export function ManageUserModal({ editUser, closeModal }: IProps): JSX.Element {
   const api = useApi();
-  const dispatch = useDispatch();
+  const act = useAct();
   const { groups } = useRedux(state => state.manageGroups);
   const [password, setPassword] = useState('');
   const [groupIds, setGroupIds] = useState<string[]>([]);
@@ -52,7 +56,7 @@ export function ManageUserModal({
       const groupRoleKeys = Object.keys(userGroupRoles);
 
       if (!groupRoleKeys.length)
-        return dispatch(act(IUtilActionTypes.SET_SNACK, { snackType: 'error', snackOn: 'Group roles must be assigned.' }));
+        return act(SET_SNACK, { snackType: 'error', snackOn: 'Group roles must be assigned.' });
 
       user.groups = groupRoleKeys // { "g1": [...], "g2": [...] } => ["g1", "g2"];
         .reduce((memo, key) => {
@@ -79,31 +83,16 @@ export function ManageUserModal({
       // Add user to application db if needed no user.id
       if (!id)
         user = await api(sub ? POST_MANAGE_USERS_APP_ACCT : POST_MANAGE_USERS, true, user) as IUserProfile;
-
-      closeModal();
+      
+      if (closeModal)
+        closeModal();
     }
 
     void submitUser();
   }, [profile, password, groups, userGroupRoles]);
 
-  const passwordGen = useCallback(() => {
-    const sets = [
-      'abcdefghijklmnopqrstuvwxyz',
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-      '0123456789',
-      '!@#$%^&*'
-    ];
-    const chars = 4;
-    const pass: string[] = [];
-
-    sets.forEach(set => {
-      for (let i = 0, n = set.length; i < chars; i++) {
-        const seed = Math.floor(Math.random() * n);
-        pass.splice(seed + i * chars, 0, set.charAt(seed));
-      }
-    });
-
-    setPassword(pass.join(''));
+  const passwordGenerator = useCallback(() => {
+    setPassword(passwordGen());
   }, []);
 
   const groupSelectComp = useMemo(() => {
@@ -191,7 +180,7 @@ export function ManageUserModal({
                   <Input type="text" id="password" aria-describedby="password" value={password} onChange={handlePassword}
                     endAdornment={
                       <InputAdornment position="end">
-                        <Button onClick={passwordGen} style={{ backgroundColor: 'transparent' }}>Generate</Button>
+                        <Button onClick={passwordGenerator} style={{ backgroundColor: 'transparent' }}>Generate</Button>
                       </InputAdornment>
                     }
                   />

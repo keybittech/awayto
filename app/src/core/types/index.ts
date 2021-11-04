@@ -26,7 +26,7 @@ declare global {
    */
   interface IProps extends SafeRouteProps {
     classes: Record<string, string>;
-    closeModal?: () => void;
+    closeModal?(): void;
     // [prop: string]: SiteRoles | ReactElement | SafeRouteProps[keyof SafeRouteProps] | undefined | boolean | string | number | ILoadedState | (() => void);
   }
 }

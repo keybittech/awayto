@@ -2,10 +2,11 @@ import React, { useState, FormEvent } from 'react';
 import { Button, Grid, Typography, TextField } from '@material-ui/core';
 
 // import { useAppSelector } from '../../../hooks';
+import { useRedux } from 'awayto';
 
 export function ChangeNewPassword (): JSX.Element {
 
-  // const login = useAppSelector(state => state.login);
+  const login = useRedux(state => state.login);
 
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -16,10 +17,10 @@ export function ChangeNewPassword (): JSX.Element {
     
     // if (login && login.cognitoUser && login.authenticator) {
     //   login.authenticator.onSuccess = function () {
-        // export const completeLoginPasswordChange = (): ThunkResult => () => {
-        //   store.dispatch(createPayloadAction(ILoginActionTypes.FORCE_PASS_CHANGE_SUCCESS, { newPassRequired: false }));
-        //   store.dispatch(createPayloadAction(IUtilActionTypes.SET_SNACK, { snackType: 'success', snackOn: 'Password reset!' }))
-        // }
+    //     export const completeLoginPasswordChange = (): ThunkResult => () => {
+    //       store.dispatch(createPayloadAction(ILoginActionTypes.FORCE_PASS_CHANGE_SUCCESS, { newPassRequired: false }));
+    //       store.dispatch(createPayloadAction(IUtilActionTypes.SET_SNACK, { snackType: 'success', snackOn: 'Password reset!' }))
+    //     }
     //     dispatch(completeLoginPasswordChange());
     //   }
     //   login.authenticator.onFailure = () => {

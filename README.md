@@ -90,7 +90,30 @@ In the future, if you want get access to new or updated tooling offered by Awayt
 Type reference can be found [here](https://awayto.dev/docs/modules.html). Notable functionalities are described below. We're always trying to think of and develop new tools for developers. If you have an idea for something you want to use or see in the platform, or need help with something,  [Discord](https://discord.gg/KzpcTrn5DQ).
 
 ### Hooks
-There are a few hooks offered out of the box, core to the Awayto UI design experience.
+There are a few hooks offered out of the box, core to the Awayto UI design experience. (Awayto exports React's `useState` for convenience.)
+
+### useRedux
+Hook into the fully typed redux store. Access your redux state using this hook.
+
+```ts
+import { useRedux } from 'awayto';
+
+const profile = useRedux(state => state.profile); // e.g. returns an [IUserProfile](https://awayto.dev/docs/modules/core.html#iuserprofile)
+```
+
+### useAct
+
+`useAct` is a wrapper for dispatching actions. Give it an [IActionTypes](https://awayto.dev/docs/modules.html#iactiontypes), a loader boolean, and the action payload if necessary.
+
+```ts
+import { useAct, IUtilActions } from 'awayto';
+
+const { SET_SNACK } = IUtilActions;
+
+const act = useAct();
+
+act(SET_SNACK, { snackOn: 'Success!', snackType: 'success' }); // e.g. send a notification to the toast popup component
+```
 
 #### useApi
 The `useApi` hook provides type-bound api functionality. By passing in a [IActionTypes](https://awayto.dev/docs/modules.html#iactiontypes) (e.g. [IUtilActionTypes](https://awayto.dev/docs/enums/iutilactiontypes.html), [IManageUsersActionTypes](https://awayto.dev/docs/enums/imanageusersactiontypes.html), etc...) we can control the structure of the api request, and more easily handle it on the backend.
@@ -121,7 +144,9 @@ import { useCognitoUser } from 'awayto';
 
 const cognitoUser = useCognitoUser();
 
-cognitoUser.getSession();
+await cognitoUser.getSession();
+
+cognito.isLoggedIn == true
 ```
 
 ### useComponents
@@ -139,45 +164,6 @@ function ParentComponent(props: IProps): JSX.Element {
   return <SomeComponent {...props} />;
 
 }
-```
-
-### useDispatch
-This will soon be overtaken by a `useAction` hook.
-
-Typical dispatch.
-
-```ts
-import { useDispatch } from 'awayto';
-
-const dispatch = useDispatch();
-
-dispatch(act(...));
-```
-
-### useRedux
-Typical typed redux store hook. Awayto exports `useState` for convenience.
-
-```ts
-import { useRedux, useState } from 'awayto';
-
-const profile = useRedux(state => state.profile);
-const modifications = useState<IUserProfile>({ ...profile });
-```
-
-### act
-Act is used to call Redux actions. This will be converted to a hook.
-
-```ts
-import { act, IUtilActions } from 'awayto';
-
-const { SET_SNACK } = IUtilActions;
-
-const snack = {
- snackType: 'error',
- snackOn: 'Please log back in.'
-};
-
-act(SET_SNACK, snack);
 ```
 
 ## Contributing

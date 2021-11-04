@@ -15,7 +15,7 @@ import CardContent from '@material-ui/core/CardContent'
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-import { act, ILoginActionTypes, cognitoSSRPLogin, useRedux, useDispatch, useComponents, IUtilActionTypes } from 'awayto';
+import { act, ILoginActionTypes, cognitoSSRPLogin, useRedux, useAct, useComponents, IUtilActionTypes } from 'awayto';
 
 const { RESET_PASSWORD, LOGIN_USER, AUTH_DENIAL } = ILoginActionTypes;
 const { SET_SNACK, START_LOADING, STOP_LOADING } = IUtilActionTypes;
@@ -23,7 +23,7 @@ const { SET_SNACK, START_LOADING, STOP_LOADING } = IUtilActionTypes;
 export function Login(props: IProps): JSX.Element {
   // const { classes = {} } = props;
   const { SignUp } = useComponents();
-  const dispatch = useDispatch();
+  const act = useAct();
   const login = useRedux(state => state.login);
 
   const [showPass, setShowPass] = useState(false);
@@ -32,19 +32,19 @@ export function Login(props: IProps): JSX.Element {
 
   const submitForm = useCallback(async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
-    dispatch(act(START_LOADING, { isLoading: true }));
+    act(START_LOADING, { isLoading: true });
     try {
       const ChallengeName = await cognitoSSRPLogin(username, password);
       if (ChallengeName)
-        dispatch(act(RESET_PASSWORD, { newPassRequired: true }));
+        act(RESET_PASSWORD, { newPassRequired: true });
       else
-        dispatch(act(LOGIN_USER, { username }));
+        act(LOGIN_USER, { username });
     } catch (error) {
       const { message } = error as Error;
-      dispatch(act(SET_SNACK, { snackType: 'error', snackOn: `Error while submitting login form: ${message}` }))
-      dispatch(act(AUTH_DENIAL, { error: message }));
+      act(SET_SNACK, { snackType: 'error', snackOn: `Error while submitting login form: ${message}` })
+      act(AUTH_DENIAL, { error: message });
     } finally {
-      dispatch(act(STOP_LOADING, { isLoading: false }));
+      act(STOP_LOADING, { isLoading: false });
     }
   }, [username, password]);
 

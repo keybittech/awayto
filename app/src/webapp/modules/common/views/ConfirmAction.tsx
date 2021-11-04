@@ -1,11 +1,13 @@
 import React from 'react';
 import { Button, Card, CardContent, CardActions, CardActionArea, Typography, Grid, Dialog } from '@material-ui/core';
 
-import { useRedux, useDispatch, IUtilActionTypes, act } from 'awayto';
+import { useRedux, useAct, IUtilActionTypes } from 'awayto';
+
+const { CLOSE_CONFIRM } = IUtilActionTypes;
 
 export function ConfirmAction (): JSX.Element {
 
-  const dispatch = useDispatch();
+  const act = useAct();
   const util = useRedux(state => state.util);
 
   return <>
@@ -18,7 +20,7 @@ export function ConfirmAction (): JSX.Element {
           <CardActionArea onClick={async () => {
             if (util.action)
               await util.action();
-            dispatch(act(IUtilActionTypes.CLOSE_CONFIRM, { isConfirming: false }));
+            act(CLOSE_CONFIRM, { isConfirming: false });
           }}>
             <CardContent>
               <Grid container direction="column" alignItems="center" justifyContent="space-evenly">
@@ -28,7 +30,7 @@ export function ConfirmAction (): JSX.Element {
             </CardContent>
           </CardActionArea>
           <CardActions>
-            <Button onClick={() => { dispatch(act(IUtilActionTypes.CLOSE_CONFIRM, { isConfirming: false })) }}>Cancel</Button>
+            <Button onClick={() => { act(CLOSE_CONFIRM, { isConfirming: false }) }}>Cancel</Button>
           </CardActions>
         </Card>
       </Dialog>

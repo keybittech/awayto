@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Grid, Button, TextField, Typography } from '@material-ui/core';
 
-import { useDispatch, useRedux, IUtilActionTypes, act, getUserPool, CognitoUser } from 'awayto';
+import { useAct, useRedux, IUtilActionTypes, getUserPool, CognitoUser } from 'awayto';
 
 const { SET_SNACK, HAS_CODE } = IUtilActionTypes;
 
 export function CompleteSignUp (props: IProps): JSX.Element {
 
-  const dispatch = useDispatch();
+  const act = useAct();
   const user = useRedux(state => state.profile);
 
   const [code, setCode] = useState('');
@@ -26,11 +26,11 @@ export function CompleteSignUp (props: IProps): JSX.Element {
 
       cognitoUser.confirmSignUp(code, false)
         .then(() => {
-          dispatch(act(SET_SNACK, { snackType: 'success', snackOn: 'User confirmed! You may now log in.' }));
-          dispatch(act(HAS_CODE, { hasSignUpCode: false }))
+          act(SET_SNACK, { snackType: 'success', snackOn: 'User confirmed! You may now log in.' });
+          act(HAS_CODE, { hasSignUpCode: false });
           props.history.push('/');
         }).catch(err => {
-          dispatch(act(SET_SNACK, { snackType: 'info', snackOn: err as string }));
+          act(SET_SNACK, { snackType: 'info', snackOn: err as string });
         });
     }}>
       <Grid container direction="column" alignItems="center" spacing={5}>
@@ -48,7 +48,7 @@ export function CompleteSignUp (props: IProps): JSX.Element {
 
         <Grid item style={{ width: '100%' }} xs={user.signedUp ? 6 : 12}>
           <Grid container justifyContent="space-between">
-            <Button onClick={() => dispatch(act(HAS_CODE, { hasSignUpCode: false }))} color="primary">Back</Button>
+            <Button onClick={() => act(HAS_CODE, { hasSignUpCode: false })} color="primary">Back</Button>
             <Button type="submit" color="primary">Submit Code</Button>
           </Grid>
         </Grid>

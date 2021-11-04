@@ -40,6 +40,8 @@ export function useCognitoUser(): CognitoUser {
 
       await user.getSession();
 
+      console.log('attempting to login')
+      user.isLoggedIn = true;
       user.attributes = await user.getUserAttributes();
 
       if (IdentityPoolId && user.signInUserSession) {

@@ -21,6 +21,7 @@ declare global {
   interface ISharedActionTypes {
     util: IUtilActionTypes;
     login: ILoginActionTypes;
+    logout: ILogoutActionTypes;
     uuidNotes: IUuidNotesActionTypes;
     uuidFiles: IUuidFilesActionTypes;
     file: IFileActionTypes;
@@ -230,6 +231,12 @@ export type ILoginActions = LogoutAction
   | IResetPasswordAction
   | IForcePassChangeAction;
 
+
+/**
+* @category Logout
+*/
+export type ILogout = Record<string, unknown>
+
 /**
  * @category Action Types
  */
@@ -240,7 +247,7 @@ export enum ILogoutActionTypes {
 /**
 * @category Logout
 */
-export type LogoutAction = PayloadAction<"LOGOUT", void>;
+export type LogoutAction = PayloadAction<"LOGOUT", ILogout>;
 
 export type ILogoutActions = LogoutAction;
 

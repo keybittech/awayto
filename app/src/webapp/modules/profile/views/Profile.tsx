@@ -4,7 +4,7 @@ import { Grid, Typography, Button, TextField, Avatar, CardActionArea, FormContro
 
 import PersonIcon from '@material-ui/icons/Person';
 
-import { IUserProfile, IUserProfileActionTypes, IPreviewFile, useRedux, useDispatch, useCognitoUser, useApi, act, useComponents, FileStoreContext, AWSS3FileStoreStrategy } from 'awayto';
+import { IUserProfile, IUserProfileActionTypes, IPreviewFile, useRedux, useCognitoUser, useApi, useAct, useComponents, FileStoreContext, AWSS3FileStoreStrategy } from 'awayto';
 
 const { GET_USER_PROFILE_DETAILS, POST_USER_PROFILE, PUT_USER_PROFILE } = IUserProfileActionTypes;
 
@@ -12,12 +12,12 @@ export function Profile(props: IProps): JSX.Element {
   const { classes } = props;
 
   const { AsyncAvatar, PickTheme } = useComponents();
-  const cu = useCognitoUser();
+  const cognitoUser = useCognitoUser();
 
   const api = useApi();
-  const dispatch = useDispatch();
+  const act = useAct();
   const [file, setFile] = useState<IPreviewFile>();
-  const [ctx, setCtx] = useState<FileStoreContext>();
+  const [fileStore, setFileStore] = useState<FileStoreContext>();
 
   const { getRootProps, getInputProps } = useDropzone({
     maxSize: 1000000,
@@ -43,8 +43,8 @@ export function Profile(props: IProps): JSX.Element {
 
 
   useEffect(() => {
-    cu.signInUserSession && setCtx(new FileStoreContext(new AWSS3FileStoreStrategy(cu)));
-  }, [cu.signInUserSession])
+    cognitoUser.signInUserSession && setFileStore(new FileStoreContext(new AWSS3FileStoreStrategy(cognitoUser)));
+  }, [cognitoUser.signInUserSession])
 
   useEffect(() => {
     // void api(GET_USER_PROFILE_DETAILS, true);
@@ -65,15 +65,15 @@ export function Profile(props: IProps): JSX.Element {
   }
 
   const handleSubmit = async () => {
-    if (ctx && file) {
-      const location = await ctx.postFile(file, 'testkey.png');
+    if (fileStore && file) {
+      const location = await fileStore.postFile(file, 'testkey.png');
 
       console.log('i uploaded a file to', location);
     }
 
     // if (profile) {
     //   void api(profile.id ? PUT_USER_PROFILE : POST_USER_PROFILE, true, profile);
-    //   dispatch(act(SET_SNACK, { snackType: 'success', snackOn: 'Profile updated!' }));
+    //   act(SET_SNACK, { snackType: 'success', snackOn: 'Profile updated!' });
     // }
   }
 
