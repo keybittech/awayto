@@ -72,13 +72,16 @@ const theme = {
   },
 
   overrides: {
-    // MuiDrawer: {
-    //   root :{
-    //     '& .MuiList-padding': {
-    //       paddingLeft: 'none !important'
-    //     }
-    //   }
-    // },
+    MuiDrawer: {
+      paper: {
+        '& .MuiList-padding': {
+          paddingLeft: 'unset'
+        },
+        '& .MuiListItem-button': {
+          paddingLeft: '16px'
+        }
+      }
+    },
     MuiTableCell: {
       root: {
         padding: '4px 8px !important'
@@ -177,6 +180,7 @@ export const blueTheme = createTheme({
     ... {
       MuiDrawer: {
         paper: {
+          ...theme.overrides.MuiDrawer.paper,
           backgroundColor: '#009cc8'
         },
         root: {
