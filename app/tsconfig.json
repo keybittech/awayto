@@ -3,6 +3,9 @@
   "include": [
     "src"
   ],
+  "exclude": [
+    "src/api"
+  ],
   "compilerOptions": {
     "target": "es2017",
     "lib": [

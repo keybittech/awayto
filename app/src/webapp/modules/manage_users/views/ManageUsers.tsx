@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import DataTable from 'react-data-table-component';
+import DataTable, { IDataTableColumn }  from 'react-data-table-component';
 import moment from 'moment';
 import { Dialog, IconButton, Button, Typography, CircularProgress, Checkbox } from '@material-ui/core';
 import CreateIcon from '@material-ui/icons/Create';
@@ -24,15 +24,13 @@ export function ManageUsers(props: IProps): JSX.Element {
   const updateSelections = useCallback((state: { selectedRows: IUserProfile[] }) => setSelected(state.selectedRows), []);
 
   const columns = useMemo(() => [
-    {
-      name: 'Username', selector: 'username', format: (row: IUserProfile) =>
-        <Typography>{row.username} {row.locked && (<LockIcon fontSize="small" />)}</Typography>
-    },
+    { name: '', grow: 'unset', minWidth: '48px', cell: (user: IUserProfile) => user.locked ? <LockIcon /> : <LockOpenIcon /> },
+    { name: 'Username', selector: 'username' },
     { name: 'First Name', selector: 'firstName' },
     { name: 'Last Name', selector: 'lastName' },
     { name: 'Group', cell: (user: IUserProfile) => user.groups ? user.groups.map(r => r.name).join(', ') : '' },
     { name: 'Created', cell: (user: IUserProfile) => moment(user.createdOn).fromNow() },
-  ], undefined)
+  ] as IDataTableColumn<IUserProfile>[], undefined)
 
   const actions = useMemo(() => {
     const { length } = selected;
@@ -49,11 +47,11 @@ export function ManageUsers(props: IProps): JSX.Element {
     return [
       ...actions,
       <IconButton key={'lock_user'} onClick={() => {
-        void api(LOCK_MANAGE_USERS, true, selected.map(u => ({ id: u.id })) as IUserProfile[]);
+        void api(LOCK_MANAGE_USERS, true, selected.map(u => ({ username: u.username })));
         setToggle(!toggle);
       }}><LockIcon /></IconButton>,
       <IconButton key={'unlock_user'} onClick={() => {
-        void api(UNLOCK_MANAGE_USERS, true, selected.map<string>(u => u.id));
+        void api(UNLOCK_MANAGE_USERS, true, selected.map(u => ({ username: u.username })));
         setToggle(!toggle);
       }}><LockOpenIcon /></IconButton>,
     ];

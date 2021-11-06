@@ -1,5 +1,5 @@
 import { UserType, AttributeType } from '@aws-sdk/client-cognito-identity-provider';
-import { ApiModule, IUserProfile } from 'awayto';
+import { ApiModule, IUserProfile, SiteRoles } from 'awayto';
 import { adminCreateUser, adminDisableUser, adminEnableUser, getUserInfo, parseGroupString, parseGroupArray, updateUserAttributesAdmin, listUsers, attachCognitoInfoToUser } from "../util/cognito";
 import { asyncForEach } from "../util/db";
 import usersApi from './users';
@@ -88,7 +88,8 @@ const manageUsers: ApiModule = {
             createdOn: u.UserCreateDate?.toISOString(),
             groups: parseGroupString(u.Attributes?.find(a => a.Name == 'custom:admin')?.Value as string),
             sub: u.Attributes?.find(a => a.Name == 'sub')?.Value as string,
-            email: u.Attributes?.find(a => a.Name == 'email')?.Value as string
+            email: u.Attributes?.find(a => a.Name == 'email')?.Value as string,
+            locked: !u.Enabled
           } as IUserProfile;
         }) || [];
 
@@ -195,19 +196,20 @@ const manageUsers: ApiModule = {
   lock_manage_users: {
     path: 'PUT/manage/users/lock',
     cmnd: async (props) => {
-      const ids = props.event.body as string[];
+      const profiles = props.event.body as IUserProfile[];
       try {
-        await asyncForEach<string>(ids, async (id) => {
-          const profile = await props.client.query<IUserProfile>(`
+        await asyncForEach<IUserProfile>(profiles, async (profile) => {
+
+          console.log('profile', profile);
+          const result = await props.client.query<IUserProfile>(`
             UPDATE users
             SET locked = true
-            WHERE id = $1
-            RETURNING username;
-          `, [id])
-          await adminDisableUser(profile.rows[0].username);
+            WHERE username = $1;
+          `, [profile.username])
+          await adminDisableUser(profile.username);
         });
 
-        return true;
+        return profiles;
       } catch (error) {
         throw error;
       }
@@ -218,19 +220,18 @@ const manageUsers: ApiModule = {
     path: 'PUT/manage/users/unlock',
     cmnd: async (props) => {
       try {
-        const ids = props.event.body as string[];
+        const profiles = props.event.body as IUserProfile[];
 
-        await asyncForEach(ids, async (id: string) => {
-          const profile = await props.client.query<IUserProfile>(`
+        await asyncForEach(profiles, async (profile) => {
+          await props.client.query<IUserProfile>(`
             UPDATE users
             SET locked = false
-            WHERE id = $1
-            RETURNING username;
-          `, [id])
-          await adminEnableUser(profile.rows[0].username);
+            WHERE username = $1;
+          `, [profile.username])
+          await adminEnableUser(profile.username);
         });
 
-        return true;
+        return profiles;
       } catch (error) {
         throw error;
       }

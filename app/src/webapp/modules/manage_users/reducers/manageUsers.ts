@@ -57,9 +57,8 @@ function reduceLockState(state: IManageUsersState, action: ILockManageUsersActio
   const { users } = state;
   if (users) {
     action.payload.forEach(user => {
-      const u = users.find(u => u.id == user.id);
-      if (u)
-        u.locked = locked;
+      const u = users.find(u => u.username == user.username);
+      if (u) u.locked = locked;
     })
   }
   return { ...state, ...{ users: Object.assign(state.users, users) } };

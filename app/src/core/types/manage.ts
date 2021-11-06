@@ -134,7 +134,7 @@ export type IPutManageUsersAction = PayloadAction<IManageUsersActionTypes.PUT_MA
 /**
  * @category Manage Users
  */
-export type ILockManageUsersAction = PayloadAction<IManageUsersActionTypes.LOCK_MANAGE_USERS, IUserProfile[]>;
+export type ILockManageUsersAction = PayloadAction<IManageUsersActionTypes.LOCK_MANAGE_USERS, Partial<IUserProfile>[]>;
 
 /**
  * @category Manage Users
