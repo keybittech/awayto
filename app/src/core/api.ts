@@ -3,8 +3,6 @@ class ErrorType extends Error {
     super(message); 
     Object.setPrototypeOf(this, new.target.prototype);
   }
-
-
 }
 
 export default { ErrorType }

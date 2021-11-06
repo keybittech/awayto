@@ -166,6 +166,26 @@ function ParentComponent(props: IProps): JSX.Element {
 }
 ```
 
+### useFileStore
+ `useFileStore` is used to access various types of pre-determined file stores. All stores allow CRUD operations for user-bound files. Internally default instantiates {@link AWSS3FileStoreStrategy}, but you can also pass a {@link FileStoreStrategies} to `useFileStore` for other supported stores.
+ 
+ ```ts
+ import { useFileStore } from 'awayto';
+ 
+ const files = useFileStore();
+ 
+ const file: File = ....
+ const fileName: string = '...';
+ 
+ // Make sure the filestore has connected
+ if (files)
+  await files.post(file, fileName)
+ 
+ ```
+
+
+
+
 ## Contributing
 
 We are happy to have people help with the project whether it be code, feedback, or other. Join our [Discord](https://discord.gg/KzpcTrn5DQ) to learn about the project, meet other members in the community, and get involved.

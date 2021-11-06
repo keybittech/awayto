@@ -12,3 +12,4 @@ export { useComponents, components } from './hooks/useComponents';
 export { useCognitoUser } from './hooks/useCognitoUser';
 export { useApi, registerApi } from './hooks/useApi';
 export { useAct } from './hooks/useAct';
+export { useFileStore } from './hooks/useFileStore';

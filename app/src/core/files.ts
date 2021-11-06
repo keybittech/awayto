@@ -1,15 +1,13 @@
-import fs from 'fs';
-
 export interface FileStoreStrategy {
-  postFile(file: File, name: string): Promise<string>;
-  putFile(file: File, name: string): Promise<string>;
-  getFile(id: string): Promise<string>;
-  deleteFile(id: string): Promise<string>;
+  post(file: File): Promise<string>;
+  put(file: File): Promise<string>;
+  get(id: string): Promise<string>;
+  delete(id: string): Promise<string>;
 }
 
 export enum FileStoreStrategies {
-  FILE_SYSTEM = "file_system",
-  AWS_S3 = "aws_s3"
+  FILE_SYSTEM = "fs",
+  AWS_S3 = "aws"
 }
 
 export class FileStoreContext {
@@ -20,37 +18,40 @@ export class FileStoreContext {
     this.strategy = strategy;
   }
 
-  public async postFile(file: File, name: string) {
-    return await this.strategy.postFile(file, name);
+  public async post(file: File) {
+    return await this.strategy.post(file);
   }
 
-  public async putFile(file: File, name: string) {
-    return await this.strategy.putFile(file, name);
+  public async put(file: File) {
+    return await this.strategy.put(file);
   }
 
-  public async getFile(id: string) {
-    return await this.strategy.getFile(id);
+  public async get(id: string) {
+    return await this.strategy.get(id);
   }
 
-  public async deleteFile(id: string) {
-    return await this.strategy.deleteFile(id);
+  public async delete(id: string) {
+    return await this.strategy.delete(id);
   }
 }
 
 export class FileSystemFileStoreStrategy implements FileStoreStrategy {
-  public async postFile(file: File, name: string) {
+  public async post(file: File) {
     await new Promise(() => { return 'stub' });
     return '';
   }
-  public async putFile(file: File, name: string) {
+
+  public async put(file: File) {
     await new Promise(() => { return 'stub' });
     return '';
   }
-  public async getFile(id: string) {
+
+  public async get(id: string) {
     await new Promise(() => { return 'stub' });
     return '';
   }
-  public async deleteFile(id: string) {
+
+  public async delete(id: string) {
     await new Promise(() => { return 'stub' });
     return '';
   }

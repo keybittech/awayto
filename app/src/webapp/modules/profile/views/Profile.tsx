@@ -1,39 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Grid, Typography, Button, TextField, Avatar, CardActionArea, FormControlLabel, Switch } from '@material-ui/core';
+import { Grid, Typography, Button, TextField, Avatar, CardActionArea } from '@material-ui/core';
 
 import PersonIcon from '@material-ui/icons/Person';
 
-import { IUserProfile, IUserProfileActionTypes, IPreviewFile, useRedux, useCognitoUser, useApi, useAct, useComponents, FileStoreContext, AWSS3FileStoreStrategy } from 'awayto';
+import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, IPreviewFile, useRedux, useApi, useAct, useComponents, useFileStore } from 'awayto';
 
+const { SET_SNACK } = IUtilActionTypes;
 const { GET_USER_PROFILE_DETAILS, POST_USER_PROFILE, PUT_USER_PROFILE } = IUserProfileActionTypes;
 
 export function Profile(props: IProps): JSX.Element {
   const { classes } = props;
 
-  const { AsyncAvatar, PickTheme } = useComponents();
-  const cognitoUser = useCognitoUser();
-
   const api = useApi();
   const act = useAct();
-  const [file, setFile] = useState<IPreviewFile>();
-  const [fileStore, setFileStore] = useState<FileStoreContext>();
+  const fileStore = useFileStore();
+  const { AsyncAvatar, PickTheme } = useComponents();
 
-  const { getRootProps, getInputProps } = useDropzone({
-    maxSize: 1000000,
-    maxFiles: 1,
-    accept: 'image/*',
-    onDrop: acceptedFiles => {
-      setFile(acceptedFiles.map(file => Object.assign(file, {
-        preview: URL.createObjectURL(file)
-      })).pop());
-    }
-  });
-
-  // const login = useRedux(state => state.login);
   const util = useRedux(state => state.util);
   const user = useRedux(state => state.profile);
 
+  const [file, setFile] = useState<IPreviewFile>();
   const [profile, setProfile] = useState<Partial<IUserProfile>>({
     firstName: '',
     lastName: '',
@@ -41,17 +28,21 @@ export function Profile(props: IProps): JSX.Element {
     image: ''
   });
 
+  const { getRootProps, getInputProps } = useDropzone({
+    maxSize: 1000000,
+    maxFiles: 1,
+    accept: 'image/*',
+    onDrop: acceptedFiles => {
+      setFile(acceptedFiles.map(file => Object.assign(file, { preview: URL.createObjectURL(file) })).pop());
+    }
+  });
 
   useEffect(() => {
-    cognitoUser.signInUserSession && setFileStore(new FileStoreContext(new AWSS3FileStoreStrategy(cognitoUser)));
-  }, [cognitoUser.signInUserSession])
-
-  useEffect(() => {
-    // void api(GET_USER_PROFILE_DETAILS, true);
+    void api(GET_USER_PROFILE_DETAILS, true);
   }, []);
 
   useEffect(() => () => {
-    file && URL.revokeObjectURL(file.preview);
+    if (file) URL.revokeObjectURL(file.preview);
   }, [file]);
 
   useEffect(() => {
@@ -59,22 +50,18 @@ export function Profile(props: IProps): JSX.Element {
   }, [user]);
 
   const deleteFile = () => {
-    if (file) {
-      setFile(undefined);
-    }
+    const { image, ...rest } = profile;
+    setProfile(rest);
+    setFile(undefined);
   }
 
   const handleSubmit = async () => {
-    if (fileStore && file) {
-      const location = await fileStore.postFile(file, 'testkey.png');
-
-      console.log('i uploaded a file to', location);
+    if (file) {
+      profile.image = await fileStore?.put(file);
     }
-
-    // if (profile) {
-    //   void api(profile.id ? PUT_USER_PROFILE : POST_USER_PROFILE, true, profile);
-    //   act(SET_SNACK, { snackType: 'success', snackOn: 'Profile updated!' });
-    // }
+    
+    void api(profile.id ? PUT_USER_PROFILE : POST_USER_PROFILE, true, profile);
+    act(SET_SNACK, { snackType: 'success', snackOn: 'Profile updated!' });
   }
 
   return <div>

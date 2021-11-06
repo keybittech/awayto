@@ -83,7 +83,7 @@
     "start": "react-app-rewired start",
     "start-stack": "npm-run-all -p watch-api start-local start-api ",
     "start-local": "react-app-rewired start --local",
-    "start-api": "sam local start-api -t ./template.sam.yaml -n ./env.json -p 3001 --host localhost",
+    "start-api": "sam local start-api -t ./template.sam.yaml -n ./env.json -p 3001 --host localhost --warm-containers EAGER",
     "watch-api": "webpack --config api.webpack.js --watch",
     "build-web": "react-app-rewired build",
     "build-api": "webpack --config api.webpack.js",

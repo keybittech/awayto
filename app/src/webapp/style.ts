@@ -61,7 +61,7 @@ const theme = {
       dark: '#121f31',
       contrastText: '#aaa',
     },
-    secondary: { main: '#009cc8' }
+    secondary: { main: '#121f31' }
   },
 
   typography: {
@@ -160,7 +160,8 @@ export const darkTheme = createTheme({
   palette: {
     ...theme.palette,
     type: 'dark',
-    primary: { main: '#fff' }
+    primary: { main: '#fff' },
+    secondary: { main: '#009cc8' }
   },
   ...styles
 });
@@ -172,8 +173,7 @@ export const blueTheme = createTheme({
   ...theme,
   palette: {
     ...theme.palette,
-    primary: { main: '#000' },
-    secondary: { main: '#fff' }
+    primary: { main: '#000' }
   },
   overrides: {
     ...theme.overrides,
@@ -191,7 +191,7 @@ export const blueTheme = createTheme({
             color: '#fff'
           },
           '& .MuiSvgIcon-colorSecondary': {
-            color: '#aaa'
+            color: '#121f31'
           }
         }
       }

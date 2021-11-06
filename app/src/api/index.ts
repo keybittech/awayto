@@ -19,7 +19,7 @@ import ManageGroups from './objects/manage_groups';
 import ManageUsers from './objects/manage_users';
 import auditRequest from './util/auditor';
 import authorize from './util/auth';
-import { ApiEvent, ApiModule, ApiModulet, ILoadedState } from 'awayto';
+import { ApiEvent, ApiModulet, ILoadedState } from 'awayto';
 
 const Objects = Object.assign(
   Deploy,
@@ -98,38 +98,22 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
     event.pathParameters = pathMatch._params;
 
     try {
-      !dev && await auditRequest({ event, context, client });
+      await auditRequest({ event, context, client });
     } catch (error) { console.log('ERROR AUDITING REQUEST, are you deploying the db?', error) }
-    
+
     const response = await Objects[pathMatch._route].cmnd({ event, context, client });
 
-    if (response === false) {
+    if (!response) 
       return errCallback(400, "400_BAD_REQUEST"); // Return 400 BAD REQUEST
-    } else {
-      const payload = {
-        statusCode: 200,
-        body: JSON.stringify(response),
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json"
-        }
-      }
 
-      if (dev) {
-        signUp ? 
-        context.succeed(event) : 
-        callback(null, {
-          statusCode: 200,
-          body: JSON.stringify(payload),
-          headers: { "Access-Control-Allow-Origin": "*" }
-        }); // Return 200 SUCCESS
-      } else {
-        return payload
+    return {
+      statusCode: 200,
+      body: JSON.stringify(response),
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json"
       }
-
-      // Uncomment for local testing
-      // signUp ? context.succeed(event) : callback(null, { statusCode: 200, body: JSON.stringify(response) });
-    }
+    };
 
   } catch (error) {
     console.log('====== CRITICAL ERROR:', error)
@@ -146,11 +130,6 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
       errCallback(500, `500_INTERNAL_SERVER_ERROR ${error as string}`); // Return 500 INTERNAL SERVER ERROR
     }
     
-    // callback(JSON.stringify({
-    //   errorType: 'Internal Server Error',
-    //   httpStatus: 500,
-    //   message: error.message
-    // }));
   } finally {
     if (client)
       client.release();

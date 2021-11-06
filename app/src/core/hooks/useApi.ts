@@ -118,7 +118,7 @@ export function useApi(): <T = unknown>(actionType: IActionTypes, load?: boolean
         cognitoUser
       });
 
-      const responseBody = JSON.parse(response.body ? response.body : '{}') as T;
+      const responseBody = ('string' === typeof response.body ? JSON.parse(response.body) : response) as T;
       act(actionType || API_SUCCESS, responseBody, meta);
       return responseBody;
       

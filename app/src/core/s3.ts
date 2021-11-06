@@ -1,4 +1,5 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { CognitoUser, FileStoreStrategy } from 'awayto';
 
@@ -10,7 +11,6 @@ const {
 } = process.env as { [prop: string]: string };
 
 export class AWSS3FileStoreStrategy implements FileStoreStrategy {
-
   private cognitoUser: CognitoUser;
   private client: S3Client;
   private bucket: string;
@@ -25,67 +25,43 @@ export class AWSS3FileStoreStrategy implements FileStoreStrategy {
     });
   }
 
-  public async postFile(file: File, name: string) {
+  public async post(file: File) {
+    const location = `cognito/${AwaytoId}/${this.cognitoUser.credentials.identityId}/${file.name}`;
     await this.client.send(new PutObjectCommand({
       Bucket: this.bucket,
-      Key: `cognito/${AwaytoId}/${this.cognitoUser.credentials.identityId}/${name}`,
+      Key: location,
       Body: file,
       
     }));
-    return 'saved';
+    return location;
   }
-  public async putFile(file: File, name: string) {
-    const session = await this.cognitoUser.getSession()
-    return '';
+
+  public async put(file: File) {
+    const location = `cognito/${AwaytoId}/${this.cognitoUser.credentials.identityId}/${file.name}`;
+    await this.client.send(new PutObjectCommand({
+      Bucket: this.bucket,
+      Key: location,
+      Body: file
+    }));
+    return location;
   }
-  public async getFile(id: string) {
-    const session = await this.cognitoUser.getSession()
-    // const data = await this.client.send(new GetObjectCommand({
-    //   Bucket: this.bucket,
-    //   Key: id
-    // }));
-    return '';
+
+  public async get(location: string) {
+    const command = new GetObjectCommand({
+      Bucket: this.bucket,
+      Key: location
+    });
+
+    const url = await getSignedUrl(this.client, command, { expiresIn: 3600 });
+
+    return url;
   }
-  public async deleteFile(id: string) {
-    const session = await this.cognitoUser.getSession()
-    return ''
+
+  public async delete(location: string) {
+    await this.client.send(new DeleteObjectCommand({
+      Bucket: this.bucket,
+      Key: location
+    }));
+    return location;
   }
 }
-
-// export const downloadFile = async (Key: string, fileName: string) => {
-
-//   const data = await client.send(new GetObjectCommand({
-//     Bucket: fileBucket,
-//     Key
-//   }));
-
-//   if (data.Body) {
-//     const link = document.createElement('a');
-//     link.href = window.URL.createObjectURL(data.Body);
-//     link.download = fileName;
-//     link.click();
-//     window.URL.revokeObjectURL(link.href);
-//   }
-// }
-
-// export const uploadFile = async (Key: string, file: File) => {
-//   try {
-//     await client.send(new PutObjectCommand({
-//       Bucket: fileBucket,
-//       Key,
-//       Body: file
-//     }));
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
-
-
-// export const getObjectData = async (Key: string) => {
-//   const data = await client.send(new GetObjectCommand({
-//     Bucket: fileBucket,
-//     Key
-//   }));
-
-//   return data;
-// }
