@@ -12,7 +12,8 @@ import CardActions from '@material-ui/core/CardActions'
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, useAct, cognitoPoolSignUp } from 'awayto';
+import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, cognitoPoolSignUp } from 'awayto';
+import { useAct } from '../../../hooks';
 
 const { SIGNUP_USER } = IUserProfileActionTypes;
 const { HAS_CODE } = IUtilActionTypes;

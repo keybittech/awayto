@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 import { CognitoIdentityClient } from "@aws-sdk/client-cognito-identity";
 
-import { CognitoUser, CognitoUserPool } from '../cognito';
+import { CognitoUser, CognitoUserPool } from 'awayto';
 
 const {
   REACT_APP_AWS_REGION: Region,

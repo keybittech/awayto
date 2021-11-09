@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar } from '@material-ui/core';
-import { useFileStore } from 'awayto';
+import { useFileStore } from '../../../hooks';
 
 declare global {
   interface IProps {

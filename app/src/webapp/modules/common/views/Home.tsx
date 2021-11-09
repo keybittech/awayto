@@ -2,7 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { Button, Input, Grid, Typography, TextField, InputAdornment, FormControl } from '@material-ui/core';
 import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
 
-import { IGroup, IUtilActionTypes, SiteRoles, useApi, useRedux, useComponents, IManageRolesActionTypes } from 'awayto';
+import { IGroup, IUtilActionTypes, SiteRoles, IManageRolesActionTypes } from 'awayto';
+import { useApi, useRedux, useComponents } from '../../../hooks';
 
 const { GET_MANAGE_ROLES } = IManageRolesActionTypes;
 const { TEST_API } = IUtilActionTypes;

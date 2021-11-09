@@ -15,7 +15,8 @@ import CardContent from '@material-ui/core/CardContent'
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-import { act, ILoginActionTypes, cognitoSSRPLogin, useRedux, useAct, useComponents, IUtilActionTypes } from 'awayto';
+import { ILoginActionTypes, cognitoSSRPLogin, IUtilActionTypes } from 'awayto';
+import { useRedux, useAct, useComponents } from '../../../hooks';
 
 const { RESET_PASSWORD, LOGIN_USER, AUTH_DENIAL } = ILoginActionTypes;
 const { SET_SNACK, START_LOADING, STOP_LOADING } = IUtilActionTypes;

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { AWSS3FileStoreStrategy, FileSystemFileStoreStrategy, FileStoreStrategy, FileStoreStrategies, FileStoreContext, useCognitoUser } from "awayto";
+import { AWSS3FileStoreStrategy, FileSystemFileStoreStrategy, FileStoreStrategy, FileStoreStrategies, FileStoreContext } from "awayto";
+import { useCognitoUser } from './useCognitoUser';
 
 
 /**
@@ -48,5 +49,3 @@ export const useFileStore = (strategyName: FileStoreStrategies | void): FileStor
 
   return fileStore;
 }
-
-export default {}

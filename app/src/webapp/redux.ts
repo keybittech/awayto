@@ -7,8 +7,10 @@ import logger from 'redux-logger';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import { persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
-import { ILoadedReducers, ILoadedState, ThunkStore, setStore } from 'awayto';
+import { ILoadedReducers, ILoadedState, ThunkStore } from 'awayto';
 import persistStore from 'redux-persist/es/persistStore';
+
+import { setStore } from './hooks/useDispatch';
 
 /**
  * @category Redux

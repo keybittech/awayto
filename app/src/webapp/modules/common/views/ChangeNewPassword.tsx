@@ -2,7 +2,7 @@ import React, { useState, FormEvent } from 'react';
 import { Button, Grid, Typography, TextField } from '@material-ui/core';
 
 // import { useAppSelector } from '../../../hooks';
-import { useRedux } from 'awayto';
+import { useRedux } from '../../../hooks';
 
 export function ChangeNewPassword (): JSX.Element {
 

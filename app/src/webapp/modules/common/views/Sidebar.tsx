@@ -7,7 +7,8 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import AppsIcon from '@material-ui/icons/Apps';
 
-import { useAct, IUtilActionTypes, ILogoutActionTypes } from 'awayto';
+import { IUtilActionTypes, ILogoutActionTypes } from 'awayto';
+import { useAct } from '../../../hooks';
 
 const { SET_SNACK } = IUtilActionTypes;
 const { LOGOUT } = ILogoutActionTypes;

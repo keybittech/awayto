@@ -1,7 +1,7 @@
 import { AnyAction } from 'redux';
 import { useDispatch as dispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { ThunkStore } from '../types';
+import { ThunkStore } from 'awayto';
 
 let store: ThunkStore;
 
@@ -23,4 +23,4 @@ export const setStore = (newStore: ThunkStore): void => {
  * @deprecated
  * @category Hooks
  */
-export const useDispatch = (): ThunkDispatch<ISharedState, undefined, AnyAction> => dispatch<typeof store.dispatch>();
+export const useDispatch = (): ThunkDispatch<ISharedState, undefined, AnyAction> => dispatch<ThunkDispatch<ISharedState, undefined, AnyAction>>();

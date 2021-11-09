@@ -4,7 +4,8 @@ import { Grid, Typography, Button, TextField, Avatar, CardActionArea } from '@ma
 
 import PersonIcon from '@material-ui/icons/Person';
 
-import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, IPreviewFile, useRedux, useApi, useAct, useComponents, useFileStore } from 'awayto';
+import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, IPreviewFile,  } from 'awayto';
+import { useRedux, useApi, useAct, useComponents, useFileStore } from '../../../hooks';
 
 const { SET_SNACK } = IUtilActionTypes;
 const { GET_USER_PROFILE_DETAILS, POST_USER_PROFILE, PUT_USER_PROFILE } = IUserProfileActionTypes;

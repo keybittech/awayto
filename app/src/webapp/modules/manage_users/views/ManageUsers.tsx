@@ -6,7 +6,8 @@ import CreateIcon from '@material-ui/icons/Create';
 import LockIcon from '@material-ui/icons/Lock';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 
-import { IManageUsersActionTypes, IUserProfile, useRedux, useApi } from 'awayto';
+import { IManageUsersActionTypes, IUserProfile } from 'awayto';
+import { useRedux, useApi } from '../../../hooks';
 
 import ManageUserModal from './ManageUserModal';
 

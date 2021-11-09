@@ -18,7 +18,8 @@ import Backdrop from '@material-ui/core/Backdrop'
 import AppBar from '@material-ui/core/AppBar'
 import Link from '@material-ui/core/Link'
 
-import { ILoginActionTypes, IUtilActionTypes, act, CognitoUserPool, useRedux, useAct, useComponents } from 'awayto';
+import { ILoginActionTypes, IUtilActionTypes, CognitoUserPool } from 'awayto';
+import { useRedux, useAct, useComponents } from './hooks';
 
 import './App.css';
 import { ThemeProvider } from '@material-ui/styles';

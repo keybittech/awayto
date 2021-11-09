@@ -139,8 +139,8 @@ export declare function parseResource(path: string): Record<string, string>;
  * function checkWriteBuildFile(next) {
  *   try {
  *     const files = JSON.stringify({
- *       views: parseResource('.' + AWAYTO_WEBAPP_MODULES + '/**\/views/*.tsx'),
- *       reducers: parseResource('.' + AWAYTO_WEBAPP_MODULES + '/**\/reducers/*.ts')
+ *       views: parseResource('.' + REACT_APP_AWAYTO_WEBAPP_MODULES + '/**\/views/*.tsx'),
+ *       reducers: parseResource('.' + REACT_APP_AWAYTO_WEBAPP_MODULES + '/**\/reducers/*.ts')
  *     });
  * 
  *     const newHash = crypto.createHash('sha1').update(Buffer.from(files)).digest('base64');

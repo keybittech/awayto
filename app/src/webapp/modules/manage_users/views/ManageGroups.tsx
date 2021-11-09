@@ -4,7 +4,8 @@ import { Dialog, IconButton, Button, CircularProgress, Checkbox } from '@materia
 import CreateIcon from '@material-ui/icons/Create';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-import { IGroup, IManageGroupsActionTypes, useRedux, useApi } from 'awayto';
+import { IGroup, IManageGroupsActionTypes } from 'awayto';
+import { useRedux, useApi } from '../../../hooks';
 
 import ManageGroupModal from './ManageGroupModal';
 

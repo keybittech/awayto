@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button, Card, CardContent, CardActions, CardActionArea, Typography, Grid, Dialog } from '@material-ui/core';
 
-import { useRedux, useAct, IUtilActionTypes } from 'awayto';
+import { IUtilActionTypes } from 'awayto';
+import { useRedux, useAct } from '../../../hooks';
 
 const { CLOSE_CONFIRM } = IUtilActionTypes;
 

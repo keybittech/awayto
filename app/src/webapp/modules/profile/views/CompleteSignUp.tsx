@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Grid, Button, TextField, Typography } from '@material-ui/core';
 
-import { useAct, useRedux, IUtilActionTypes, getUserPool, CognitoUser } from 'awayto';
+import { IUtilActionTypes, getUserPool, CognitoUser } from 'awayto';
+import { useAct, useRedux } from '../../../hooks';
 
 const { SET_SNACK, HAS_CODE } = IUtilActionTypes;
 

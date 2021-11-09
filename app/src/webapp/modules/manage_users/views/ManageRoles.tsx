@@ -3,7 +3,8 @@ import DataTable from 'react-data-table-component';
 import { Dialog, IconButton, Button, CircularProgress, Checkbox } from '@material-ui/core';
 import CreateIcon from '@material-ui/icons/Create';
 
-import { IManageRolesActionTypes, IRole, useRedux, useApi } from 'awayto';
+import { IManageRolesActionTypes, IRole } from 'awayto';
+import { useRedux, useApi } from '../../../hooks';
 
 import ManageRoleModal from './ManageRoleModal';
 

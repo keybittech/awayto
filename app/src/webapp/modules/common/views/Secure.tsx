@@ -1,5 +1,6 @@
 import React, { useEffect, useState, ReactElement } from 'react';
-import { SiteRoles, getUserPool, getAuthorization, act, useAct, IUtilActionTypes, ILogoutActionTypes } from 'awayto';
+import { SiteRoles, getUserPool, getAuthorization, IUtilActionTypes, ILogoutActionTypes } from 'awayto';
+import { useAct } from '../../../hooks';
 
 const { SET_SNACK } = IUtilActionTypes;
 const { LOGOUT } = ILogoutActionTypes;
