@@ -159,9 +159,10 @@ export type IUtilActions = LocationChangeAction
  * @category Awayto
  */
 export type ILogin = {
-  bootstrapped: boolean;
   error: Error | string;
-  newPassRequired: boolean;
+  challengeName: string;
+  session: string;
+  isLoggedIn: boolean;
   username: string;
 }
 

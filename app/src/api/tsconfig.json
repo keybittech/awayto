@@ -1,10 +1,8 @@
 {
   "extends": "./tsconfig.paths.json",
   "include": [
-    "src"
-  ],
-  "exclude": [
-    "src/webapp"
+    ".",
+    "../core"
   ],
   "compilerOptions": {
     "target": "es2017",

@@ -16,7 +16,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      awayto: '/src/core/index'
+      awayto: '/src/core/index.ts'
     },
     extensions: ['.ts', '.js'],
   },
@@ -26,7 +26,7 @@ module.exports = {
         test: /\.ts$/,
         loader: 'ts-loader',
         options: {
-          configFile: path.resolve(__dirname, './api.ts.json')
+          configFile: path.resolve(__dirname, './src/api/tsconfig.json')
         }
       }
     ],

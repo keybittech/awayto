@@ -8,6 +8,7 @@ import {
   ConfirmSignUpCommandOutput,
   GetUserCommand,
   InitiateAuthCommand,
+  RespondToAuthChallengeCommand,
   SignUpCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 
@@ -23,6 +24,11 @@ import {
 } from './types';
 
 import { CognitoIdentityCredentials } from '@aws-sdk/credential-provider-cognito-identity';
+
+const {
+  REACT_APP_COGNITO_USER_POOL_ID: UserPoolId,
+  REACT_APP_COGNITO_CLIENT_ID: ClientId
+} = process.env;
 
 /**
  * @category Cognito
@@ -348,11 +354,6 @@ export class CognitoUser implements CognitoUserType {
   completeNewPasswordChallenge(pass: string): string { return pass; }
 }
 
-const {
-  REACT_APP_COGNITO_USER_POOL_ID: UserPoolId,
-  REACT_APP_COGNITO_CLIENT_ID: ClientId
-} = process.env;
-
 /**
  * @category Cognito
  */
@@ -370,13 +371,13 @@ export const getUserPool = (): CognitoUserPool => {
 /**
  * @category Cognito
  */
-export const cognitoSSRPLogin = async (Username: string, Password: string): Promise<string | void> => {
+export const cognitoSSRPLogin = async (Username: string, Password: string): Promise<Record<string, string>> => {
 
   const response = await authenticateUserDefaultAuth({ Username, Password });
-  const { ChallengeName, AuthenticationResult } = response;
+  const { ChallengeName, AuthenticationResult, Session } = response;
 
-  if (ChallengeName) {
-    return ChallengeName;
+  if (ChallengeName && Session) {
+    return { ChallengeName, Session };
   } else {
     const { IdToken, AccessToken, RefreshToken } = AuthenticationResult as Required<AuthenticationResultType>;
 
@@ -392,8 +393,31 @@ export const cognitoSSRPLogin = async (Username: string, Password: string): Prom
     sessionStorage.setItem('accessToken', AccessToken);
     sessionStorage.setItem('provider', 'user_pool');
     sessionStorage.setItem('providerToken', '');
+    return { };
   }
 }
+
+/**
+ * @category Cognito
+ */
+export const cognitoSSRPChallengeResponse = async (ChallengeName: string, Session: string, payload: Record<string, any>): Promise<{ error?: string }> => {
+  const pool = getUserPool();
+
+  try {
+    await pool.client.send(new RespondToAuthChallengeCommand({
+      ChallengeName,
+      ClientId,
+      ChallengeResponses: payload,
+      Session
+    }));
+  } catch (error) {
+    const { message } = error as Error;
+    return { error: message };
+  }
+
+  return { };
+}
+
 
 // TODO May be used with Federated IdP
 // export const authUser = async (): Promise<boolean> => {

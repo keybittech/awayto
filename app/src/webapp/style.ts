@@ -33,7 +33,7 @@ export const styles = ({ mixins, spacing }: Theme): StyleRules => createStyles({
 
   menuIcon: { "&:hover svg": { color: '#aaa' }, width: '100%' },
 
-  loginWrap: { marginTop: '50px' },
+  loginWrap: {  height: '75vh' },
 
   dropzone: { width: '400px', height: '150px' },
 

@@ -35,11 +35,11 @@ export function Login(props: IProps): JSX.Element {
     e.preventDefault()
     act(START_LOADING, { isLoading: true });
     try {
-      const ChallengeName = await cognitoSSRPLogin(username, password);
+      const { ChallengeName, Session } = await cognitoSSRPLogin(username, password);
       if (ChallengeName)
-        act(RESET_PASSWORD, { newPassRequired: true });
+        act(RESET_PASSWORD, { username, challengeName: ChallengeName, session: Session });
       else
-        act(LOGIN_USER, { username });
+        act(LOGIN_USER, { username, isLoggedIn: true });
     } catch (error) {
       const { message } = error as Error;
       act(SET_SNACK, { snackType: 'error', snackOn: `Error while submitting login form: ${message}` })

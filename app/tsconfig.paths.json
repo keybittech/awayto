@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "awayto": ["./src/core/index.ts"],
       "awayto-hooks": ["./src/webapp/hooks/index.ts"]
