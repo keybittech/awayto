@@ -16,7 +16,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 import { ILoginActionTypes, cognitoSSRPLogin, IUtilActionTypes } from 'awayto';
-import { useRedux, useAct, useComponents } from '../../../hooks';
+import { useRedux, useAct, useComponents } from 'awayto-hooks';
 
 const { RESET_PASSWORD, LOGIN_USER, AUTH_DENIAL } = ILoginActionTypes;
 const { SET_SNACK, START_LOADING, STOP_LOADING } = IUtilActionTypes;

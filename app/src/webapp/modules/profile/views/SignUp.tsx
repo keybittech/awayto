@@ -13,7 +13,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, cognitoPoolSignUp } from 'awayto';
-import { useAct } from '../../../hooks';
+import { useAct } from 'awayto-hooks';
 
 const { SIGNUP_USER } = IUserProfileActionTypes;
 const { HAS_CODE } = IUtilActionTypes;

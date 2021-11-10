@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent, Grid, Typography, TextField, CardActions, Button } from "@material-ui/core";
 
 import { IManageRolesActionTypes, IRole, IUtilActionTypes } from "awayto";
-import { useApi, useAct } from '../../../hooks';
+import { useApi, useAct } from 'awayto-hooks';
 import { useCallback } from "react";
 
 const { POST_MANAGE_ROLES, PUT_MANAGE_ROLES } = IManageRolesActionTypes;

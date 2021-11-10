@@ -115,7 +115,8 @@ module.exports = {
 
     override(
       addWebpackAlias({
-        'awayto': path.resolve(__dirname, AWAYTO_CORE)
+        'awayto': path.resolve(__dirname, AWAYTO_CORE),
+        'awayto-hooks': path.resolve(__dirname, AWAYTO_WEBAPP + '/hooks/index.ts')
       })
     )
 

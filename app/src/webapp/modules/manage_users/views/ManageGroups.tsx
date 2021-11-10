@@ -5,7 +5,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import { IGroup, IManageGroupsActionTypes } from 'awayto';
-import { useRedux, useApi } from '../../../hooks';
+import { useRedux, useApi } from 'awayto-hooks';
 
 import ManageGroupModal from './ManageGroupModal';
 

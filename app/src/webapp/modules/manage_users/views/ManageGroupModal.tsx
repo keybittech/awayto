@@ -4,7 +4,7 @@ import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
 import { IGroup, IManageGroupsActionTypes, IManageRolesActionTypes, IUtilActionTypes } from "awayto";
-import { useAct, useApi, useRedux } from '../../../hooks';
+import { useAct, useApi, useRedux } from 'awayto-hooks';
 
 const { GET_MANAGE_ROLES } = IManageRolesActionTypes;
 const { CHECK_GROUP_NAME, PUT_MANAGE_GROUPS, POST_MANAGE_GROUPS } = IManageGroupsActionTypes;

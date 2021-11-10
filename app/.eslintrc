@@ -9,6 +9,7 @@
       "typescript": {},
       "alias": [
         ["awayto", "./src/core/index.ts"],
+        ["awayto-hooks", "./src/webapp/hooks/index.ts"],
         ["route-match", "./src/core/types/route-match.d.ts"]
       ]
     }

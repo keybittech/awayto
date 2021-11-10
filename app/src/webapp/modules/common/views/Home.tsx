@@ -3,7 +3,7 @@ import { Button, Input, Grid, Typography, TextField, InputAdornment, FormControl
 import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
 
 import { IGroup, IUtilActionTypes, SiteRoles, IManageRolesActionTypes } from 'awayto';
-import { useApi, useRedux, useComponents } from '../../../hooks';
+import { useApi, useRedux, useComponents } from 'awayto-hooks';
 
 const { GET_MANAGE_ROLES } = IManageRolesActionTypes;
 const { TEST_API } = IUtilActionTypes;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Card, CardContent, CardActions, CardActionArea, Typography, Grid, Dialog } from '@material-ui/core';
 
 import { IUtilActionTypes } from 'awayto';
-import { useRedux, useAct } from '../../../hooks';
+import { useRedux, useAct } from 'awayto-hooks';
 
 const { CLOSE_CONFIRM } = IUtilActionTypes;
 

@@ -3,7 +3,7 @@ import DataTable, { IDataTableColumn } from 'react-data-table-component';
 import { Checkbox } from '@material-ui/core';
 
 import { IManageRolesActionTypes } from 'awayto';
-import { useApi, useRedux } from '../../../hooks';
+import { useApi, useRedux } from 'awayto-hooks';
 
 const { GET_MANAGE_ROLES } = IManageRolesActionTypes;
 

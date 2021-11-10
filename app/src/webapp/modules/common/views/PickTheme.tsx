@@ -1,6 +1,6 @@
 import React from 'react';
 import { IUtilActionTypes } from 'awayto';
-import { useAct } from '../../../hooks';
+import { useAct } from 'awayto-hooks';
 import { Grid, Typography, Box } from '@material-ui/core';
 
 const { SET_THEME } = IUtilActionTypes;

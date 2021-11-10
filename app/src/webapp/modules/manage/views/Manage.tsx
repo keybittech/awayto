@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Card, CardActions, CardContent, Grid, Typography } from '@material-ui/core';
 import { SiteRoles } from 'awayto';
-import { useComponents } from '../../../hooks';
+import { useComponents } from 'awayto-hooks';
 
 declare global {
   interface IProps {

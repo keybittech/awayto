@@ -4,7 +4,7 @@ import { Dialog, IconButton, Button, CircularProgress, Checkbox } from '@materia
 import CreateIcon from '@material-ui/icons/Create';
 
 import { IManageRolesActionTypes, IRole } from 'awayto';
-import { useRedux, useApi } from '../../../hooks';
+import { useRedux, useApi } from 'awayto-hooks';
 
 import ManageRoleModal from './ManageRoleModal';
 
