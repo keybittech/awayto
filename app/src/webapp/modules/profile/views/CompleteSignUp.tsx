@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Grid, Button, TextField, Typography } from '@material-ui/core';
 
-import { IUtilActionTypes, getUserPool, CognitoUser } from 'awayto';
+import { IUtilActionTypes, getUserPool, CognitoUser, IUserProfileActionTypes } from 'awayto';
 import { useAct, useRedux } from 'awayto-hooks';
 
-const { SET_SNACK, HAS_CODE } = IUtilActionTypes;
+const { SET_SNACK } = IUtilActionTypes;
+const { HAS_CODE } = IUserProfileActionTypes;
 
 export function CompleteSignUp (props: IProps): JSX.Element {
 

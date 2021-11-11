@@ -44,6 +44,7 @@ export type IUserProfile = {
   status: string;
   info: AdminGetUserResponse;
   signedUp: boolean;
+  hasSignUpCode: boolean;
 };
 
 
@@ -56,6 +57,7 @@ export type IUserProfileState = Partial<IUserProfile>;
  * @category Action Types
  */
 export enum IUserProfileActionTypes {
+  HAS_CODE = "login/HAS_CODE",
   SIGNUP_USER = "login/SIGNUP_USER",
   POST_USER_PROFILE = "POST/users",
   PUT_USER_PROFILE = "PUT/users",
@@ -65,6 +67,16 @@ export enum IUserProfileActionTypes {
   DISABLE_USER_PROFILE = "PUT/users/:id/disable"
 }
 
+
+/**
+ * @category User Profile
+ */
+ export type ISignUpUserAction = PayloadAction<IUserProfileActionTypes.SIGNUP_USER, IUserProfile>;
+
+/**
+ * @category User Profile
+ */
+ export type IHasCodeUserProfileAction = PayloadAction<IUserProfileActionTypes.HAS_CODE, IUserProfile>;
 
 /**
  * @category User Profile
@@ -99,20 +111,15 @@ export type IDisableUserProfileAction = PayloadAction<IUserProfileActionTypes.DI
 /**
  * @category User Profile
  */
-export type ISignUpUserAction = PayloadAction<IUserProfileActionTypes.SIGNUP_USER, IUserProfile>;
-
-
-/**
- * @category User Profile
- */
 export type IUserProfileActions = LogoutAction
+  | IHasCodeUserProfileAction
+  | ISignUpUserAction
   | IPostUserProfileAction 
   | IPutUserProfileAction 
   | IGetUserProfileDetailsAction 
   | IGetUserProfileDetailsBySubAction 
   | IGetUserProfileDetailsByIdAction
-  | IDisableUserProfileAction
-  | ISignUpUserAction;
+  | IDisableUserProfileAction;
 
 
 

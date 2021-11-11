@@ -9,6 +9,7 @@ const initialUserProfileState: IUserProfileState = {};
 
 const profileReducer: Reducer<IUserProfileState, IUserProfileActions> = (state = initialUserProfileState, action) => {
   switch (action.type) {
+    case IUserProfileActionTypes.HAS_CODE:
     case IUserProfileActionTypes.SIGNUP_USER:
     case IUserProfileActionTypes.POST_USER_PROFILE:
     case IUserProfileActionTypes.PUT_USER_PROFILE:

@@ -12,11 +12,10 @@ import CardActions from '@material-ui/core/CardActions'
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, cognitoPoolSignUp } from 'awayto';
+import { IUserProfile, IUserProfileActionTypes, cognitoPoolSignUp } from 'awayto';
 import { useAct } from 'awayto-hooks';
 
-const { SIGNUP_USER } = IUserProfileActionTypes;
-const { HAS_CODE } = IUtilActionTypes;
+const { SIGNUP_USER, HAS_CODE } = IUserProfileActionTypes;
 
 declare global {
   interface IProps {

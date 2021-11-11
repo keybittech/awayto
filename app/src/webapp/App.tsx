@@ -18,7 +18,7 @@ import Backdrop from '@material-ui/core/Backdrop'
 import AppBar from '@material-ui/core/AppBar'
 import Link from '@material-ui/core/Link'
 
-import { ILoginActionTypes, IUtilActionTypes, CognitoUserPool } from 'awayto';
+import { IUtilActionTypes } from 'awayto';
 import { useRedux, useAct, useComponents, useCognitoUser } from 'awayto-hooks';
 
 import './App.css';
@@ -30,13 +30,7 @@ function Alert(props: AlertProps): JSX.Element {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const {
-  REACT_APP_COGNITO_USER_POOL_ID: UserPoolId,
-  REACT_APP_COGNITO_CLIENT_ID: ClientId
-} = process.env;
-
-const { AUTH_DENIAL, AUTH_SUCCESS } = ILoginActionTypes;
-const { SET_SNACK, SET_THEME } = IUtilActionTypes;
+const { SET_SNACK } = IUtilActionTypes;
 
 const App = (props: IProps): JSX.Element => {
 
@@ -45,12 +39,12 @@ const App = (props: IProps): JSX.Element => {
   const { Sidebar, ConfirmAction, Home, Profile, ChangeNewPassword, Login, Manage, SignUp, CompleteSignUp, PickTheme } = useComponents();
 
   // Keep this useCognitoUser() call to bootstrap login state
-  const cognitoUser = useCognitoUser();
+  useCognitoUser();
   
   const act = useAct();
   const login = useRedux(state => state.login);
-  const util = useRedux(state => state.util);
-  const { snackOn, snackType, isLoading, loadingMessage, theme, hasSignUpCode } = util;
+  const { hasSignUpCode } = useRedux(state => state.profile);
+  const { snackOn, snackType, isLoading, loadingMessage, theme } = useRedux(state => state.util);
 
   const hideSnack = (): void => {
     act(SET_SNACK, { snackOn: '' });

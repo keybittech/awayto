@@ -60,7 +60,6 @@ export enum IUtilActionTypes {
   CLEAR_REDUX = "util/CLEAR_REDUX",
   OPEN_CONFIRM = "util/OPEN_CONFIRM",
   CLOSE_CONFIRM = "util/CLOSE_CONFIRM",
-  HAS_CODE = "util/HAS_CODE",
   START_LOADING = "util/START_LOADING",
   STOP_LOADING = "util/STOP_LOADING",
   SET_THEME = "util/SET_THEME",
@@ -137,11 +136,6 @@ export type IApiSuccessAction = PayloadAction<IUtilActionTypes.API_SUCCESS, void
 /**
  * @category Util
  */
-export type IHasSignUpCodeAction = PayloadAction<IUtilActionTypes.HAS_CODE, IUtil>;
-
-/**
- * @category Util
- */
 export type IUtilActions = LocationChangeAction
   | IClearReduxAction
   | IOpenConfirmAction
@@ -151,8 +145,7 @@ export type IUtilActions = LocationChangeAction
   | ISetThemeAction
   | ISetSnackAction
   | ITestApiAction
-  | IApiErrorAction
-  | IHasSignUpCodeAction;
+  | IApiErrorAction;
 
 
 /**
