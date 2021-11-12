@@ -18,7 +18,6 @@ export function Profile(props: IProps): JSX.Element {
   const fileStore = useFileStore();
   const { AsyncAvatar, PickTheme } = useComponents();
 
-  const util = useRedux(state => state.util);
   const user = useRedux(state => state.profile);
 
   const [file, setFile] = useState<IPreviewFile>();
@@ -47,26 +46,33 @@ export function Profile(props: IProps): JSX.Element {
   }, [file]);
 
   useEffect(() => {
+    console.log('break');
     if (user) setProfile({ ...profile, ...user });
   }, [user]);
 
   const deleteFile = () => {
-    const { image, ...rest } = profile;
-    setProfile(rest);
-    setFile(undefined);
+    const { ...p } = profile;
+    p.image = '';
+    setProfile(p);
+    if (file) {
+      const { ...f } = file;
+      f.preview = '';
+      setFile(f);
+    }
   }
 
   const handleSubmit = async () => {
     if (file) {
       profile.image = await fileStore?.put(file);
     }
-    
+    console.log('just put profile with image', profile);
     void api(profile.id ? PUT_USER_PROFILE : POST_USER_PROFILE, true, profile);
     act(SET_SNACK, { snackType: 'success', snackOn: 'Profile updated!' });
+    setFile(undefined);
   }
 
   return <div>
-    {profile && util && (
+    {profile && (
       <Grid container spacing={6}>
         <Grid item xs={12} sm={4}>
           <Grid container direction="column" spacing={2}>
@@ -74,13 +80,13 @@ export function Profile(props: IProps): JSX.Element {
               <Typography variant="h6">Profile</Typography>
             </Grid>
             <Grid item>
-              <TextField fullWidth id="firstName" label="First Name" value={profile.firstName} name="firstName" onChange={e => setProfile({ ...profile, firstName: e.target.value })} />
+              <TextField fullWidth id="firstName" label="First Name" autoComplete="on" value={profile.firstName} name="firstName" onChange={e => setProfile({ ...profile, firstName: e.target.value })} />
             </Grid>
             <Grid item>
-              <TextField fullWidth id="lastName" label="Last Name" value={profile.lastName} name="lastName" onChange={e => setProfile({ ...profile, lastName: e.target.value })} />
+              <TextField fullWidth id="lastName" label="Last Name" autoComplete="on" value={profile.lastName} name="lastName" onChange={e => setProfile({ ...profile, lastName: e.target.value })} />
             </Grid>
             <Grid item>
-              <TextField fullWidth id="email" label="Email" value={profile.email} name="email" onChange={e => setProfile({ ...profile, email: e.target.value })} />
+              <TextField fullWidth id="email" label="Email" autoComplete="on" value={profile.email} name="email" onChange={e => setProfile({ ...profile, email: e.target.value })} />
             </Grid>
             <Grid item>
               <Typography variant="h6">Settings</Typography>
@@ -114,7 +120,7 @@ export function Profile(props: IProps): JSX.Element {
                   </Grid> :
                   <Grid onClick={deleteFile} container alignItems="center" direction="column">
                     <Grid item>
-                      {profile.image ? <AsyncAvatar {...props} image={profile.image} /> : file ? <Avatar src={file.preview} /> : <div />}
+                      {file && <Avatar src={file.preview} />} <AsyncAvatar image={profile.image || ''} {...props} />
                     </Grid>
                     <Grid item>
                       <Typography variant="h6" style={{ wordBreak: 'break-all' }}>{profile.image ? "Current profile image." : file ? `${file.name || ''} added.` : ''}</Typography>

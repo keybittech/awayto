@@ -11,9 +11,13 @@ declare global {
 export function AsyncAvatar ({ image }: IProps): JSX.Element {
   const [url, setUrl] = useState('');
   const fileStore = useFileStore();
+  console.log('breaker3');
   
   useEffect(() => {
+    console.log('breaker1');
     async function getImage() {
+      
+      console.log('breaker2');
       if (fileStore && image) {
         setUrl(await fileStore?.get(image));
       }
@@ -21,7 +25,7 @@ export function AsyncAvatar ({ image }: IProps): JSX.Element {
     void getImage();
   }, [fileStore, image])
 
-  return <Avatar src={url} />
+  return url.length ? <Avatar src={url || ''} /> : <></>
 }
 
 export default AsyncAvatar;
