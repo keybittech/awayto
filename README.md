@@ -1,12 +1,29 @@
-# Awayto
+# ![Awayto logo](https://raw.githubusercontent.com/keybittech/awayto/main/app/src/webapp/img/kbt-icon_32w.png) Awayto
 
 [Awayto.dev](https://awayto.dev/) - [Typedoc](https://awayto.dev/docs/index.html) - [KeyBit Tech](https://keybittech.com/) - [Discord](https://discord.gg/KzpcTrn5DQ) - [Twitch](https://twitch.tv/awayto) - [Twitter](https://twitter.com/awaytodev) - [Contact](mailto:joe@keybittech.com) - [LinkedIn](https://www.linkedin.com/in/joe-mccormick-76224429/)
 
+Awayto is a curated development platform designed to produce high-value web and mobile applications with minimal investment. Application architecture can be complex — sometimes problematic — and there are a great deal of methods and solutions to choose from. Awayto simplifies higher-order technological concerns such as hosting, deployment, and building, in order to greatly reduce time-to-market, and the general barrier of entry to building web and mobile applications. 
+
+Using these technologies, Awayto gives a structured framework for rapid development:
+
+[`typescript`](https://www.typescriptlang.org/), [`react`](https://reactjs.org/), [`react-app-rewired`](https://github.com/timarney/react-app-rewired), [`redux`](https://redux.js.org/), [`pg`](https://node-postgres.com/), [`AWS Cognito`](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-cognito-identity-provider/index.html), [`AWS S3`](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/), AWS Lambda, AWS API Gateway, AWS EC2, AWS RDS
+
 `!` We're actively looking for contributors and AWS replacements for our cloudless implementation! If interested, [join the discord](https://discord.gg/KzpcTrn5DQ). Thanks!
 
-Awayto is a curated development platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape of tools to use. 
+## Quick Installation
 
-Deploy a fully-featured application in about 10 minutes that is primed for quick development. Run a business, impress a client with a quick demo, finish your poc with time to spare; all easily achievable with Awayto. Managing the infrastructure for web applications is often cumbersome and time consuming. Awayto can be thought of as a method for working with web applications, laying out each step should you care to change something, removing complexity.
+Make sure your console session can perform AWS CLI commands with Administrator role access.
+```
+npm i -g @keybittech/awayto
+
+mkdir proj
+cd proj
+awayto
+```
+
+## What is Awayto?
+
+Deploy a fully-featured application in about 10 minutes that is primed for quick development. Run a business, impress a client with a quick demo, finish your poc with time to spare; all easily achievable with Awayto. Managing the infrastructure for web applications is often cumbersome and time consuming. Awayto can be thought of as a method for working with web applications, laying out each step, should you care to change something.
 
 There are a few tenets of Awayto:  
 
@@ -32,21 +49,6 @@ The Awayto platform adheres to these tenets in part by being scalable, lightweig
 
 - Database schema designed for auditing and reporting
 
-Awayto is a stack comprised of:
-
-[`typescript`](https://www.typescriptlang.org/), 
-[`react`](https://reactjs.org/), 
-[`react-app-rewired`](https://github.com/timarney/react-app-rewired), 
-[`redux`](https://redux.js.org/), 
-[`@aws-sdk/client-Cognito-identity-provider`](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-Cognito-identity-provider/),
-[`@aws-sdk/client-s3`](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/), 
-[`pg`](https://node-postgres.com/), 
-AWS Lambda, 
-AWS API Gateway, 
-AWS Cognito, 
-AWS EC2, 
-AWS RDS
-
 ## CLI Usage
 
 #### Prerequisites
@@ -63,21 +65,9 @@ Any versions mentioned are what was used at time of writing. Any AWS tasks are p
 
 - Python 3.7.9
 
-#### Install
+#### Manual Install
 
-```
-npm i -g @keybittech/awayto
-```
-
-Make sure your console session can perform AWS CLI commands with Administrator role access. After restarting your console you can make a new folder or go into an existing folder and deploy an Awayto app.
-
-```
-mkdir proj
-cd proj
-awayto
-```
-
-Then follow the prompts. Old installation guide moved to `INSTALL.md` as the installer is now automated.
+Old installation guide moved to `INSTALL.md` as the installer is now automated.
 
 #### Update
 
@@ -98,7 +88,7 @@ Hook into the fully typed redux store. Access your redux state using this hook.
 ```ts
 import { useRedux } from 'awayto';
 
-const profile = useRedux(state => state.profile); // e.g. returns an [IUserProfile](https://awayto.dev/docs/modules/core.html#iuserprofile)
+const profile = useRedux(state => state.profile); // e.g. returns the currently logged in IUserProfile
 ```
 
 ### useAct
@@ -119,13 +109,14 @@ act(SET_SNACK, { snackOn: 'Success!', snackType: 'success' }); // e.g. send a no
 The `useApi` hook provides type-bound api functionality. By passing in a [IActionTypes](https://awayto.dev/docs/modules.html#iactiontypes) (e.g. [IUtilActionTypes](https://awayto.dev/docs/enums/iutilactiontypes.html), [IManageUsersActionTypes](https://awayto.dev/docs/enums/imanageusersactiontypes.html), etc...) we can control the structure of the api request, and more easily handle it on the backend.
 
 ```ts
-import { useApi, IManageUsersActions } from 'awayto';
+import { useApi, IManageUsersActions, useRedux } from 'awayto';
 
 const { GET_MANAGE_USERS, GET_MANAGE_USERS_BY_ID } = IManageUsersActions;
 
 const api = useApi();
+const users = useRedux(state => state.users);
 
-api(GET_MANAGE_USERS);
+api(GET_MANAGE_USERS); // Kickoff a GET/manage/users call, which will populate our redux state later
 ```
 
 As long as we have setup our model, `GET_MANAGE_USERS` will inform the system of the API endpoint and shape of the request/response.
@@ -133,7 +124,7 @@ As long as we have setup our model, `GET_MANAGE_USERS` will inform the system of
 If the endpoint takes path parameters (like `GET/manage/user/id/:id`), or if the request requires a body, we can pass these as the third parameter. Pass a boolean as the second argument to show or hide a loading screen.
 
 ```ts
-api(GET_MANAGE_USERS_BY_ID, false, { id });
+api(GET_MANAGE_USERS_BY_ID, false, { id }); // Get a user profile by a specified ID, refresh it in redux state, and do not show a loading screen
 ```
  
 ### useCognitoUser
@@ -146,7 +137,7 @@ const cognitoUser = useCognitoUser();
 
 await cognitoUser.getSession();
 
-cognito.isLoggedIn == true
+cognitoUser.isLoggedIn == true
 ```
 
 ### useComponents
@@ -182,9 +173,6 @@ function ParentComponent(props: IProps): JSX.Element {
   await files.post(file, fileName)
  
  ```
-
-
-
 
 ## Contributing
 
