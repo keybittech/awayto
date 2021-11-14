@@ -1,4 +1,6 @@
 export interface FileStoreStrategy {
+  shouldDelete: boolean;
+  loaded(): boolean;
   post(file: File): Promise<string>;
   put(file: File): Promise<string>;
   get(id: string): Promise<string>;
@@ -7,6 +9,7 @@ export interface FileStoreStrategy {
 
 export enum FileStoreStrategies {
   FILE_SYSTEM = "fs",
+  IPFS = "ipfs",
   AWS_S3 = "aws"
 }
 
@@ -14,8 +17,15 @@ export class FileStoreContext {
 
   private strategy: FileStoreStrategy;
 
+  shouldDelete: boolean;
+
   constructor(strategy: FileStoreStrategy) {
     this.strategy = strategy;
+    this.shouldDelete = this.strategy.shouldDelete;
+  }
+
+  public loaded() {
+    return this.strategy.loaded();
   }
 
   public async post(file: File) {
@@ -36,6 +46,14 @@ export class FileStoreContext {
 }
 
 export class FileSystemFileStoreStrategy implements FileStoreStrategy {
+
+  ready = true;
+  shouldDelete = true;
+
+  public loaded() {
+    return this.ready;
+  }
+  
   public async post(file: File) {
     await new Promise(() => { return 'stub' });
     return '';

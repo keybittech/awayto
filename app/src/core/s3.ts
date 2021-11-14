@@ -14,6 +14,9 @@ export class AWSS3FileStoreStrategy implements FileStoreStrategy {
   private cognitoUser: CognitoUser;
   private client: S3Client;
   private bucket: string;
+  private ready: boolean;
+  
+  shouldDelete: boolean;
 
   constructor(cognitoUser: CognitoUser) {
     this.cognitoUser = cognitoUser;
@@ -23,6 +26,12 @@ export class AWSS3FileStoreStrategy implements FileStoreStrategy {
       apiVersion: '2006-03-01',
       credentials: cognitoUser.credentials
     });
+    this.ready = true;
+    this.shouldDelete = true;
+  }
+
+  public loaded() {
+    return this.ready;
   }
 
   public async post(file: File) {

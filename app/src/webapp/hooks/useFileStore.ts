@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AWSS3FileStoreStrategy, FileSystemFileStoreStrategy, FileStoreStrategy, FileStoreStrategies, FileStoreContext } from "awayto";
+import { AWSS3FileStoreStrategy, IPFSFileStoreStrategy, FileSystemFileStoreStrategy, FileStoreStrategy, FileStoreStrategies, FileStoreContext } from "awayto";
 import { useCognitoUser } from './useCognitoUser';
 
 
@@ -30,22 +30,28 @@ export const useFileStore = (strategyName: FileStoreStrategies | void): FileStor
   const [fileStore, setFileStore] = useState<FileStoreContext>();
   const cognitoUser = useCognitoUser();
 
-  useEffect(() => {
-    if (cognitoUser.signInUserSession) {
-      let strategy: FileStoreStrategy;
+  let strategy: FileStoreStrategy;
 
+  useEffect(() => {
+    if (!strategy) {
       switch (strategyName) {
         case FileStoreStrategies.AWS_S3:
+          if (!cognitoUser.signInUserSession) {
+            throw 'No cognito user.';
+          }
           strategy = new AWSS3FileStoreStrategy(cognitoUser);
           break;
+        case FileStoreStrategies.IPFS:
+          strategy = new IPFSFileStoreStrategy();
+          break;
         default:
-          strategy = new FileSystemFileStoreStrategy()
+          strategy = new FileSystemFileStoreStrategy();
           break;
       }
 
       setFileStore(new FileStoreContext(strategy));
     }
-  }, [cognitoUser.signInUserSession])  
+  }, [strategyName == FileStoreStrategies.AWS_S3 && cognitoUser.signInUserSession])  
 
   return fileStore;
 }

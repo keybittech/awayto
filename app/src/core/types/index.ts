@@ -236,7 +236,7 @@ export interface ApiResponseBody {
  * @category Awayto
  */
 export interface IPreviewFile extends File {
-  preview: string;
+  preview?: string;
 }
 
 export * from './cognito';

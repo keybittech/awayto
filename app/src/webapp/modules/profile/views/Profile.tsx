@@ -4,7 +4,7 @@ import { Grid, Typography, Button, TextField, Avatar, CardActionArea } from '@ma
 
 import PersonIcon from '@material-ui/icons/Person';
 
-import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, IPreviewFile,  } from 'awayto';
+import { IUserProfile, IUserProfileActionTypes, IUtilActionTypes, IPreviewFile, FileStoreStrategies } from 'awayto';
 import { useRedux, useApi, useAct, useComponents, useFileStore } from 'awayto-hooks';
 
 const { SET_SNACK } = IUtilActionTypes;
@@ -15,11 +15,12 @@ export function Profile(props: IProps): JSX.Element {
 
   const api = useApi();
   const act = useAct();
-  const fileStore = useFileStore();
+  const fileStore = useFileStore(FileStoreStrategies.IPFS);
   const { AsyncAvatar, PickTheme } = useComponents();
 
   const user = useRedux(state => state.profile);
 
+  const [displayImage, setDisplayImage] = useState('');
   const [file, setFile] = useState<IPreviewFile>();
   const [profile, setProfile] = useState<Partial<IUserProfile>>({
     firstName: '',
@@ -33,7 +34,9 @@ export function Profile(props: IProps): JSX.Element {
     maxFiles: 1,
     accept: 'image/*',
     onDrop: acceptedFiles => {
-      setFile(acceptedFiles.map(file => Object.assign(file, { preview: URL.createObjectURL(file) })).pop());
+      const acceptedFile = acceptedFiles.pop()
+      setFile(acceptedFile);
+      setDisplayImage(URL.createObjectURL(acceptedFile));
     }
   });
 
@@ -41,24 +44,28 @@ export function Profile(props: IProps): JSX.Element {
     void api(GET_USER_PROFILE_DETAILS, true);
   }, []);
 
-  useEffect(() => () => {
-    if (file) URL.revokeObjectURL(file.preview);
+  useEffect(() => {
+    if (file?.preview) URL.revokeObjectURL(file.preview);
   }, [file]);
 
   useEffect(() => {
-    console.log('break');
-    if (user) setProfile({ ...profile, ...user });
+    async function getImage() {
+      if (fileStore && profile.image) {
+        setDisplayImage(await fileStore.get(profile.image));
+      }
+    }
+    void getImage();
+  }, [fileStore, profile.image]);
+
+  useEffect(() => {
+    if (user) {
+      setProfile({ ...profile, ...user });
+    }
   }, [user]);
 
   const deleteFile = () => {
-    const { ...p } = profile;
-    p.image = '';
-    setProfile(p);
-    if (file) {
-      const { ...f } = file;
-      f.preview = '';
-      setFile(f);
-    }
+    setProfile({ ...profile, ...{ image: '' } });
+    setDisplayImage('');
   }
 
   const handleSubmit = async () => {
@@ -103,7 +110,7 @@ export function Profile(props: IProps): JSX.Element {
             </Grid>
             <Grid item>
               <CardActionArea style={{ padding: '12px' }}>
-                {!file && !profile.image ?
+                {!displayImage ?
                   <Grid {...getRootProps({ refKey: 'innerRef' })} container alignItems="center" direction="column">
                     <input {...getInputProps()} />
                     <Grid item>
@@ -120,10 +127,10 @@ export function Profile(props: IProps): JSX.Element {
                   </Grid> :
                   <Grid onClick={deleteFile} container alignItems="center" direction="column">
                     <Grid item>
-                      {file && <Avatar src={file.preview} />} <AsyncAvatar image={profile.image || ''} {...props} />
+                      <Avatar src={displayImage} /> {/*<AsyncAvatar image={profile.image || ''} {...props} /> */}
                     </Grid>
                     <Grid item>
-                      <Typography variant="h6" style={{ wordBreak: 'break-all' }}>{profile.image ? "Current profile image." : file ? `${file.name || ''} added.` : ''}</Typography>
+                      <Typography variant="h6" style={{ wordBreak: 'break-all' }}>{user.image ? "Current profile image." : file ? `${file.name || ''} added.` : ''}</Typography>
                     </Grid>
                     <Grid item>
                       <Typography variant="subtitle1">To remove, click here then submit.</Typography>
