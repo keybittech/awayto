@@ -427,8 +427,6 @@ export default async function () {
     '.babelrc',
     '.eslintignore',
     '.eslintrc',
-    'api.paths.json',
-    'api.ts.json',
     'api.webpack.js',
     'config-overrides.js',
     'package.json',
