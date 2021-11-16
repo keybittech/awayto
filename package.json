@@ -1,6 +1,6 @@
 {
   "name": "@keybittech/awayto",
-  "version": "1.0.33",
+  "version": "1.0.34",
   "description": "Awayto is a curated development platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape of tools to use.",
   "homepage": "https://awayto.dev/",
   "repository": {
@@ -37,8 +37,6 @@
     "@aws-sdk/client-rds": "^3.21.0",
     "@aws-sdk/client-s3": "^3.13.1",
     "@aws-sdk/client-ssm": "^3.36.0",
-    "archiver": "^5.3.0",
-    "fs-extra": "^10.0.0",
-    "public-ip": "^4.0.4"
+    "fs-extra": "^10.0.0"
   }
 }

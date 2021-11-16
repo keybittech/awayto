@@ -1,4 +1,5 @@
-import { create, IPFS } from 'ipfs-core';
+import { create } from 'ipfs-core';
+import { IPFS } from 'ipfs-core-types';
 import { pipe } from 'it-pipe';
 import all from 'it-all';
 import toBuffer from 'it-to-buffer';

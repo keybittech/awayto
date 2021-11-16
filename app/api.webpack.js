@@ -16,7 +16,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      awayto: '/src/core/index.ts'
+      awayto: '/src/core/index.ts',
+      'ipfs-core-types': '/node_modules/ipfs-core-types/types/src/index.d.ts'
     },
     extensions: ['.ts', '.js'],
   },
