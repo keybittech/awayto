@@ -531,19 +531,7 @@ try {
 
     await waitUntilFunctionUpdated({ client: lamClient, maxWaitTime: 600 }, { FunctionName: awaytoConfig.functionName });
 
-    console.log('Calling DB script deployment API.');
-    await lamClient.send(new InvokeCommand({
-      FunctionName: awaytoConfig.functionName,
-      InvocationType: 'Event',
-      Payload: makeLambdaPayload({
-        "httpMethod": "GET",
-        "resource": "/{proxy+}",
-        "pathParameters": {
-          "proxy": "deploy"
-        },
-        "body": {}
-      })
-    }));
+    child_process.execSync(`node bin/db-update.mjs`);
 
     await ssmClient.send(new PutParameterCommand({
       Name: 'PGHOST_' + id,
