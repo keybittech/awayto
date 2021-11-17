@@ -68,8 +68,10 @@ export default async function (id) {
 
   try {
     child_process.execSync(`node bin/deploy.mjs "${path.normalize(seedPath)}"`, {stdio: 'inherit'});
+    console.log('Installation complete!');
   } catch (error) {
     console.log('deploy failed', error)
   }
 
+  process.exit();
 }

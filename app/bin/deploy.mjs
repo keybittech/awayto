@@ -443,8 +443,7 @@ if (!debug) {
 
   try {
     console.log('Building webapp and api.')
-    child_process.execSync(`npm run build-api`, { stdio: 'inherit' });
-    child_process.execSync(`npm run build-web`, { stdio: 'inherit' });
+    child_process.execSync(`npm run build-deploy`, { stdio: 'inherit' });
   } catch (error) {
     console.log('webapp build failed')
   }
@@ -587,7 +586,7 @@ try {
     await waitUntilDistributionDeployed({ client: clClient, maxWaitTime: 600 }, { Id: distributionCmd.Distribution.Id });
 
     console.log(`Site available at ${awaytoConfig.website}. Login with the credentials you provided.`)
-    console.log('You may also run the project locally with "npm run start-stack". See the package for more options.');
+    console.log('You may also run the project locally with "npm run start-stack". See the package.json for more options.');
 
     process.exit();
   });
