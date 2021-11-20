@@ -379,7 +379,7 @@ await cfClient.send(new CreateStackCommand({
   Parameters: [
     {
       ParameterKey: 'Environment',
-      ParameterValue: 'dev'
+      ParameterValue: config.environment
     }
   ]
 }))
