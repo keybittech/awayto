@@ -104,7 +104,8 @@
     "build-api": "webpack --config api.webpack.js",
     "build-deploy": "npm-run-all -p build-web build-api",
     "install-stack": "node bin/deploy.mjs",
-    "db-update": "node bin/dbUpdate.mjs --local"
+    "db-update": "node bin/dbUpdate.mjs --local",
+    "release": "node bin/release.mjs ##awaytoId##"
   },
   "eslintConfig": {
     "extends": [
