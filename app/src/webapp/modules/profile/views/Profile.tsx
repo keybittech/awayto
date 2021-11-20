@@ -33,10 +33,12 @@ export function Profile(props: IProps): JSX.Element {
     maxSize: 1000000,
     maxFiles: 1,
     accept: 'image/*',
-    onDrop: acceptedFiles => {
+    onDrop: (acceptedFiles: File[]) => {
       const acceptedFile = acceptedFiles.pop()
-      setFile(acceptedFile);
-      setDisplayImage(URL.createObjectURL(acceptedFile));
+      if (acceptedFile) {
+        setFile(acceptedFile);
+        setDisplayImage(URL.createObjectURL(acceptedFile));
+      }
     }
   });
 

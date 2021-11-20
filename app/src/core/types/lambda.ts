@@ -34,6 +34,7 @@ export type ApiProps = {
 export type ApiEvent = {
   [name: string]: unknown;
   body: Record<string, string | Record<string, unknown>> | ILoadedState;
+  script: string;
   userSub: string;
   userAdmin: string;
   resource: string;

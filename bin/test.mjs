@@ -1,9 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 import fse from 'fs-extra';
-import archiver from 'archiver';
-import child_process from 'child_process';
-import publicIp from 'public-ip';
 import { URL } from 'url';
 
 

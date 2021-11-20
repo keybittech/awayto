@@ -84,6 +84,18 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
 
     client = await pool.connect();
 
+    if (event.script) {
+      const dbUpdate = await client.query(event.script);
+      return {
+        statusCode: 200,
+        body: dbUpdate.rows,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json"
+        }
+      };
+    }
+
     if (!pathMatch)
       return errCallback(404, "404_NOT_FOUND"); // Return 404 NOT FOUND
 

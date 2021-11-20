@@ -21,6 +21,7 @@ import { CloudFrontClient, CreateDistributionCommand, CreateCloudFrontOriginAcce
 import { ask, replaceText, asyncForEach, makeLambdaPayload } from './tool.mjs';
 import regions from './data/regions.mjs';
 import createAccount from './createAccount.mjs';
+import dbUpdate from './dbUpdate.mjs';
 
 const debug = false;
 
@@ -399,7 +400,7 @@ const awaytoConfig = {
   name: config.name,
   description: config.description,
   environment: config.environment,
-  seed,
+  seed: config.seed,
   awsRegion: region,
   functionName: resources[id + 'Resource'],
   cognitoUserPoolId: resources['CognitoUserPool'],
@@ -531,8 +532,6 @@ try {
 
     await waitUntilFunctionUpdated({ client: lamClient, maxWaitTime: 600 }, { FunctionName: awaytoConfig.functionName });
 
-    child_process.execSync(`node bin/db-update.mjs`);
-
     await ssmClient.send(new PutParameterCommand({
       Name: 'PGHOST_' + id,
       Value: dbInstance.Endpoint.Address,
@@ -560,6 +559,9 @@ try {
         await replaceText(path.resolve(process.cwd(), 'env.json'), k, envJson[k]);
       })
     }
+
+    console.log('Deploying DB scripts.');
+    await dbUpdate({ awaytoId: awaytoConfig.awaytoId });
 
     console.log('Creating admin account.')
     await createAccount({

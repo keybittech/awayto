@@ -103,7 +103,8 @@
     "build-web": "react-app-rewired build",
     "build-api": "webpack --config api.webpack.js",
     "build-deploy": "npm-run-all -p build-web build-api",
-    "install-stack": "node bin/deploy.mjs"
+    "install-stack": "node bin/deploy.mjs",
+    "db-update": "node bin/dbUpdate.mjs --local"
   },
   "eslintConfig": {
     "extends": [
