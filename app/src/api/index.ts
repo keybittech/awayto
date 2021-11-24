@@ -1,5 +1,3 @@
-'use strict';
-
 import { Handler } from 'aws-lambda';
 import { Pool, PoolClient } from 'pg'
 import routeMatch, { RouteMatch } from 'route-match';

@@ -196,7 +196,7 @@ export interface ICognitoUserPoolData {
   UserPoolId: string;
   ClientId: string;
   endpoint?: string;
-  Storage?: ICognitoStorage;
+  Storage?: Storage;
   AdvancedSecurityDataCollectionFlag?: boolean;
 }
 

@@ -1,36 +1,85 @@
-import AWS from 'aws-sdk';
-import { AttributeType, ListUsersResponse, UserType, AdminCreateUserRequest, AdminUpdateUserAttributesRequest } from '@aws-sdk/client-cognito-identity-provider';
+import { 
+  AttributeType,
+  AdminCreateUserCommand,
+  AdminGetUserCommand,
+  AdminDisableUserCommand, 
+  AdminEnableUserCommand,
+  AdminUpdateUserAttributesCommand,
+  ListUsersCommand,
+  ListUsersResponse, 
+  UserType, 
+  AdminCreateUserCommandInput,
+  AdminGetUserCommandOutput
+} from '@aws-sdk/client-cognito-identity-provider';
 
-import { IGroup, IRole, IUserProfile } from 'awayto';
+import { IGroup, IRole, IUserProfile, CognitoUserPool } from 'awayto';
 
-const client = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18' });
+const { CognitoClientId: ClientId, CognitoUserPoolId: UserPoolId } = process.env as { [prop: string]: string };
 
-const UserPoolId = process.env.CognitoUserPoolId as string;
+const pool = new CognitoUserPool({ ClientId, UserPoolId, Storage: {} as Storage });
 
-const pool = { UserPoolId };
+export async function getUserInfo(Username: string): Promise<AdminGetUserCommandOutput> {
+  const user = await pool.client.send(new AdminGetUserCommand({
+    UserPoolId,
+    Username
+  }));
+  return user;
+}
 
-export const getUserInfo = async (Username: string) => await client.adminGetUser({ Username, ...pool }).promise();
+export async function attachCognitoInfoToUser (user: IUserProfile): Promise<void> {
+  const { UserStatus: status, UserAttributes, UserCreateDate } = await getUserInfo(user.username);
 
-export const adminDisableUser = async (Username: string) =>
-  await client.adminDisableUser({ Username, ...pool }).promise();
+  const groupRoles = UserAttributes?.find(a => a.Name == 'custom:admin')?.Value as string;
+  user.status = status as string;
+  user.groups = parseGroupString(groupRoles);
+  user.createdOn = UserCreateDate?.toISOString() || user.createdOn;
+}
 
-export const adminEnableUser = async (Username: string) =>
-  await client.adminEnableUser({ Username, ...pool }).promise();
+export function parseGroupString (value: string): IGroup[] {
+  const groups = [] as IGroup[];
+  value?.split(';').forEach(set => {
+    const [name, roles] = set.split(':');
+    groups.push({ name, roles: roles.split(',').map(r => ({ name: r })) as IRole[] } as IGroup)
+  });
+  return groups;
+}
 
-export const deleteEnableUser = async (Username: string) =>
-  await client.adminEnableUser({ Username, ...pool }).promise();
+export function parseGroupArray (groups: IGroup[]): string {
+  let groupRoles = '';
+  groups.forEach((g, i) => {
+    groupRoles += `${g.name}:${g.roles.map(r => r.name).join(',')}`;
+    if (groups[i + 1] != null) groupRoles += ';';
+  });
+  return groupRoles;
+}
 
-// export const listUsers = async () =>
-//   await client.listUsers({ ...pool }).promise();
+
+
+export async function adminDisableUser(Username: string): Promise<boolean> {
+  await pool.client.send(new AdminDisableUserCommand({
+    UserPoolId,
+    Username
+  }));
+  return true;
+}
+
+export async function adminEnableUser(Username: string): Promise<boolean> {
+  await pool.client.send(new AdminEnableUserCommand({
+    UserPoolId,
+    Username
+  }));
+  return true;
+}
+
 
 export const listUsers = async (params: ListUsersResponse = {}): Promise<ListUsersResponse> => {
   
   let { Users = [] } = params;
   const { PaginationToken: token } = params;
 
-  const listUserParams = { ...pool, ...(token ? { PaginationToken: token } : {}) };
+  const listUserParams = { UserPoolId, ...(token ? { PaginationToken: token } : {}) };
 
-  const { Users: users, PaginationToken } = await client.listUsers(listUserParams).promise();
+  const { Users: users, PaginationToken } = await pool.client.send(new ListUsersCommand(listUserParams));
 
   if (users?.length) {
     
@@ -50,36 +99,19 @@ export const listUsers = async (params: ListUsersResponse = {}): Promise<ListUse
   return { Users };
 }
 
-export const updateUserAdmin = async (Username: string) =>
-  await client.adminUpdateUserAttributes({
-    UserAttributes: [
-      {
-        Name: 'custom:admin',
-        Value: 'system:user,admin'
-      }
-    ],
-    UserPoolId,
-    Username
-  }).promise();
 
-export const updateUserAttributesAdmin = async (Username: string, UserAttributes: AttributeType[]): Promise<any> => {
-  const params: AdminUpdateUserAttributesRequest = {
+export async function updateUserAttributesAdmin (Username: string, UserAttributes: AttributeType[]): Promise<boolean> {
+  await pool.client.send(new AdminUpdateUserAttributesCommand({
     UserPoolId,
     Username,
     UserAttributes
-  };
-
-  try {
-    return client.adminUpdateUserAttributes(params as AWS.CognitoIdentityServiceProvider.AdminUpdateUserAttributesRequest).promise();
-  } catch (error) {
-    throw error;
-  }
+  }));
+  return true;
 }
-  
 
-export const adminCreateUser = async ({ username = '', email = '', password = '', groupRoles = '' }): Promise<boolean | UserType> => {
-  const params: AdminCreateUserRequest = {
-    ...pool,
+export async function adminCreateUser ({ username = '', email = '', password = '', groupRoles = '' }): Promise<void | UserType> {
+  const params: AdminCreateUserCommandInput = {
+    UserPoolId,
     Username: username,
     ForceAliasCreation: true,
     TemporaryPassword: password,
@@ -107,194 +139,8 @@ export const adminCreateUser = async ({ username = '', email = '', password = ''
     ]
   }
 
-  try {
-    return client.adminCreateUser(params as AWS.CognitoIdentityServiceProvider.AdminCreateUserRequest).promise().then(response => {
-      if (!response.User)
-        return false;
-      return response.User;
-    }).catch(error => {
-      return false;
-    });
-  } catch (error) {
-    throw error;
-  }
+  const { User } = await pool.client.send(new AdminCreateUserCommand(params));
+
+  return User;
+
 }
-
-export function parseGroupString(value: string) {
-  const groups = [] as IGroup[];
-  value?.split(';').forEach(set => {
-    const [name, roles] = set.split(':');
-    groups.push({ name, roles: roles.split(',').map(r => ({ name: r })) as IRole[] } as IGroup)
-  });
-  return groups;
-}
-
-export const parseGroupArray = (groups: IGroup[]): string => {
-  let groupRoles = '';
-  groups.forEach((g, i) => {
-    groupRoles += `${g.name}:${g.roles.map(r => r.name).join(',')}`;
-    if (groups[i + 1] != null) groupRoles += ';';
-  });
-  return groupRoles;
-}
-
-export const attachCognitoInfoToUser = async (user: IUserProfile) => {
-  const { UserStatus: status, UserAttributes, UserCreateDate } = await getUserInfo(user.username);
-
-  const groupRoles = UserAttributes?.find(a => a.Name == 'custom:admin')?.Value as string;
-  user.status = status as string;
-  user.groups = parseGroupString(groupRoles);
-  user.createdOn = UserCreateDate?.toISOString() || user.createdOn;
-}
-
-// export const adminCreateUser = ({ email }: CognitoUserData): Promise<AdminCreateUserResponse | AWSError> => (
-//   new Promise((resolve, reject) => {
-//     const params = {
-//       UserPoolId: userPoolId,
-//       Username: email,
-//       DesiredDeliveryMediums: ['EMAIL'],
-//       ForceAliasCreation: true,
-//       TemporaryPassword: generatePassword(),
-//       UserAttributes: [
-//         {
-//           Name: 'email',
-//           Value: email
-//         },
-//         {
-//           Name: 'email_verified',
-//           Value: 'True'
-//         }
-//       ]
-//     };
-
-//     cognitoIdentityServiceProvider.adminCreateUser(params, function (err, data) {
-//       if (err) reject(err);
-//       else resolve(data);
-//     });
-
-//   })
-// );
-
-
-/**
- * Register a user with Amazon Cognito
- *
- * @param {string} username - username of the user
- * @param {string} password - password of the user
- * @param {string} email - email of the user
- * @returns {Promise<string>} Promise object represents the username of the registered user
- */
-// export const register = (data) => (
-//   new Promise((resolve, reject) => {
-//     getUserPool().signUp(data.username, password, null, null, (err, data) => {
-//       if (err) {
-//         reject(err);
-//       } else {
-//         resolve(data.user.getUsername());
-//       }
-//     });
-//   })
-// );
-
-// export const adminCreateUser = ({ email }: CognitoUserData): Promise<AdminCreateUserResponse | AWSError> => (
-//   new Promise((resolve, reject) => {
-//     const params = {
-//       UserPoolId: userPoolId,
-//       Username: email,
-//       DesiredDeliveryMediums: ['EMAIL'],
-//       ForceAliasCreation: true,
-//       TemporaryPassword: generatePassword(),
-//       UserAttributes: [
-//         {
-//           Name: 'email',
-//           Value: email
-//         },
-//         {
-//           Name: 'email_verified',
-//           Value: 'True'
-//         }
-//       ]
-//     };
-
-//     cognitoIdentityServiceProvider.adminCreateUser(params, function (err, data) {
-//       if (err) reject(err);
-//       else resolve(data);
-//     });
-
-//   })
-// );
-
-// export const getUserAdmin = async (Username: string): Promise<AdminUpdateUserAttributesResponse | AWSError> =>
-//   await cognitoIdentityServiceProvider.adminGetUser({ Username, UserPoolId: userPoolId }).promise();
-
-// export const updateUserAdmin = async (Username: string): Promise<AdminUpdateUserAttributesResponse | AWSError> =>
-//   await cognitoIdentityServiceProvider.adminUpdateUserAttributes({
-//     UserAttributes: [
-//       {
-//         Name: 'custom:user:admin',
-//         Value: 'system'
-//       }
-//     ],
-//     UserPoolId: userPoolId,
-//     Username
-//   }).promise();
-
-
-
-// export const listUsers = (filter: string): Promise<ListUsersResponse | AWSError> => (
-//   new Promise((resolve, reject) => {
-//     const params = {
-//       UserPoolId: userPoolId,
-//       Filter: `email = "${filter}"`
-//     };
-
-//     cognitoIdentityServiceProvider.listUsers(params, (err, data) => {
-//       if (err) reject(err);
-//       else resolve(data);
-//     });
-//   })
-// );
-
-// export const disableUser = (Username: string): Promise<AdminDisableUserResponse | AWSError> => (
-//   new Promise((resolve, reject) => {
-//     const params = {
-//       Username,
-//       UserPoolId: userPoolId
-//     };
-
-//     cognitoIdentityServiceProvider.adminDisableUser(params, (err, data) => {
-//       if (err) reject(err);
-//       else resolve(data);
-//     })
-//   })
-// )
-// export const enableUser = (Username: string): Promise<AdminEnableUserResponse | AWSError> => (
-//   new Promise((resolve, reject) => {
-//     const params = {
-//       Username,
-//       UserPoolId: userPoolId
-//     };
-
-//     cognitoIdentityServiceProvider.adminEnableUser(params, (err, data) => {
-//       if (err) reject(err);
-//       else resolve(data);
-//     })
-//   })
-// )
-
-// export const deleteUser = (Username: string): Promise<Record<string, never> | AWSError> => (
-//   new Promise((resolve, reject) => {
-//     const params = {
-//       Username,
-//       UserPoolId: userPoolId
-//     };
-
-//     cognitoIdentityServiceProvider.adminDeleteUser(params, (err, data) => {
-//       if (err) reject(err);
-//       else resolve(data);
-//     })
-//   })
-// )
-
-
-

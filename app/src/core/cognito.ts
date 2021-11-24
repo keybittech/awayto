@@ -122,7 +122,7 @@ export class CognitoUserPool implements CognitoUserPoolType {
   clientId: string;
   client: CognitoIdentityProviderClient;
   storage: Storage;
-  constructor({ UserPoolId, ClientId }: ICognitoUserPoolData) {
+  constructor({ UserPoolId, ClientId, Storage }: ICognitoUserPoolData) {
 
     if (!UserPoolId || !ClientId)
       throw new Error('Both UserPoolId and ClientId are required.');
@@ -135,7 +135,7 @@ export class CognitoUserPool implements CognitoUserPoolType {
     this.userPoolId = UserPoolId;
     this.clientId = ClientId;
     this.client = new CognitoIdentityProviderClient({ region });
-    this.storage = sessionStorage;
+    this.storage = Storage || sessionStorage;
   }
 
   getUserPoolId = (): string => this.userPoolId;
