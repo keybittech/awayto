@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { HttpResponse } from '@aws-sdk/types';
 import routeMatch, { RouteMatch } from 'route-match';
-const { Route, RouteCollection, PathGenerator } = routeMatch as RouteMatch;
 
 import { 
   ApiResponseBody, 
@@ -14,7 +13,12 @@ import {
   IUserProfileActionTypes,
   CognitoUserPool 
 } from 'awayto';
+
 import { useAct } from './useAct';
+
+export function registerApi(api: IActionTypes): void {
+  ApiActions = Object.assign(ApiActions, api);
+}
 
 let ApiActions = Object.assign(
   IManageUsersActionTypes,
@@ -23,9 +27,7 @@ let ApiActions = Object.assign(
   IUserProfileActionTypes
 ) as Record<string, string>;
 
-export function registerApi(api: IActionTypes): void {
-  ApiActions = Object.assign(ApiActions, api);
-}
+const { Route, RouteCollection, PathGenerator } = routeMatch as RouteMatch;
 
 const paths = Object.keys(ApiActions).map(key => {
   return new Route(key, ApiActions[key])
