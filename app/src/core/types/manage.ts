@@ -1,5 +1,4 @@
-import { LogoutAction } from 'awayto';
-import { PayloadAction, IUserProfile } from '.';
+import { PayloadAction, IUserProfile, LogoutAction } from '.';
 
 declare global {
   /**

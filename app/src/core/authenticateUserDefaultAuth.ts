@@ -13,11 +13,7 @@ import DateHelper from './auth/DateHelper';
 
 import { CognitoAuthResponse, AuthenticationHelper as AuthHelperType } from './types';
 
-const {
-  REACT_APP_AWS_REGION: region,
-  REACT_APP_COGNITO_USER_POOL_ID: userPoolId,
-  REACT_APP_COGNITO_CLIENT_ID: clientId
-} = process.env;
+import { Region, UserPoolId, ClientId } from '.';
 
 /**
  * @category Cognito
@@ -27,12 +23,12 @@ export const authenticateUserDefaultAuth = async (authDetails: { [key: string]: 
   //  Use a Promise here to interact with callback methods of yore
   new Promise((resolve, reject) => {
 
-    if (!userPoolId)
-      throw new Error('Configuration error: userPoolId missing during auth.');
+    if (!UserPoolId)
+      throw new Error('Configuration error: UserPoolId missing during auth.');
 
-    const client = new CognitoIdentityProviderClient({ region });
+    const client = new CognitoIdentityProviderClient({ region: Region });
     const { Username, Password } = authDetails;
-    const authenticationHelper = new AuthenticationHelper(userPoolId.split('_')[1]) as AuthHelperType;
+    const authenticationHelper = new AuthenticationHelper(UserPoolId.split('_')[1]) as AuthHelperType;
     const dateHelper = new DateHelper();
 
     const authParameters: Record<string, string> = {};
@@ -46,7 +42,7 @@ export const authenticateUserDefaultAuth = async (authDetails: { [key: string]: 
 
       client.send(new InitiateAuthCommand({
         AuthFlow: 'USER_SRP_AUTH',
-        ClientId: clientId,
+        ClientId: ClientId,
         AuthParameters: authParameters
       })).then(data => {
 
@@ -69,7 +65,7 @@ export const authenticateUserDefaultAuth = async (authDetails: { [key: string]: 
 
             const message = CryptoJS.lib.WordArray.create(
               Buffer.concat([
-                Buffer.from(userPoolId.split('_')[1], 'utf8'),
+                Buffer.from(UserPoolId.split('_')[1], 'utf8'),
                 Buffer.from(USER_ID_FOR_SRP, 'utf8'),
                 Buffer.from(SECRET_BLOCK, 'base64'),
                 Buffer.from(dateNow, 'utf8'),
@@ -81,7 +77,7 @@ export const authenticateUserDefaultAuth = async (authDetails: { [key: string]: 
 
             client.send(new RespondToAuthChallengeCommand({
               ChallengeName: 'PASSWORD_VERIFIER',
-              ClientId: clientId,
+              ClientId: ClientId,
               ChallengeResponses: {
                 USERNAME: USER_ID_FOR_SRP,
                 PASSWORD_CLAIM_SECRET_BLOCK: SECRET_BLOCK,

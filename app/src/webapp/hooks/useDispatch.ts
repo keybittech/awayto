@@ -1,7 +1,14 @@
-import { AnyAction } from 'redux';
+import { AnyAction, Store } from 'redux';
 import { useDispatch as dispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { ThunkStore } from 'awayto';
+
+
+/**
+* @category Awayto Redux
+*/
+export type ThunkStore = Store<ISharedState, ISharedActions> & {
+  dispatch: ThunkDispatch<ISharedState, undefined, ISharedActions>;
+}
 
 let store: ThunkStore;
 

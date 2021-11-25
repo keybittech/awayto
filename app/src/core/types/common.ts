@@ -1,4 +1,3 @@
-import { LocationChangeAction } from 'connected-react-router';
 import { PayloadAction } from '.';
 
 declare global {
@@ -74,10 +73,12 @@ export enum IUtilActionTypes {
  * @category Util
  */
 export type IUtilLoadingActionPayload = { isLoading: boolean };
+
 /**
  * @category Util
  */
 export type IApiErrorActionPayload = { error: string }
+
 /**
  * @category Util
  */
@@ -136,8 +137,7 @@ export type IApiSuccessAction = PayloadAction<IUtilActionTypes.API_SUCCESS, void
 /**
  * @category Util
  */
-export type IUtilActions = LocationChangeAction
-  | IClearReduxAction
+export type IUtilActions = IClearReduxAction
   | IOpenConfirmAction
   | ICloseConfirmAction
   | IStartLoadingAction

@@ -18,7 +18,6 @@ export default async function (id) {
     '.env',
     '.babelrc',
     '.eslintignore',
-    '.eslintrc',
     'api.webpack.js',
     'config-overrides.js',
     'package.json',

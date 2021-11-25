@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { DialogContent, Grid, Typography, TextField, DialogActions, Button, FormHelperText, FormControl, CircularProgress, InputLabel, Input, InputAdornment, Select, MenuItem, DialogTitle } from "@material-ui/core";
 
-import { IGroup, IUserProfile, IManageUsersActionTypes, IChangeEvent, IManageGroupsActionTypes, IUtilActionTypes, passwordGen } from "awayto";
+import { IGroup, IUserProfile, IManageUsersActionTypes, IManageGroupsActionTypes, IUtilActionTypes, passwordGen } from "awayto";
 import { useApi, useAct, useRedux } from 'awayto-hooks';
 
 const { PUT_MANAGE_USERS, POST_MANAGE_USERS, GET_MANAGE_USERS_BY_ID, POST_MANAGE_USERS_SUB, POST_MANAGE_USERS_APP_ACCT } = IManageUsersActionTypes;
@@ -46,8 +46,8 @@ export function ManageUserModal({ editUser, closeModal }: IProps): JSX.Element {
     }
   }, [editUser, groups]);
 
-  const handlePassword = useCallback(({ target: { value } }: IChangeEvent) => setPassword(value), [])
-  const handleProfile = useCallback(({ target: { name, value } }: IChangeEvent) => setProfile({ ...profile, [name]: value }), [profile])
+  const handlePassword = useCallback(({ target: { value } }: React.ChangeEvent<HTMLTextAreaElement>) => setPassword(value), [])
+  const handleProfile = useCallback(({ target: { name, value } }: React.ChangeEvent<HTMLTextAreaElement>) => setProfile({ ...profile, [name]: value }), [profile])
 
   const handleSubmit = useCallback(() => {
     async function submitUser() {

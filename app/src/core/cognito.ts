@@ -1,5 +1,3 @@
-import { authenticateUserDefaultAuth } from './authenticateUserDefaultAuth';
-
 import {
   AttributeType,
   AuthenticationResultType,
@@ -12,6 +10,10 @@ import {
   SignUpCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 
+import { CognitoIdentityCredentials } from '@aws-sdk/credential-provider-cognito-identity';
+
+import { authenticateUserDefaultAuth } from './authenticateUserDefaultAuth';
+
 import {
   ICognitoUserPoolData,
   ICognitoUserData,
@@ -23,12 +25,7 @@ import {
   ICognitoStorage
 } from './types';
 
-import { CognitoIdentityCredentials } from '@aws-sdk/credential-provider-cognito-identity';
-
-const {
-  REACT_APP_COGNITO_USER_POOL_ID: UserPoolId,
-  REACT_APP_COGNITO_CLIENT_ID: ClientId
-} = process.env;
+import { UserPoolId, ClientId } from '.';
 
 /**
  * @category Cognito

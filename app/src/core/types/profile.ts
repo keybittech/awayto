@@ -1,6 +1,5 @@
 import { AdminGetUserResponse } from '@aws-sdk/client-cognito-identity-provider';
-import { LogoutAction } from 'awayto';
-import { PayloadAction, IGroup } from '.';
+import { PayloadAction, IGroup, LogoutAction } from '.';
 
 declare global {
   /**

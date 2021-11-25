@@ -1,5 +1,6 @@
 import { useDispatch } from './useDispatch';
-import { act, ILoadedState,IActionTypes } from 'awayto';
+import { act } from './actions';
+import { ILoadedState, IActionTypes } from 'awayto';
 
 /**
  * `useAct` is a wrapper for dispatching actions. Give it an action type (i.e. SET_SNACK), a loader boolean, and the action payload if necessary.

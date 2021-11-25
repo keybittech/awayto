@@ -1,4 +1,3 @@
-import { create } from 'ipfs-core';
 import { IPFS } from 'ipfs-core-types';
 import { pipe } from 'it-pipe';
 import all from 'it-all';
@@ -9,22 +8,15 @@ import { extract } from 'it-tar';
 import { FileStoreStrategy } from 'awayto';
 
 export class IPFSFileStoreStrategy implements FileStoreStrategy {
-  private client?: IPFS;
+  private client: IPFS;
 
   private ready: boolean;
   shouldDelete: boolean;
 
-  constructor() {
-    void this.getClient();
-    this.ready = false;
+  constructor(client: IPFS) {
+    this.client = client;
+    this.ready = true;
     this.shouldDelete = false;
-  }
-
-  private async getClient() {
-    if (!this.client) {
-      this.client = await create();
-      this.ready = true;
-    }
   }
 
   public loaded() {
@@ -57,7 +49,7 @@ export class IPFSFileStoreStrategy implements FileStoreStrategy {
     }
 
     const source = this.client.get(location);
-    const file = await pipe(source, tarballed, i =>{ return all(i) });
+    const file = await pipe(source, this.tarballed, i =>{ return all(i) });
     const url = URL.createObjectURL(new Blob([file[0].body], { type: 'image/png' }));
 
     return url;
@@ -67,19 +59,19 @@ export class IPFSFileStoreStrategy implements FileStoreStrategy {
     await new Promise((r) => r);
     return '';
   }
-}
 
-async function * tarballed (source: AsyncIterable<Uint8Array>) {
-  yield * pipe(
-    source,
-    extract(),
-    async function * (source) {
-      for await (const entry of source) {
-        yield {
-          ...entry,
-          body: await toBuffer(map(entry.body, (buf) => buf.slice()))
+  private async * tarballed (source: AsyncIterable<Uint8Array>) {
+    yield * pipe(
+      source,
+      extract(),
+      async function * (source) {
+        for await (const entry of source) {
+          yield {
+            ...entry,
+            body: await toBuffer(map(entry.body, (buf) => buf.slice()))
+          }
         }
       }
-    }
-  )
+    )
+  }
 }

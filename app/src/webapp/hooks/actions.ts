@@ -1,5 +1,5 @@
-import { MetaAction, PayloadAction } from './types';
-
+import { MetaAction, PayloadAction } from 'awayto';
+  
 const createAction = <Type extends string, Meta>(type: Type, meta?: Meta): MetaAction<Type, Meta> =>
   ({ type, meta });
 

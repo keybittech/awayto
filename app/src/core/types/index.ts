@@ -1,78 +1,16 @@
-import React, { FunctionComponent } from 'react';
-import { RouterState } from 'connected-react-router';
-import { RouteComponentProps } from 'react-router';
-import { Action, ReducersMapObject, Store } from 'redux';
-import { PersistState } from 'redux-persist';
-import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { CognitoUser } from '../cognito';
 
 declare global {
   /**
    * @category Awayto Redux
    */
-  interface ISharedState {
-    components: IBaseComponents;
-    _persist: PersistState;
-    router: RouterState<unknown>;
-  }
-
-  /**
-   * @category Awayto Redux
-   */
   type ISharedActions =  ICommonModuleActions | IManageModuleActions | IProfileModuleActions;
 
-  /**
-   * @category Awayto React
-   */
-  interface IProps extends SafeRouteProps {
-    classes: Record<string, string>;
-    closeModal?(): void;
-    // [prop: string]: SiteRoles | ReactElement | SafeRouteProps[keyof SafeRouteProps] | undefined | boolean | string | number | ILoadedState | (() => void);
-  }
 }
 
-type RouteProps = { [prop: string]: string }
-type SafeRouteProps = Omit<RouteComponentProps<RouteProps>, "staticContext">;
-
-/**
- * @category Awayto React
- */
-export type IBaseComponent = FunctionComponent<IProps>
-
-/**
- * @category Awayto React
- */
-export type IBaseComponents = { [component: string]: IBaseComponent }
-
-/**
- * @category Awayto React
- */
-export type TempComponent = IBaseComponent | string | undefined
-
-/**
- * @category Awayto React
- */
-export type LazyComponentPromise = Promise<{ default: IBaseComponent }>
-
-/**
- * @category Awayto Redux
- */
-export type ILoadedState = ISharedState[keyof ISharedState];
-
-/**
- * @category Awayto Redux
- */
-export type IReducers = ReducersMapObject<ISharedState, ISharedActions>;
-
-/**
- * @category Awayto Redux
- */
-export type ILoadedReducers = Partial<IReducers>;
-
-/**
- * @category Action Types
- */
-export type IActionTypes = ISharedActionTypes[keyof ISharedActionTypes];
+export interface Action<T = any> {
+  type: T
+}
 
 /**
  * @category Awayto Redux
@@ -91,14 +29,13 @@ export type PayloadAction<Type, Payload, Meta = void> = MetaAction<Type, Meta> &
 /**
  * @category Awayto Redux
  */
-export type ThunkResult = ThunkAction<void, ISharedState, unknown | undefined, ISharedActions>
+export type ILoadedState = ISharedState[keyof ISharedState];
+
 
 /**
- * @category Awayto Redux
+ * @category Action Types
  */
-export type ThunkStore = Store<ISharedState, ISharedActions> & {
-  dispatch: ThunkDispatch<ISharedState, undefined, ISharedActions>;
-}
+export type IActionTypes = ISharedActionTypes[keyof ISharedActionTypes];
 
 /**
  * @category Build
@@ -191,16 +128,6 @@ export enum SiteRoles {
   DEMO = "public:demo",
   GUEST = "public:guest"
 }
-
-/**
- * @category Awayto
- */
-export type IChangeEvent = React.ChangeEvent<HTMLTextAreaElement>;
-
-/**
- * @category Awayto
- */
-export type IFocusEvent = React.FocusEvent<HTMLTextAreaElement>;
 
 /**
  * @category Awayto

@@ -2,15 +2,8 @@ import { useEffect, useState } from 'react';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 import { CognitoIdentityClient } from "@aws-sdk/client-cognito-identity";
 
-import { CognitoUser, CognitoUserPool, ILoginActionTypes } from 'awayto';
+import { CognitoUser, CognitoUserPool, ILoginActionTypes, Region, UserPoolId, ClientId, IdentityPoolId } from 'awayto';
 import { useAct } from 'awayto-hooks';
-
-const {
-  REACT_APP_AWS_REGION: Region,
-  REACT_APP_COGNITO_USER_POOL_ID: UserPoolId,
-  REACT_APP_COGNITO_CLIENT_ID: ClientId,
-  REACT_APP_COGNITO_IDENTITY_POOL_ID: IdentityPoolId
-} = process.env as { [prop: string]: string };
 
 const { AUTH_SUCCESS, AUTH_DENIAL } = ILoginActionTypes;
 

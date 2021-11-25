@@ -1,4 +1,4 @@
-import { IGroup, IRole } from "awayto";
+import { IGroup, IRole } from 'awayto';
 
 /**
  * @category Util

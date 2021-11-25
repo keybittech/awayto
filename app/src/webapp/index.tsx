@@ -1,33 +1,85 @@
 // React imports
 import 'typeface-roboto';
 import 'typeface-courgette';
-import React from 'react';
+import React, { FunctionComponent, createElement } from 'react';
 import MomentUtils from '@date-io/moment';
-import { ConnectedRouter } from 'connected-react-router';
+import { RouteComponentProps } from 'react-router';
+import { ConnectedRouter, routerMiddleware, connectRouter, RouterState } from 'connected-react-router';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { asyncForEach, IReducers } from 'awayto';
-import reportWebVitals from './reportWebVitals';
-import { createElement } from 'react';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import { render } from 'react-dom';
-import build from './build.json';
-import './index.css';
-import App from './App';
-
-// Redux imports
 import { createBrowserHistory, History } from 'history';
-import { createStore, applyMiddleware, compose, combineReducers, Reducer } from 'redux';
-import { routerMiddleware, connectRouter } from 'connected-react-router';
+import { createStore, applyMiddleware, compose, combineReducers, Reducer, ReducersMapObject } from 'redux';
 import thunk, { ThunkMiddleware } from 'redux-thunk';
 import createDebounce from 'redux-debounced';
 import logger from 'redux-logger';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
-import { persistReducer } from 'redux-persist'
+import { persistReducer, PersistState } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
-import { ILoadedReducers, ILoadedState, ThunkStore } from 'awayto';
 import persistStore from 'redux-persist/es/persistStore';
-import { setStore } from './hooks/useDispatch';
+
+import { setStore, ThunkStore } from './hooks/useDispatch';
+import { asyncForEach, ILoadedState } from 'awayto';
+
+import build from './build.json';
+import reportWebVitals from './reportWebVitals';
+import './index.css';
+import App from './App';
+
+declare global {
+  /**
+   * @category Awayto Redux
+   */
+  interface ISharedState {
+    components: IBaseComponents;
+    _persist: PersistState;
+    router: RouterState<unknown>;
+  }
+
+  /**
+   * @category Awayto React
+   */
+  interface IProps extends SafeRouteProps {
+    classes: Record<string, string>;
+    closeModal?(): void;
+    // [prop: string]: SiteRoles | ReactElement | SafeRouteProps[keyof SafeRouteProps] | undefined | boolean | string | number | ILoadedState | (() => void);
+  }
+}
+
+type RouteProps = { [prop: string]: string }
+type SafeRouteProps = Omit<RouteComponentProps<RouteProps>, "staticContext">;
+
+
+/**
+ * @category Awayto Redux
+ */
+ export type IReducers = ReducersMapObject<ISharedState, ISharedActions>;
+
+ /**
+  * @category Awayto Redux
+  */
+ export type ILoadedReducers = Partial<IReducers>;
+
+/**
+ * @category Awayto React
+ */
+ export type IBaseComponent = FunctionComponent<IProps>
+
+ /**
+  * @category Awayto React
+  */
+ export type IBaseComponents = { [component: string]: IBaseComponent }
+ 
+/**
+ * @category Awayto React
+ */
+export type LazyComponentPromise = Promise<{ default: IBaseComponent }>
+
+/**
+ * @category Awayto React
+ */
+export type TempComponent = IBaseComponent | string | undefined
 
 /**
  * @category Redux
