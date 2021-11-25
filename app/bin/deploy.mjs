@@ -517,6 +517,10 @@ try {
 
     let envVars = Object.assign({}, lamCfgCommand.Environment.Variables);
     envVars['PGHOST'] = dbInstance.Endpoint.Address;
+    envVars['CognitoUserPoolId'] = awaytoConfig.cognitoUserPoolId;
+    envVars['CognitoClientId'] = awaytoConfig.cognitoClientId;
+    envVars['CognitoIdentityPoolId'] = awaytoConfig.cognitoIdentityPoolId;
+    envVars['CognitoRegion'] = region;
 
     console.log('Updating lambda security group configuration.');
     await lamClient.send(new UpdateFunctionConfigurationCommand({
@@ -553,6 +557,7 @@ try {
         "CognitoUserPoolId": awaytoConfig.cognitoUserPoolId,
         "CognitoClientId": awaytoConfig.cognitoClientId,
         "CognitoIdentityPoolId": awaytoConfig.cognitoIdentityPoolId,
+        "CognitoRegion": region
       }
 
       await asyncForEach(Object.keys(envJson), async k => {
