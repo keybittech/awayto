@@ -354,11 +354,6 @@ export class CognitoUser implements CognitoUserType {
 /**
  * @category Cognito
  */
-export { UserPoolId, ClientId }
-
-/**
- * @category Cognito
- */
 export const getUserPool = (): CognitoUserPool => {
   if (!UserPoolId || !ClientId)
     throw new Error('Configuration error: missing pool or client ids.')
