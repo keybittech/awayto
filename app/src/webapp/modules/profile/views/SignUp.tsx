@@ -7,7 +7,9 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import TextField from '@material-ui/core/TextField'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
+import CardHeader from '@material-ui/core/CardHeader'
 import CardActions from '@material-ui/core/CardActions'
+import Typography from '@material-ui/core/Typography'
 
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -52,12 +54,14 @@ export function SignUp(props: IProps): JSX.Element {
           act(SIGNUP_USER, profile as IUserProfile);
           act(HAS_CODE, { hasSignUpCode: true })
         }}>
-
           <Card>
             <CardContent>
               <Grid container spacing={4}>
+                <Grid item xs={12}>
+                  <Typography variant="h5">Signup</Typography>
+                </Grid>
                 <Grid item xs={12} md={6}>
-                  <Grid container direction="column" justifyContent="flex-start" alignItems="stretch" spacing={2}>
+                  <Grid container direction="column" justifyContent="flex-start" alignItems="stretch" spacing={10}>
                     <Grid item>
                       <TextField fullWidth id="firstName" label="First Name" value={profile.firstName} name="firstName" onChange={e => setProfile({ ...profile, firstName: e.target.value })} />
                     </Grid>
@@ -73,7 +77,7 @@ export function SignUp(props: IProps): JSX.Element {
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                  <Grid container direction="column" justifyContent="flex-start" alignItems="stretch" spacing={2}>
+                  <Grid container direction="column" justifyContent="flex-start" alignItems="stretch" spacing={10}>
                     <Grid item>
                       <TextField fullWidth id="username" label="Username" value={profile.username} name="username" onChange={e => setProfile({ ...profile, username: e.target.value })} />
                     </Grid>
@@ -113,6 +117,7 @@ export function SignUp(props: IProps): JSX.Element {
               </Grid>
             </CardActions>
           </Card>
+
 
 
         </form>
