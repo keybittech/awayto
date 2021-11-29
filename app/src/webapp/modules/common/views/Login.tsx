@@ -1,16 +1,15 @@
 import React, { FormEvent, useState, useCallback } from 'react';
-import Button from '@material-ui/core/Button'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import IconButton from '@material-ui/core/IconButton'
-import TextField from '@material-ui/core/TextField'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-// import Link from '@material-ui/core/Link'
-
+import { Link } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import TextField from '@material-ui/core/TextField';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -22,8 +21,10 @@ const { RESET_PASSWORD, LOGIN_USER, AUTH_DENIAL } = ILoginActionTypes;
 const { SET_SNACK, START_LOADING, STOP_LOADING } = IUtilActionTypes;
 
 export function Login(props: IProps): JSX.Element {
-  // const { classes = {} } = props;
+  const { classes } = props;
+
   const { SignUp } = useComponents();
+
   const act = useAct();
   const login = useRedux(state => state.login);
 
@@ -53,6 +54,18 @@ export function Login(props: IProps): JSX.Element {
     <Grid item xs={12} md={9}>
       <Card>
         <CardContent>
+
+          <Typography variant="h4">Watch the video</Typography>
+
+          <iframe style={{ border: 'none' }} width="560" height="315" src="https://www.youtube.com/embed/GKsvr3KkF4E" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+          
+          <Typography variant="h6">Ready to start?</Typography>
+          <Typography variant="subtitle1">Check out the <Typography className={classes.link} color="secondary" component={Link} to="/start">Getting Started</Typography> and <Typography className={classes.link} color="secondary" component={Link} to="/faq">FAQ</Typography> pages.</Typography>
+          
+          <Typography variant="h6">Still have questions?</Typography>
+          <Typography variant="subtitle1"><Typography className={classes.link} color="secondary" component={Link} to={{ pathname: "https://discord.gg/KzpcTrn5DQ" }} target="_blank">Join the discord!</Typography></Typography>
+
+          <Typography variant="h6">What is this?</Typography>
           <Typography>
             Awayto is a workflow enhancing platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape. The right path is a way to be discovered.
           </Typography>

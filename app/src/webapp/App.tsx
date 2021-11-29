@@ -1,22 +1,19 @@
 import Icon from './img/kbt-icon.png';
 
-import React, { Suspense, useEffect } from 'react';
-import { Route, Redirect, withRouter, Switch } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { Route, Redirect, withRouter, Switch, Link } from 'react-router-dom';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { Skeleton } from '@material-ui/lab';
 
-import withStyles from '@material-ui/core/styles/withStyles'
+import withStyles from '@material-ui/core/styles/withStyles';
 import Drawer from '@material-ui/core/Drawer';
-import Toggle from '@material-ui/core/Switch'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Snackbar from '@material-ui/core/Snackbar'
-import Toolbar from '@material-ui/core/Toolbar'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Backdrop from '@material-ui/core/Backdrop'
-import AppBar from '@material-ui/core/AppBar'
-import Link from '@material-ui/core/Link'
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import Snackbar from '@material-ui/core/Snackbar';
+import Toolbar from '@material-ui/core/Toolbar';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Backdrop from '@material-ui/core/Backdrop';
+import AppBar from '@material-ui/core/AppBar';
 
 import { IUtilActionTypes } from 'awayto';
 import { useRedux, useAct, useComponents, useCognitoUser } from 'awayto-hooks';
@@ -36,7 +33,7 @@ const App = (props: IProps): JSX.Element => {
 
   const { classes, history } = props;
 
-  const { Sidebar, ConfirmAction, Home, Profile, ChangeNewPassword, Login, Manage, SignUp, CompleteSignUp, PickTheme } = useComponents();
+  const { Sidebar, ConfirmAction, Home, Profile, ChangeNewPassword, Login, Manage, SignUp, CompleteSignUp, PickTheme, FAQ, GettingStarted } = useComponents();
 
   // Keep this useCognitoUser() call to bootstrap login state
   useCognitoUser();
@@ -107,30 +104,36 @@ const App = (props: IProps): JSX.Element => {
         <main>
           <Grid container justifyContent="center">
             <Grid item xs={10}>
-              <Link href="/">
+              <Typography className={classes.link} color="primary" component={Link} to="/">
                 <Grid container alignItems="center" direction="row">
                   <img src={Icon} alt="keybit tech logo" className={classes.appLogo} />
                   <Typography variant="h3">&nbsp;AWAYTO</Typography>
                 </Grid>
-              </Link>
+              </Typography>
             </Grid>
             <Grid item xs={10}>
               <Grid container>
                 <Grid item xs={12}>
                   <Grid container justifyContent="space-evenly">
-                    <Typography><Link href="https://github.com/keybittech/awayto">View on GitHub</Link></Typography>
-                    <Typography><Link href="https://awayto.dev/docs/index.html">Typedoc</Link></Typography>
-                    <Typography><Link href="https://keybittech.com">KeyBit Tech</Link></Typography>
-                    <Typography><Link href="https://discord.gg/KzpcTrn5DQ">Discord</Link></Typography>
-                    <Typography><Link href="https://twitch.tv/awayto">Twitch</Link></Typography>
-                    <Typography><Link href="https://twitter.com/awaytodev">Twitter</Link></Typography>
-                    <Typography><Link href="mailto:joe@keybittech.com">Contact</Link></Typography>
+                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://github.com/keybittech/awayto" }} target="_blank">View on GitHub</Typography>
+                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://awayto.dev/docs/index.html" }} target="_blank">Typedoc</Typography>
+                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://keybittech.com" }} target="_blank">KeyBit Tech</Typography>
+                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://discord.gg/KzpcTrn5DQ" }} target="_blank">Discord</Typography>
+                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://twitch.tv/awayto" }} target="_blank">Twitch</Typography>
+                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://twitter.com/awaytodev" }} target="_blank">Twitter</Typography>
+                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "mailto:joe@keybittech.com" }} target="_blank">Contact</Typography>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <Grid container justifyContent="space-evenly">
+                    <Typography className={classes.link} color="primary" component={Link} to="/start">Getting Started</Typography>
+                    <Typography className={classes.link} color="primary" component={Link} to="/faq">FAQ</Typography>
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
-          <Grid container className={classes.loginWrap} alignItems="center" justifyContent="center" direction="row">
+          <Grid container className={classes.loginWrap} justifyContent="center" direction="row">
             <Grid item xs={10}>
               <Suspense fallback={
                 <Grid container direction="row" justifyContent="center" spacing={2}>
@@ -148,9 +151,10 @@ const App = (props: IProps): JSX.Element => {
                 </Grid>
               }>
                 <Switch>
-                  {!['/', '/signup'].includes(history.location.pathname) && <Redirect to="/" />}
                   <Route exact path="/" render={() => login.challengeName ? <ChangeNewPassword {...props} /> : <Login {...props} />} />
                   <Route exact path="/signup" render={() => hasSignUpCode ? <CompleteSignUp {...props} /> : <SignUp {...props} />} />
+                  <Route exact path="/start" render={() => <GettingStarted {...props} />} />
+                  <Route exact path="/faq" render={() => <FAQ {...props} />} />
                 </Switch>
               </Suspense>
             </Grid>

@@ -53,7 +53,7 @@ The Awayto platform adheres to these tenets in part by being scalable, lightweig
 
 #### Prerequisites
 
-Any versions mentioned are what was used at time of writing. Any AWS tasks are performed on an AWS account with the Administrator role.
+Any AWS tasks are performed on an AWS account with the Administrator role.
 
 - An AWS Account
 

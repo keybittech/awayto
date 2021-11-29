@@ -35,6 +35,10 @@ export const styles = ({ mixins, spacing }: Theme): StyleRules => createStyles({
 
   loginWrap: {  height: '75vh' },
 
+  link: {
+    textDecoration: 'none'
+  },
+
   dropzone: { width: '400px', height: '150px' },
 
   //Common

@@ -2,6 +2,13 @@ body {
   background-color: white;
 }
 
+pre {
+  font-family: monospace;
+  display: inline;
+  padding: 5px;
+  background-color: #555;
+}
+
 .App {
    text-align: center; 
 }
