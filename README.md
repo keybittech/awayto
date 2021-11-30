@@ -44,7 +44,7 @@ The Awayto platform adheres to these tenets in part by being scalable, lightweig
 
 - Full scale business application built with business owners in mind
 
-- Robust user management system allowing for self signup, federated IdP, or admin generated memberships
+- Robust user management system allowing for self signup, federated IdP, SAML, or admin generated memberships
 
 - Baked in group and role authorization framework
 

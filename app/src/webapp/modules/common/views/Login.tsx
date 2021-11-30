@@ -102,7 +102,7 @@ export function Login(props: IProps): JSX.Element {
               Full scale business application built with business owners in mind
             </ListItem>
             <ListItem className="bullet">
-              Robust user management system allowing for self signup, federated IdP, or admin generated memberships
+              Robust user management system allowing for self signup, federated IdP, SAML, or admin generated memberships
             </ListItem>
             <ListItem className="bullet">
               Baked in group and role authorization framework
