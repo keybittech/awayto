@@ -177,7 +177,8 @@ export const blueTheme = createTheme({
   ...theme,
   palette: {
     ...theme.palette,
-    primary: { main: '#000' }
+    primary: { main: '#000' },
+    secondary: { main: 'rgb(0 191 255)' }
   },
   overrides: {
     ...theme.overrides,

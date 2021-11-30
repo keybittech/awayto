@@ -580,8 +580,10 @@ try {
     console.log('Waiting for CloudFront deployment to be available.');
     await waitUntilDistributionDeployed({ client: clClient, maxWaitTime: 600 }, { Id: distributionCmd.Distribution.Id });
 
-    console.log(`Site available at ${awaytoConfig.website}. Login with the credentials you provided.`)
-    console.log('You may also run the project locally with "npm run start-stack". See the package.json for more options.');
+    console.log(`Site available at ${awaytoConfig.website}. Login with the credentials you provided.`);
+    console.log(`Your Awayto ID is ${awaytoConfig.awaytoId}. This is stored in bin/data/seeds, but you may want to note it elsewhere. It is needed to use the uninstaller.`);
+    console.log('You may also run the project locally with "npm run start". See the package.json for more options.');
+    console.log('Resources are available at https://awayto.dev/docs/index.html, https://awayto.dev/start, https://awayto.dev/faq and on Discord https://discord.gg/KzpcTrn5DQ');
 
     process.exit();
   });

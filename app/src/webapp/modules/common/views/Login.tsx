@@ -57,20 +57,21 @@ export function Login(props: IProps): JSX.Element {
 
           <Typography variant="h4">Watch the video</Typography>
 
-          <iframe style={{ border: 'none' }} width="560" height="315" src="https://www.youtube.com/embed/GKsvr3KkF4E" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+          <iframe style={{ border: 'none', width: '100%', maxWidth: '560px', height: '315px' }} src="https://www.youtube.com/embed/GKsvr3KkF4E" title="YouTube video player Awayto 2-Minute Introduction" allow="accelerometer; fullscreen; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+          <Typography variant="h6">Inquiries: <Typography variant="h5" className={classes.link} color="secondary" component={Link} to={{ pathname: "mailto:joe@keybittech.com" }} target="_blank">joe@keybittech.com</Typography></Typography>
           
           <Typography variant="h6">Ready to start?</Typography>
-          <Typography variant="subtitle1">Check out the <Typography className={classes.link} color="secondary" component={Link} to="/start">Getting Started</Typography> and <Typography className={classes.link} color="secondary" component={Link} to="/faq">FAQ</Typography> pages.</Typography>
+          <Typography variant="body1">Check out the <Typography className={classes.link} color="secondary" component={Link} to="/start">Getting Started</Typography> and <Typography className={classes.link} color="secondary" component={Link} to="/faq">FAQ</Typography> pages.</Typography>
           
           <Typography variant="h6">Still have questions?</Typography>
-          <Typography variant="subtitle1"><Typography className={classes.link} color="secondary" component={Link} to={{ pathname: "https://discord.gg/KzpcTrn5DQ" }} target="_blank">Join the discord!</Typography></Typography>
+          <Typography variant="body1"><Typography className={classes.link} color="secondary" component={Link} to={{ pathname: "https://discord.gg/KzpcTrn5DQ" }} target="_blank">Join the discord!</Typography></Typography>
 
           <Typography variant="h6">What is this?</Typography>
           <Typography>
-            Awayto is a workflow enhancing platform, producing great value with minimal investment. With all the ways there are to reach a solution, it's important to understand the landscape. The right path is a way to be discovered.
+            Deploy a fully-featured application in about 10 minutes that is primed for quick development. Do business, impress a client with a quick demo, finish your poc with time to spare; all easily achievable with Awayto. Managing the infrastructure for web applications is often cumbersome and time consuming. Awayto can be thought of as a method for working with web applications, laying out each step, should you care to change something.
           </Typography>
 
-          <Typography>
+          <Typography variant="body1">
             There are a few tenets of Awayto:
           </Typography>
 
@@ -89,8 +90,8 @@ export function Login(props: IProps): JSX.Element {
             </ListItem>
           </List>
 
-          <Typography>
-            The Awayto platform adheres to these tenets in part by being scalable, lightweight, and secure. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:
+          <Typography variant="body1">
+            The Awayto platform adheres to these tenets in part by being scalable, lightweight, and informative in its formation. The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:
           </Typography>
 
           <List>
@@ -107,10 +108,10 @@ export function Login(props: IProps): JSX.Element {
               Baked in group and role authorization framework
             </ListItem>
             <ListItem className="bullet">
-              Completely typed Typescript development environment
+              Fully-typed development environment using Typescript; use the same types on the full stack
             </ListItem>
             <ListItem className="bullet">
-              Curated set of database scripts designed for auditing and reporting
+              Database schema designed for auditing and reporting
             </ListItem>
           </List>
 

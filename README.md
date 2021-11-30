@@ -10,6 +10,9 @@ Using these technologies, Awayto gives a structured framework for rapid developm
 
 `!` We're actively looking for contributors and AWS replacements for our cloudless implementation! If interested, [join the discord](https://discord.gg/KzpcTrn5DQ). Thanks!
 
+## [Watch the 2-minute intro](https://www.youtube.com/watch?v=GKsvr3KkF4E)
+## [Getting Started](https://awayto.dev/start) - [FAQ](https://awayto.dev/faq)
+
 ## Quick Installation
 
 Make sure your console session can perform AWS CLI commands with Administrator role access.
@@ -23,7 +26,7 @@ awayto
 
 ## What is Awayto?
 
-Deploy a fully-featured application in about 10 minutes that is primed for quick development. Run a business, impress a client with a quick demo, finish your poc with time to spare; all easily achievable with Awayto. Managing the infrastructure for web applications is often cumbersome and time consuming. Awayto can be thought of as a method for working with web applications, laying out each step, should you care to change something.
+Deploy a fully-featured application in about 10 minutes that is primed for quick development. Do business, impress a client with a quick demo, finish your poc with time to spare; all easily achievable with Awayto. Managing the infrastructure for web applications is often cumbersome and time consuming. Awayto can be thought of as a method for working with web applications, laying out each step, should you care to change something.
 
 There are a few tenets of Awayto:  
 
@@ -77,12 +80,37 @@ In the future, if you want get access to new or updated tooling offered by Awayt
 
 ## Usage
 
-Type reference can be found [here](https://awayto.dev/docs/modules.html). Notable functionalities are described below. We're always trying to think of and develop new tools for developers. If you have an idea for something you want to use or see in the platform, or need help with something,  [Discord](https://discord.gg/KzpcTrn5DQ).
+### Utility Commands
+
+- `npm run start` -- Start a local dev server at `localhost:3000` which only serves the webapp, and uses the `settings.development.env` file.
+
+- `npm run start-stack` -- Same as above, but if you opted for local-testing in the installation, this will start `sam local` using the `env.json` and `template.sam.yaml` files in the main directory. SAM Local starts up a docker contanerized instance of your Lambda function at `localhost:3001`. The webapp will pick up the `settings.local.env` file in this case.
+
+- `npm run start-api` -- Starts just the api with the same above configuration.
+
+- `npm run start-local` -- Starts just the webapp with the `settings.local.env` configuration.
+
+- `npm run watch-api` -- Start a webpack watcher on just the api.
+
+- `npm run build-api` -- Build the api with webpack using `api.webpack.js`. As a result of the build, a minified index.js containing the Lambda handler will be placed into the `apipkg` folder.
+
+- `npm run build-web` -- Build the webapp using react-app-rewired. As a result of this build, a `build` folder will be generated.
+
+- `npm run build-deploy` -- Build both the api and webapp, in the event you are preparing to deploy a full stack update.
+
+- `npm run install-stack` -- In the event you are installing a re-packaged version of Awayto, you can use this command to install the related AWS resources into your own AWS account.
+
+- `npm run db-update` -- Deploy any un-deployed `.sql` files in the `src/api/scripts` folder. You can see what's been deployed by reviewing the seed file `bin/data/seeds`.
+
+- `npm run release` -- Run a release script which will deploy both the api (`apipkg` folder) and webapp (`build` folder) to s3. Then the script will request a CloudFront distribution invalidation on the entire webapp bucket. As well, the Lambda function will be re-deployed with the built handler.
+
+### Typescript Suite
+Type reference can be found [here](https://awayto.dev/docs/modules.html). 
 
 ### Hooks
-There are a few hooks offered out of the box, core to the Awayto UI design experience. (Awayto exports React's `useState` for convenience.)
+There are a few hooks offered out of the box, core to the Awayto UI design experience.
 
-### useRedux
+#### useRedux
 Hook into the fully typed redux store. Access your redux state using this hook.
 
 ```ts
@@ -91,7 +119,7 @@ import { useRedux } from 'awayto';
 const profile = useRedux(state => state.profile); // e.g. returns the currently logged in IUserProfile
 ```
 
-### useAct
+#### useAct
 
 `useAct` is a wrapper for dispatching actions. Give it an [IActionTypes](https://awayto.dev/docs/modules.html#iactiontypes), a loader boolean, and the action payload if necessary.
 
@@ -127,7 +155,7 @@ If the endpoint takes path parameters (like `GET/manage/user/id/:id`), or if the
 api(GET_MANAGE_USERS_BY_ID, false, { id }); // Get a user profile by a specified ID, refresh it in redux state, and do not show a loading screen
 ```
  
-### useCognitoUser
+#### useCognitoUser
 Use this hook to get access to Cognito functionality once the user has logged in, or to check if the user is logged in.
 
 ```ts
@@ -140,7 +168,7 @@ await cognitoUser.getSession();
 cognitoUser.isLoggedIn == true
 ```
 
-### useComponents
+#### useComponents
 `useComponents` takes advantage of [React.lazy](https://reactjs.org/docs/code-splitting.html#reactlazy) as well as the [Proxy API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). By combining these functionalities, we end up with a tool that makes it easy to work in an expanding and quickly changing code base.
 
 As new files are added to the project while the developer is working, they will be automatically discovered and made lazily available through `useComponents`. The only need is to refresh the browser page once the component has been added to the render cycle. If the developer tries to destructure a component that does not exist in the group of lazy loaded components, `useComponents` will return an empty `div`. This is configurable.
@@ -157,7 +185,7 @@ function ParentComponent(props: IProps): JSX.Element {
 }
 ```
 
-### useFileStore
+#### useFileStore
  `useFileStore` is used to access various types of pre-determined file stores. All stores allow CRUD operations for user-bound files. Internally default instantiates {@link AWSS3FileStoreStrategy}, but you can also pass a {@link FileStoreStrategies} to `useFileStore` for other supported stores.
  
  ```ts

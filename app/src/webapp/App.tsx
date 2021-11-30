@@ -111,30 +111,30 @@ const App = (props: IProps): JSX.Element => {
                 </Grid>
               </Typography>
             </Grid>
-            <Grid item xs={10}>
-              <Grid container>
-                <Grid item xs={12}>
-                  <Grid container justifyContent="space-evenly">
-                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://github.com/keybittech/awayto" }} target="_blank">View on GitHub</Typography>
-                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://awayto.dev/docs/index.html" }} target="_blank">Typedoc</Typography>
-                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://keybittech.com" }} target="_blank">KeyBit Tech</Typography>
-                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://discord.gg/KzpcTrn5DQ" }} target="_blank">Discord</Typography>
-                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://twitch.tv/awayto" }} target="_blank">Twitch</Typography>
-                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://twitter.com/awaytodev" }} target="_blank">Twitter</Typography>
-                    <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "mailto:joe@keybittech.com" }} target="_blank">Contact</Typography>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                  <Grid container justifyContent="space-evenly">
-                    <Typography className={classes.link} color="primary" component={Link} to="/start">Getting Started</Typography>
-                    <Typography className={classes.link} color="primary" component={Link} to="/faq">FAQ</Typography>
-                  </Grid>
-                </Grid>
+            <Grid item xs={12} md={6}>
+              <Grid container justifyContent="space-evenly">
+                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://github.com/keybittech/awayto" }} target="_blank">View on GitHub</Typography>
+                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://awayto.dev/docs/index.html" }} target="_blank">Typedoc</Typography>
+                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://keybittech.com" }} target="_blank">KeyBit Tech</Typography>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Grid container justifyContent="space-evenly">
+                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://discord.gg/KzpcTrn5DQ" }} target="_blank">Discord</Typography>
+                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://twitch.tv/awayto" }} target="_blank">Twitch</Typography>
+                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://twitter.com/awaytodev" }} target="_blank">Twitter</Typography>
+                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "mailto:joe@keybittech.com" }} target="_blank">Contact</Typography>
+              </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container justifyContent="space-evenly">
+                <Typography className={classes.link} color="secondary" component={Link} to="/start">Getting Started</Typography>
+                <Typography className={classes.link} color="secondary" component={Link} to="/faq">FAQ</Typography>
               </Grid>
             </Grid>
           </Grid>
           <Grid container className={classes.loginWrap} justifyContent="center" direction="row">
-            <Grid item xs={10}>
+            <Grid item xs={10} style={{ paddingBottom: '50px' }}>
               <Suspense fallback={
                 <Grid container direction="row" justifyContent="center" spacing={2}>
                   <Grid item xs={9}>
