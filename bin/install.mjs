@@ -20,6 +20,7 @@ export default async function (id) {
     '.eslintignore',
     'api.webpack.js',
     'config-overrides.js',
+    'package-lock.json',
     'package.json',
     'settings.application.env',
     'tsconfig.json',
