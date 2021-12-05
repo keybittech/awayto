@@ -46,7 +46,8 @@ export default async function (id) {
   console.log('Beginning app deployment process\n');
 
   const varFiles = [
-    'package.json'
+    'package.json',
+    'package-lock.json'
   ];
 
   const seedPath = path.join(__dirname, `data/seeds/${id}.json`);
