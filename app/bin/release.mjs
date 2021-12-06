@@ -22,6 +22,18 @@ const release = async function (props = {}) {
     
     const awaytoConfig = JSON.parse(await fs.readFile(seedPath));
     
+    const webSha = crypto.createHash('sha1').update(Buffer.from(await fs.readFile(path.join(__dirname, '../build/index.html')))).digest('base64');
+        
+    if (webSha != awaytoConfig.webSha) {
+      awaytoConfig.webSha = webSha;
+      
+      console.log('Deploying updated webapp.');
+      
+      child_process.execSync(`aws s3 sync ./build s3://${awaytoConfig.awaytoId}-webapp`, { stdio: 'inherit' });
+      child_process.execSync(`aws cloudfront create-invalidation --distribution-id  ${awaytoConfig.distributionId} --paths "/*"`, { stdio: 'inherit' });
+      await fs.writeFile(seedPath, JSON.stringify(awaytoConfig));
+    }
+
     const apiSha = crypto.createHash('sha1').update(Buffer.from(await fs.readFile(path.join(__dirname, '../apipkg/index.js')))).digest('base64');
     
     if (apiSha != awaytoConfig.apiSha) {
@@ -42,29 +54,19 @@ const release = async function (props = {}) {
       output.on('close', async function () {
         child_process.execSync(`aws s3 cp ./lambda.zip s3://${awaytoConfig.awaytoId}-lambda`, { stdio: 'inherit' });
         child_process.execSync(`aws lambda update-function-code --function-name ${awaytoConfig.environment}-${awaytoConfig.awsRegion}-${awaytoConfig.awaytoId}Resource --region ${awaytoConfig.awsRegion} --s3-bucket ${awaytoConfig.awaytoId}-lambda --s3-key lambda.zip`, { stdio: 'inherit' });
-        child_process.execSync(`rm lambda.zip`, { stdio: 'inherit' });
+        await fs.unlink('lambda.zip');
+        await fs.writeFile(seedPath, JSON.stringify(awaytoConfig));
+
+        process.exit();
       });
       
       await archive.finalize();
+    } else {
+      process.exit();
     }
-
-    const webSha = crypto.createHash('sha1').update(Buffer.from(await fs.readFile(path.join(__dirname, '../build/index.html')))).digest('base64');
-    
-    if (webSha != awaytoConfig.webSha) {
-      awaytoConfig.webSha = webSha;
-      
-      console.log('Deploying updated webapp.');
-      
-      child_process.execSync(`aws s3 sync ./build s3://${awaytoConfig.awaytoId}-webapp`, { stdio: 'inherit' });
-      child_process.execSync(`aws cloudfront create-invalidation --distribution-id  ${awaytoConfig.distributionId} --paths "/*"`, { stdio: 'inherit' });
-    }
-    
-    await fs.writeFile(seedPath, JSON.stringify(awaytoConfig));
   } catch (error) {
     console.log('Error releasing codebases:', error);
   }
-
-  process.exit();
 };
 
 export default release;

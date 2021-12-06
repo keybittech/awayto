@@ -6,12 +6,10 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 const lamClient = new LambdaClient();
 
 const dbUpdate = async function (props = {}) {
-  let install = !!Object.keys(props).length;
+  let install = !!props.awaytoId;
   
   if (!install) {
-    props = {
-      awaytoId: await ask('Awayto Id:\n> ')
-    }
+    props.awaytoId = await ask('Awayto Id:\n> ');
   }
 
   try {
@@ -42,6 +40,22 @@ const dbUpdate = async function (props = {}) {
         }));
       }
     });
+
+    if (props.file) {
+      awaytoConfig.scripts[props.file] = await fs.readFile(path.join(sqlFilePath, props.file), { encoding: 'utf-8' });
+      await lamClient.send(new InvokeCommand({
+        FunctionName: awaytoConfig.functionName,
+        InvocationType: 'Event',
+        Payload: makeLambdaPayload({
+          "httpMethod": "POST",
+          "resource": "/{proxy+}",
+          "pathParameters": {
+            "proxy": "deploy"
+          },
+          "script": awaytoConfig.scripts[props.file]
+        })
+      }));
+    }
     
     await fs.writeFile(seedPath, JSON.stringify(awaytoConfig));
   } catch (error) {
@@ -49,10 +63,15 @@ const dbUpdate = async function (props = {}) {
   }
 
   if (!install) process.exit();
+  
 };
 
 export default dbUpdate;
 
 if (process.argv[2] == "--local") {
   dbUpdate()
+}
+
+if (process.argv[2] == "--file") {
+  dbUpdate({ file: process.argv[3] })
 }

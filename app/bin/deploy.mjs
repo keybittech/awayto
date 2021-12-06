@@ -15,7 +15,7 @@ import { SSMClient, PutParameterCommand } from '@aws-sdk/client-ssm';
 import { IAMClient, GetRoleCommand, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
 import { S3Client, CreateBucketCommand, PutObjectCommand, PutBucketCorsCommand, PutBucketWebsiteCommand, PutBucketPolicyCommand, waitUntilBucketExists } from '@aws-sdk/client-s3';
 import { CloudFormationClient, waitUntilStackCreateComplete, CreateStackCommand, DescribeStacksCommand, ListStackResourcesCommand } from '@aws-sdk/client-cloudformation';
-import { LambdaClient, waitUntilFunctionUpdated, GetFunctionConfigurationCommand, UpdateFunctionConfigurationCommand, InvokeCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, waitUntilFunctionUpdated, GetFunctionConfigurationCommand, UpdateFunctionConfigurationCommand, InvokeCommand, waitUntilFunctionExists } from '@aws-sdk/client-lambda';
 import { CloudFrontClient, CreateDistributionCommand, CreateCloudFrontOriginAccessIdentityCommand, waitUntilDistributionDeployed, ListCloudFrontOriginAccessIdentitiesCommand } from '@aws-sdk/client-cloudfront';
 
 import { ask, replaceText, asyncForEach, makeLambdaPayload } from './tool.mjs';
@@ -387,6 +387,9 @@ await cfClient.send(new CreateStackCommand({
 console.log('Deploying CloudFormation stack.');
 await waitUntilStackCreateComplete({ client: cfClient, maxWaitTime: 600 }, { StackName: id });
 
+console.log('Waiting for Lambda Function finalization.');
+await waitUntilFunctionExists({ client: lamClient, maxWaitTime: 600 }, { FunctionName: `${config.environment}-${region}-${id}Resource` });
+
 const resourceResponse = await cfClient.send(new ListStackResourcesCommand({ StackName: id }));
 
 const resources = resourceResponse.StackResourceSummaries.map(r => {
@@ -472,10 +475,12 @@ try {
 
   output.on('close', async function () {
     if (!debug) {
-      child_process.execSync(`aws s3 cp ./lambda.zip s3://${lambdaBucket}`);
-      child_process.execSync(`aws lambda update-function-code --function-name ${config.environment}-${region}-${id}Resource --region ${region} --s3-bucket ${lambdaBucket} --s3-key lambda.zip`);
+      console.log('Syncing built api to s3.');
+      child_process.execSync(`aws s3 cp ./lambda.zip s3://${lambdaBucket}`, { stdio: 'inherit' });
+      console.log('Requesting Lambda function update.');
+      child_process.execSync(`aws lambda update-function-code --function-name ${config.environment}-${region}-${id}Resource --region ${region} --s3-bucket ${lambdaBucket} --s3-key lambda.zip`, { stdio: 'inherit' });
     }
-    child_process.execSync(`rm lambda.zip`);
+    await fs.promises.unlink('lambda.zip');
 
     console.log('Waiting for DB to be ready.');
     await waitUntilDBInstanceAvailable({ client: rdsClient, maxWaitTime: 600 }, { DBInstanceIdentifier: id });

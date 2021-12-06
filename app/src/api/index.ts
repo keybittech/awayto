@@ -53,7 +53,6 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
   const proxyPath = signUp ? 'user' : path;
   const resourcePath = `${method}${proxyPath}`;
   const pathMatch = pathMatcher.match(resourcePath);
-  const { roles, inclusive = false } = Objects[pathMatch._route];
   const dev = sourceIp == 'localhost' || !sourceIp;
 
   if (dev) {
@@ -96,6 +95,8 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
 
     if (!pathMatch)
       return errCallback(404, "404_NOT_FOUND"); // Return 404 NOT FOUND
+
+    const { roles, inclusive = false } = Objects[pathMatch._route];
 
     if (roles && !authorize({ userToken: event.userAdmin, roles, inclusive }))
       return errCallback(401, "401_UNAUTHORIZED"); // Return 401 UNAUTHORIZED
