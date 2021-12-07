@@ -19,30 +19,9 @@ import auditRequest from './util/auditor';
 import authorize from './util/auth';
 import { ApiEvent, ApiModulet, ILoadedState } from 'awayto';
 
-const Objects = Object.assign(
-  Deploy,
-  Tests,
-  Public,
-  Files,
-  Users,
-  UuidGroups,
-  UuidFiles,
-  UuidNotes,
-  UuidRoles,
-  ManageRoles,
-  ManageGroups,
-  ManageUsers
-) as Record<string, ApiModulet>
-
-const paths = Object.keys(Objects).map(key => {
-  return new Route(key, Objects[key].path)
-});
-const routeCollection = new RouteCollection(paths);
-const pathMatcher = new PathMatcher(routeCollection);
-
-const pool = new Pool();
-
 export const handler: Handler<ApiEvent> = async (event, context, callback) => {
+
+  const pool = new Pool();
 
   const { httpMethod, pathParameters, resource, sourceIp, triggerSource } = event;
 
@@ -52,7 +31,6 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
   const method = signUp ? 'POST' : httpMethod;
   const proxyPath = signUp ? 'user' : path;
   const resourcePath = `${method}${proxyPath}`;
-  const pathMatch = pathMatcher.match(resourcePath);
   const dev = sourceIp == 'localhost' || !sourceIp;
 
   if (dev) {
@@ -82,49 +60,69 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
     client = await pool.connect();
 
     if (event.script) {
-      const dbUpdate = await client.query(event.script);
+      const { rows, rowCount } = await client.query(event.script);
+      callback(null, {
+        statusCode: 200,
+        body: JSON.stringify({ rows, rowCount }),
+        headers: { "Access-Control-Allow-Origin": "*" }
+      })
+    } else {
+
+      const Objects = Object.assign(
+        Deploy,
+        Tests,
+        Public,
+        Files,
+        Users,
+        UuidGroups,
+        UuidFiles,
+        UuidNotes,
+        UuidRoles,
+        ManageRoles,
+        ManageGroups,
+        ManageUsers
+      ) as Record<string, ApiModulet>
+      
+      const paths = Object.keys(Objects).map(key => {
+        return new Route(key, Objects[key].path)
+      });
+      const routeCollection = new RouteCollection(paths);
+      const pathMatcher = new PathMatcher(routeCollection);
+      const pathMatch = pathMatcher.match(resourcePath);
+
+      if (!pathMatch)
+        return errCallback(404, "404_NOT_FOUND"); // Return 404 NOT FOUND
+
+      const { roles, inclusive = false } = Objects[pathMatch._route];
+
+      if (roles && !authorize({ userToken: event.userAdmin, roles, inclusive }))
+        return errCallback(401, "401_UNAUTHORIZED"); // Return 401 UNAUTHORIZED
+
+      console.log('====== Method: ', httpMethod);
+      console.log('====== Path: ', path);
+      console.log('====== Path Parameters: ', pathParameters);
+      console.log('====== Path Match Parameters: ', pathMatch._params);
+
+      event.pathParameters = pathMatch._params;
+
+      try {
+        await auditRequest({ event, context, client });
+      } catch (error) { console.log('ERROR AUDITING REQUEST, are you deploying the db?', error) }
+
+      const response = await Objects[pathMatch._route].cmnd({ event, context, client });
+
+      if (!response) 
+        return errCallback(400, "400_BAD_REQUEST"); // Return 400 BAD REQUEST
+
       return {
         statusCode: 200,
-        body: dbUpdate.rows,
+        body: JSON.stringify(response),
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Content-Type": "application/json"
         }
       };
     }
-
-    if (!pathMatch)
-      return errCallback(404, "404_NOT_FOUND"); // Return 404 NOT FOUND
-
-    const { roles, inclusive = false } = Objects[pathMatch._route];
-
-    if (roles && !authorize({ userToken: event.userAdmin, roles, inclusive }))
-      return errCallback(401, "401_UNAUTHORIZED"); // Return 401 UNAUTHORIZED
-
-    console.log('====== Method: ', httpMethod);
-    console.log('====== Path: ', path);
-    console.log('====== Path Parameters: ', pathParameters);
-    console.log('====== Path Match Parameters: ', pathMatch._params);
-
-    event.pathParameters = pathMatch._params;
-
-    try {
-      await auditRequest({ event, context, client });
-    } catch (error) { console.log('ERROR AUDITING REQUEST, are you deploying the db?', error) }
-
-    const response = await Objects[pathMatch._route].cmnd({ event, context, client });
-
-    if (!response) 
-      return errCallback(400, "400_BAD_REQUEST"); // Return 400 BAD REQUEST
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(response),
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json"
-      }
-    };
 
   } catch (error) {
     console.log('====== CRITICAL ERROR:', error)

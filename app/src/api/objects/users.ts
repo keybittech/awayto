@@ -6,7 +6,7 @@ const users: ApiModule = {
 
   get_username_availability: {
     path: 'GET/public/username',
-    cmnd: (props) => {
+    cmnd: async (props) => {
       try {
         return true; // { result: "you are public", ...props.event.pathParameters, ...props.event.queryStringParameters };
       } catch (error) {

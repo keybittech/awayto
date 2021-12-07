@@ -1,0 +1,9 @@
+{
+  "httpMethod": "GET",
+  "pathParameters": {
+    "proxy": "deploy"
+  },
+  "body": {},
+  "script": "select * from budgets",
+  "resource": "/{proxy+}"
+}

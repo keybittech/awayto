@@ -4,9 +4,9 @@ const tests: ApiModule = {
 
   get_public_api: {
     path: 'GET/public',
-    cmnd: () => {
+    cmnd: async () => {
       try {
-        return { name: 'kbt public api', version: 1 };
+        return true;
       } catch (error) {
         throw error;
       }
@@ -36,7 +36,7 @@ const tests: ApiModule = {
 
   post_public_api: {
     path: 'POST/public',
-    cmnd: (props) => {
+    cmnd: async (props) => {
       try {
         return [];// { result: "you posted public", ...props.event.body };
       } catch (error) {
@@ -47,7 +47,7 @@ const tests: ApiModule = {
 
   post_public_api_path: {
     path: 'POST/public/:path',
-    cmnd: (props) => {
+    cmnd: async (props) => {
       const { path } = props.event.pathParameters;
       try {
         return true; //{ result: "you posted public path of " + path, ...props.event.body };

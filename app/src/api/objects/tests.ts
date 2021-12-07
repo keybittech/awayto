@@ -6,7 +6,7 @@ const tests: ApiModule = {
 
   test_return_400: {
     path: 'GET/test/event/400',
-    cmnd: () => {
+    cmnd: async () => {
       try {
         return false;
       } catch (error) {
@@ -18,7 +18,7 @@ const tests: ApiModule = {
   test_return_401: {
     roles: 'you_dont_have_this_role',
     path: 'GET/test/event/401',
-    cmnd: () => {
+    cmnd: async () => {
       try {
         return true;
       } catch (error) {
@@ -29,7 +29,7 @@ const tests: ApiModule = {
 
   test_tests: {
     path: 'POST/test',
-    cmnd: (props) => {
+    cmnd: async (props) => {
       try {
 
         const { file } = props.event.body as { file: File };
@@ -44,7 +44,7 @@ const tests: ApiModule = {
 
   test_signup: {
     path: 'POST/test/signup',
-    cmnd: (props) => {
+    cmnd: async (props) => {
       try {
         
         console.log(props.event);
@@ -73,7 +73,7 @@ const tests: ApiModule = {
         })
 
 
-        return { listUsersResponse };
+        return true;
 
       } catch (error) {
         throw error;

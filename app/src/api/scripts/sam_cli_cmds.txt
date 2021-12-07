@@ -1,0 +1,4 @@
+
+sam local invoke -t ./template.yaml -n ./env.json -e ./events/GETtestEvent.json <Lambda Function Name as listed in the yaml template>
+
+sam local start-api -t ./template.yaml -n ./env.json -p 3001 --host localhost
