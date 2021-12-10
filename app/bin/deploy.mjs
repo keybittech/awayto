@@ -332,8 +332,8 @@ fs.copyFileSync(path.join(__dirname, 'data/template.yaml.template'), path.resolv
 await replaceText(path.join(__dirname, 'data/template.yaml'), 'id', id);
 await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'id', id);
 
-await replaceText(path.join(__dirname, 'data/template.yaml'), 'storageSite', `'s3://${lambdaBucket}/lambda.zip'`);
-await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'storageSite', `'./apipkg'`);
+await replaceText(path.join(__dirname, 'data/template.yaml'), 'storageSite', `s3://${lambdaBucket}/lambda.zip`);
+await replaceText(path.resolve(process.cwd(), 'template.sam.yaml'), 'storageSite', `apipkg/index.handler`);
 
 // Create two S3 buckets and put src/api/scripts/lambda.zip in one:
 // s3://<some-name>-lambda/lambda.zip

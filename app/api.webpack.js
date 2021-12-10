@@ -6,7 +6,7 @@ const debug = process.env.NODE_ENV !== 'production';
 
 module.exports = {
   context: __dirname,
-  entry: path.resolve(__dirname, './src/api/index.ts'),
+  entry: './src/api/index.ts',
   mode: 'production',
   output: {
     path: path.join(__dirname, 'apipkg'),

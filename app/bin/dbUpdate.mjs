@@ -5,12 +5,9 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 
 const lamClient = new LambdaClient();
 
+let runByPackage = false;
+
 const dbUpdate = async function (props = {}) {
-  let install = !!props.awaytoId;
-  
-  if (!install) {
-    props.awaytoId = await ask('Awayto Id:\n> ');
-  }
 
   try {
     const __dirname = path.dirname(await fs.realpath(new URL(import.meta.url)));
@@ -61,11 +58,14 @@ const dbUpdate = async function (props = {}) {
     console.log('Error deploying db scripts:', error);
   }
   
+  if (runByPackage)
+    process.exit();
 };
 
 export default dbUpdate;
 
 if (process.argv[1].includes('dbUpdate')) {
+  runByPackage = true;
   var props = {};
 
   var idOptIndex = process.argv.indexOf('--awayto-id');

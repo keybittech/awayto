@@ -6,6 +6,8 @@ import child_process from 'child_process';
 
 const lamClient = new LambdaClient();
 
+let runByPackage = false;
+
 export async function InvokeEvent(props = {}) {
   let install = !!props.awaytoId;
   
@@ -45,25 +47,29 @@ export async function InvokeEvent(props = {}) {
     console.log('Error creating event', error);
   }
 
-  process.exit();
+  if (runByPackage)
+    process.exit();
 }
 
 export default InvokeEvent;
 
-var props = {};
+if (process.argv[1].includes('invokeEvent')) {
+  runByPackage = true;
+  var props = {};
 
-var idOptIndex = process.argv.indexOf('--awayto-id');
-if (idOptIndex > -1) {
-  props.awaytoId = process.argv[idOptIndex + 1];
+  var idOptIndex = process.argv.indexOf('--awayto-id');
+  if (idOptIndex > -1) {
+    props.awaytoId = process.argv[idOptIndex + 1];
+  }
+
+  var eventOptIndex = process.argv.indexOf('--event');
+  if (eventOptIndex > -1) {
+    props.event = process.argv[eventOptIndex + 1];
+  }
+
+  if (process.argv.indexOf('--local') > -1) {
+    props.local = true;
+  }
+
+  InvokeEvent(props);
 }
-
-var eventOptIndex = process.argv.indexOf('--event');
-if (eventOptIndex > -1) {
-  props.event = process.argv[eventOptIndex + 1];
-}
-
-if (process.argv.indexOf('--local') > -1) {
-  props.local = true;
-}
-
-InvokeEvent(props);

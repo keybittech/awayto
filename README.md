@@ -64,6 +64,8 @@ Any AWS tasks are performed on an AWS account with the Administrator role.
 
 - Node 16.3.0
 
+- NPM 7.15.1
+
 - Postgres 13.4
 
 - Python 3.7.9
@@ -88,7 +90,7 @@ In the future, if you want get access to new or updated tooling offered by Awayt
 
 - `npm run start-api` -- Starts just the api with the same above configuration.
 
-- `npm run start-local` -- Starts just the webapp with the `settings.local.env` configuration.
+- `npm run start-local` -- Starts just the webapp with the `settings.local.env` configuration. We use AWS SAM to run the local API, this requires Docker. AWS SAM, while extremely convenient, has gone through some growing pains; so if you ever run into issues, ask on the [Discord](https://discord.gg/KzpcTrn5DQ). We use the `--warm-containers LAZY` option, so when your api starts make sure to make a couple requests to get the Lambda initialized.
 
 - `npm run watch-api` -- Start a webpack watcher on just the api.
 
@@ -100,7 +102,15 @@ In the future, if you want get access to new or updated tooling offered by Awayt
 
 - `npm run install-stack` -- In the event you are installing a re-packaged version of Awayto, you can use this command to install the related AWS resources into your own AWS account.
 
-- `npm run db-update` -- Deploy any un-deployed `.sql` files in the `src/api/scripts` folder. You can see what's been deployed by reviewing the seed file `bin/data/seeds`.
+- `npm run db-create-migration <name>` -- Autogenerate a migration in the `src/api/scripts/db` folder.
+
+- `npm run db-update` -- Deploy any un-deployed `.sql` files in the `src/api/scripts/db` folder. You can see what's been deployed by reviewing the seed file `bin/data/seeds`.
+
+- `npm run db-update-file <name>` -- If a script fails while updating, you can fix it then specifically-redeploy it with this command.
+
+- `npm run invoke-event <name>` -- Use an event from `src/api/scripts/events` and run it against the live deployed lambda for your Awayto install.
+
+- `npm run invoke-event-local <name>` -- Run Lambda events locally using AWS SAM.
 
 - `npm run release` -- Run a release script which will deploy both the api (`apipkg` folder) and webapp (`build` folder) to s3. Then the script will request a CloudFront distribution invalidation on the entire webapp bucket. As well, the Lambda function will be re-deployed with the built handler.
 

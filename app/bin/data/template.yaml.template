@@ -472,9 +472,9 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Join ['-', [!Ref 'Environment', !Ref 'AWS::Region', '##id##Resource']]
-      Handler: index.handler
-      CodeUri: ##storageSite##
-      Runtime: nodejs12.x
+      Handler: "./"
+      CodeUri: "##storageSite##"
+      Runtime: "nodejs12.x"
       Timeout: 30
       Role: !Join [':', ['arn:aws:iam:', !Ref 'AWS::AccountId', 'role/LambdaTrust']]
       Events:

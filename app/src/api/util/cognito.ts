@@ -16,9 +16,20 @@ import { IGroup, IRole, IUserProfile, CognitoUserPool } from 'awayto';
 
 const { CognitoClientId: ClientId, CognitoUserPoolId: UserPoolId } = process.env as { [prop: string]: string };
 
-const pool = new CognitoUserPool({ ClientId, UserPoolId, Storage: {} as Storage });
+const clients: CognitoUserPool[] = []; 
+
+function getPool(): CognitoUserPool {
+  if (clients.length) {
+    return clients[0];
+  }
+  const pool = new CognitoUserPool({ ClientId, UserPoolId, Storage: {} as Storage });
+  clients.push(pool);
+  return pool;
+}
+
 
 export async function getUserInfo(Username: string): Promise<AdminGetUserCommandOutput> {
+  const pool = getPool();
   const user = await pool.client.send(new AdminGetUserCommand({
     UserPoolId,
     Username
@@ -56,6 +67,7 @@ export function parseGroupArray (groups: IGroup[]): string {
 
 
 export async function adminDisableUser(Username: string): Promise<boolean> {
+  const pool = getPool();
   await pool.client.send(new AdminDisableUserCommand({
     UserPoolId,
     Username
@@ -64,6 +76,7 @@ export async function adminDisableUser(Username: string): Promise<boolean> {
 }
 
 export async function adminEnableUser(Username: string): Promise<boolean> {
+  const pool = getPool();
   await pool.client.send(new AdminEnableUserCommand({
     UserPoolId,
     Username
@@ -71,14 +84,13 @@ export async function adminEnableUser(Username: string): Promise<boolean> {
   return true;
 }
 
-
 export const listUsers = async (params: ListUsersResponse = {}): Promise<ListUsersResponse> => {
   
   let { Users = [] } = params;
   const { PaginationToken: token } = params;
 
   const listUserParams = { UserPoolId, ...(token ? { PaginationToken: token } : {}) };
-
+  const pool = getPool();
   const { Users: users, PaginationToken } = await pool.client.send(new ListUsersCommand(listUserParams));
 
   if (users?.length) {
@@ -101,6 +113,7 @@ export const listUsers = async (params: ListUsersResponse = {}): Promise<ListUse
 
 
 export async function updateUserAttributesAdmin (Username: string, UserAttributes: AttributeType[]): Promise<boolean> {
+  const pool = getPool();
   await pool.client.send(new AdminUpdateUserAttributesCommand({
     UserPoolId,
     Username,
@@ -139,6 +152,7 @@ export async function adminCreateUser ({ username = '', email = '', password = '
     ]
   }
 
+  const pool = getPool();
   const { User } = await pool.client.send(new AdminCreateUserCommand(params));
 
   return User;

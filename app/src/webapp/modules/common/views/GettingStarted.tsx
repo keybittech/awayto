@@ -21,8 +21,9 @@ export function GettingStarted ({ classes }: IProps): JSX.Element {
             <Typography variant="body1">AWS Administrator with AWS CLI (2.0.42)</Typography>
             <Typography variant="body1">Python (3.7.9)</Typography>
             <Typography variant="body1">Postgres (13.4)</Typography>
-            <Typography variant="body1">Node (16.3.0)</Typography>
-            <Typography variant="body1">Docker for SAM Local testing</Typography>
+            <Typography variant="body1">NodeJS (16.3.0)</Typography>
+            <Typography variant="body1">NPM (7.15.1)</Typography>
+            <Typography variant="body1">Docker (4.3; for SAM Local testing)</Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="h6">Installation</Typography>
@@ -43,7 +44,7 @@ export function GettingStarted ({ classes }: IProps): JSX.Element {
 
               <ListItem className="bullet"><pre>npm run start-stack</pre> -- Same as above, but if you opted for local-testing in the installation, this will start <pre>sam local</pre> using the <pre>env.json</pre> and <pre>template.sam.yaml</pre> files in the main directory. SAM Local starts up a docker contanerized instance of your Lambda function at <pre>localhost:3001</pre>. The webapp will pick up the <pre>settings.local.env</pre> file in this case.</ListItem>
 
-              <ListItem className="bullet"><pre>npm run start-api</pre> -- Starts just the api with the same above configuration</ListItem>
+              <ListItem className="bullet"><pre>npm run start-api</pre> -- Starts just the api with the same above configuration. We use AWS SAM to run the local API, this requires Docker. AWS SAM, while extremely convenient, has gone through some growing pains; so if you ever run into issues, ask on the <Typography className={classes.link} color="secondary" component={Link} to={{ pathname: "https://discord.gg/KzpcTrn5DQ" }} target="_blank">discord</Typography>. We use the `--warm-containers LAZY` option, so when your api starts make sure to make a couple requests to get the Lambda initialized.</ListItem>
               
               <ListItem className="bullet"><pre>npm run start-local</pre> -- Starts just the webapp with the <pre>settings.local.env</pre> configuration.</ListItem>
               
@@ -57,8 +58,16 @@ export function GettingStarted ({ classes }: IProps): JSX.Element {
               
               <ListItem className="bullet"><pre>npm run install-stack</pre> -- In the event you are installing a re-packaged version of Awayto, you can use this command to install the related AWS resources into your own AWS account.</ListItem>
               
+              <ListItem className="bullet"><pre>npm run db-create-migration {`<name>`} </pre> -- Autogenerate a migration in the <pre>src/api/scripts/db</pre> folder.</ListItem>
+              
               <ListItem className="bullet"><pre>npm run db-update</pre> -- Deploy any un-deployed <pre>.sql</pre> files in the <pre>src/api/scripts</pre> folder. You can see what's been deployed by reviewing the seed file <pre>bin/data/seeds</pre>.</ListItem>
               
+              <ListItem className="bullet"><pre>npm run db-update-file {`<name>`}</pre> -- If a script fails while updating, you can fix it then specifically-redeploy it with this command.</ListItem>
+
+              <ListItem className="bullet"><pre>npm run invoke-event {`<name>`}</pre> -- Use an event from <pre>src/api/scripts/events</pre> and run it against the live deployed lambda for your Awayto install.</ListItem>
+
+              <ListItem className="bullet"><pre>npm run invoke-event-local {`<name>`}</pre> -- Run Lambda events locally using AWS SAM.</ListItem>
+
               <ListItem className="bullet"><pre>npm run release</pre> -- Run a release script which will deploy both the api (<pre>apipkg</pre> folder) and webapp (<pre>build</pre> folder) to s3. Then the script will request a CloudFront distribution invalidation on the entire webapp bucket. As well, the Lambda function will be re-deployed with the built handler.</ListItem>
               
             </List>

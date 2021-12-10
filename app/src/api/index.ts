@@ -15,12 +15,12 @@ import UuidRoles from './objects/uuid_roles';
 import ManageRoles from './objects/manage_roles';
 import ManageGroups from './objects/manage_groups';
 import ManageUsers from './objects/manage_users';
+
 import auditRequest from './util/auditor';
 import authorize from './util/auth';
-import { ApiEvent, ApiModulet, ILoadedState } from 'awayto';
+import { ApiEvent } from 'awayto';
 
 export const handler: Handler<ApiEvent> = async (event, context, callback) => {
-
   const pool = new Pool();
 
   const { httpMethod, pathParameters, resource, sourceIp, triggerSource } = event;
@@ -35,7 +35,7 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
 
   if (dev) {
     if (typeof event.body == 'string')
-      event.body = JSON.parse(event.body) as ILoadedState;
+      event.body = JSON.parse(event.body) as { [prop: string]: unknown };
 
     event.sourceIp = 'localhost';
     event.userSub = 'ecd63d7f-daab-494a-9df2-7e5290120671';
@@ -56,12 +56,11 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
   let client: PoolClient | undefined;
 
   try {
-
     client = await pool.connect();
 
     if (event.script) {
       const { rows, rowCount } = await client.query(event.script);
-      callback(null, {
+      return callback(null, {
         statusCode: 200,
         body: JSON.stringify({ rows, rowCount }),
         headers: { "Access-Control-Allow-Origin": "*" }
@@ -81,8 +80,7 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
         ManageRoles,
         ManageGroups,
         ManageUsers
-      ) as Record<string, ApiModulet>
-      
+      );
       const paths = Object.keys(Objects).map(key => {
         return new Route(key, Objects[key].path)
       });
@@ -106,12 +104,14 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
       event.pathParameters = pathMatch._params;
 
       try {
-        await auditRequest({ event, context, client });
+        if (!dev) {
+          await auditRequest({ event, context, client });
+        }
       } catch (error) { console.log('ERROR AUDITING REQUEST, are you deploying the db?', error) }
 
       const response = await Objects[pathMatch._route].cmnd({ event, context, client });
 
-      if (!response) 
+      if (!response)
         return errCallback(400, "400_BAD_REQUEST"); // Return 400 BAD REQUEST
 
       return {
@@ -130,15 +130,15 @@ export const handler: Handler<ApiEvent> = async (event, context, callback) => {
     const { message, detail } = error as { message: string, detail: string };
 
     if (dev) {
-      callback(null, {
+      return callback(null, {
         statusCode: 500,
         body: JSON.stringify({ error: message || detail }),
         headers: { "Access-Control-Allow-Origin": "*" }
       })
     } else {
-      errCallback(500, `500_INTERNAL_SERVER_ERROR ${error as string}`); // Return 500 INTERNAL SERVER ERROR
+      return errCallback(500, `500_INTERNAL_SERVER_ERROR ${error as string}`); // Return 500 INTERNAL SERVER ERROR
     }
-    
+
   } finally {
     if (client)
       client.release();
