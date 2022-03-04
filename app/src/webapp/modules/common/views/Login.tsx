@@ -61,7 +61,7 @@ export function Login(props: IProps): JSX.Element {
           <Typography variant="h6">Inquiries: <Typography variant="h5" className={classes.link} color="secondary" component={Link} to={{ pathname: "mailto:joe@keybittech.com" }} target="_blank">joe@keybittech.com</Typography></Typography>
           
           <Typography variant="h6">Ready to start?</Typography>
-          <Typography variant="body1">Check out the <Typography className={classes.link} color="secondary" component={Link} to="/start">Getting Started</Typography> and <Typography className={classes.link} color="secondary" component={Link} to="/faq">FAQ</Typography> pages.</Typography>
+          <Typography variant="body1">Check out the <Typography className={classes.link} color="secondary" component={Link} to="/start?scrollTo=start">Getting Started</Typography> and <Typography className={classes.link} color="secondary" component={Link} to="/faq?scrollTo=faq">FAQ</Typography> pages.</Typography>
           
           <Typography variant="h6">Still have questions?</Typography>
           <Typography variant="body1"><Typography className={classes.link} color="secondary" component={Link} to={{ pathname: "https://discord.gg/KzpcTrn5DQ" }} target="_blank">Join the discord!</Typography></Typography>

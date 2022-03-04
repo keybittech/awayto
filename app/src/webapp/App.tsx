@@ -1,7 +1,8 @@
 import Icon from './img/kbt-icon.png';
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Route, Redirect, withRouter, Switch, Link } from 'react-router-dom';
+import { parse } from 'querystring';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { Skeleton } from '@material-ui/lab';
 
@@ -42,6 +43,17 @@ const App = (props: IProps): JSX.Element => {
   const login = useRedux(state => state.login);
   const { hasSignUpCode } = useRedux(state => state.profile);
   const { snackOn, snackType, isLoading, loadingMessage, theme } = useRedux(state => state.util);
+
+  useEffect(() => {    
+    const { search } = props.location;
+    if (search) {
+      const { scrollTo } = parse(search.substring(1, search.length)) as { [prop: string]: string };
+      setTimeout(() => {
+        document.getElementById(scrollTo)?.scrollIntoView();
+        props.history.replace({ pathname: props.location.pathname });
+      }, 250);
+    }
+  }, [props.location]);
 
   const hideSnack = (): void => {
     act(SET_SNACK, { snackOn: '' });
