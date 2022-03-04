@@ -21,7 +21,6 @@ const ask = (q, invalid, valid) => new Promise((resolve, reject) => {
 })
 
 const replaceText = (file, from, to) => new Promise(async (resolve, reject) => {
-
   try {
 
     const oldFile = await fs.readFile(file, 'utf8');

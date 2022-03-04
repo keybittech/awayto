@@ -36,10 +36,12 @@ const dbUpdate = async function (props = {}) {
       }));
 
       const payloadJson = JSON.parse(readLambdaPayload(response.Payload));
-      payloadJson.body = JSON.parse(payloadJson.body);
-      const { error } = payloadJson.body;
-      if (error) {
-        console.log(`ERROR: ${fileName} - ${error}.\nYou can fix the error then re-run just this script with "npm run db-update-file ${fileName}"`);
+      if (payloadJson.body) {
+        payloadJson.body = JSON.parse(payloadJson.body);
+        const { error } = payloadJson.body;
+        if (error) {
+          console.log(`ERROR: ${fileName} - ${error}.\nYou can fix the error then re-run just this script with "npm run db-update-file ${fileName}"`);
+        }
       }
     }
 

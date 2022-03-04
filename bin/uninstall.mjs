@@ -11,15 +11,15 @@ import { asyncForEach } from './tool.mjs';
 import path from 'path';
 import fs from 'fs';
 
-const rdsClient = new RDSClient();
-const ssmClient = new SSMClient();
-const iamClient = new IAMClient();
-const ec2Client = new EC2Client();
-const s3Client = new S3Client();
-const cfClient = new CloudFormationClient();
-const clClient = new CloudFrontClient();
-
 export default async function () {
+
+  const rdsClient = new RDSClient();
+  const ssmClient = new SSMClient();
+  const iamClient = new IAMClient();
+  const ec2Client = new EC2Client();
+  const s3Client = new S3Client();
+  const cfClient = new CloudFormationClient();
+  const clClient = new CloudFrontClient();
 
   const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
 

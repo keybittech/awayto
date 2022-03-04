@@ -1,10 +1,9 @@
-import { CognitoIdentityProviderClient, SignUpCommand, AdminConfirmSignUpCommand, AddCustomAttributesCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { CognitoIdentityProviderClient, SignUpCommand, AdminConfirmSignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { ask } from './tool.mjs'
 
-
-const cipClient = new CognitoIdentityProviderClient();
-
 export default async function(props = {}) {
+
+  const cipClient = new CognitoIdentityProviderClient();
   
   let install = !!Object.keys(props).length;
   

@@ -1,6 +1,5 @@
 #! /usr/bin/env node
 
-import Test from './test.mjs';
 import Install from './install.mjs';
 import Uninstall from './uninstall.mjs';
 import CreateAccount from './createAccount.mjs';
@@ -15,25 +14,35 @@ const action = await ask(`Pick a task (0):
 > `) || '0';
 
 switch (action) {
-  case 'test':
-    Test();
-    break;
   case '0':
-    
-    const config = {
-      name: await ask('Project Name (\'awayto\'):\n> ', null, /^[a-zA-Z0-9]*$/) || 'awayto',
-      environment: await ask('Environment (\'dev\'):\n> ') || 'dev',
-      description: await ask('Project Description (\'Awayto is a workflow enhancing platform, producing great value with minimal investment.\'):\n> ') || 'Awayto is a workflow enhancing platform, producing great value with minimal investment.'
-    }
-    
-    // Generate uuids
-    config.seed = (new Date).getTime();
-    config.awaytoId = `${config.name}${config.environment}${config.seed}`;
-    
-    const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
-    fs.writeFileSync(path.join(__dirname, `data/seeds/${config.awaytoId}.json`), JSON.stringify(config));
+    let config = {};
 
-    Install(config.awaytoId);
+    try {
+      config = {
+        name: await ask('Project Name (\'awayto\'):\n> ', null, /^[a-zA-Z0-9]*$/) || 'awayto',
+        environment: await ask('Environment (\'dev\'):\n> ') || 'dev',
+        description: await ask('Project Description (\'Awayto is a workflow enhancing platform, producing great value with minimal investment.\'):\n> ') || 'Awayto is a workflow enhancing platform, producing great value with minimal investment.'
+      }
+      
+      // Generate uuids
+      config.seed = (new Date).getTime();
+      config.awaytoId = `${config.name}${config.environment}${config.seed}`;
+      
+      const __dirname = path.dirname(fs.realpathSync(new URL(import.meta.url)));
+      fs.writeFileSync(path.join(__dirname, `data/seeds/${config.awaytoId}.json`), JSON.stringify(config));
+
+    } catch (error) {
+      console.log('error with install prep', error);
+      break;
+    }
+
+    try {
+      if (config.awaytoId) {
+        Install(config.awaytoId);
+      }
+    } catch (error) {
+      console.log('install failed', error);
+    }
     break;
   case '1':
     Uninstall();

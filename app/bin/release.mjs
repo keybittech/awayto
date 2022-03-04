@@ -30,7 +30,7 @@ const release = async function (props = {}) {
       console.log('Deploying updated webapp.');
       
       child_process.execSync(`aws s3 sync ./build s3://${awaytoConfig.awaytoId}-webapp`, { stdio: 'inherit' });
-      child_process.execSync(`aws cloudfront create-invalidation --distribution-id  ${awaytoConfig.distributionId} --paths "/*"`, { stdio: 'inherit' });
+      child_process.execSync(`aws cloudfront create-invalidation --distribution-id  ${awaytoConfig.distributionId} --paths "/index.html"`, { stdio: 'inherit' });
       await fs.writeFile(seedPath, JSON.stringify(awaytoConfig));
     }
 
@@ -53,7 +53,7 @@ const release = async function (props = {}) {
       
       output.on('close', async function () {
         child_process.execSync(`aws s3 cp ./lambda.zip s3://${awaytoConfig.awaytoId}-lambda`, { stdio: 'inherit' });
-        child_process.execSync(`aws lambda update-function-code --function-name ${awaytoConfig.environment}-${awaytoConfig.awsRegion}-${awaytoConfig.awaytoId}Resource --region ${awaytoConfig.awsRegion} --s3-bucket ${awaytoConfig.awaytoId}-lambda --s3-key lambda.zip`, { stdio: 'inherit' });
+        child_process.execSync(`aws lambda update-function-code --function-name ${awaytoConfig.environment}-${awaytoConfig.awsRegion}-${awaytoConfig.awaytoId}Resource --region ${awaytoConfig.awsRegion} --s3-bucket ${awaytoConfig.awaytoId}-lambda --s3-key lambda.zip`);
         await fs.unlink('lambda.zip');
         await fs.writeFile(seedPath, JSON.stringify(awaytoConfig));
 
