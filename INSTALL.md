@@ -9,7 +9,7 @@ Make sure your console session can perform AWS CLI commands with Administrator r
 ```
 mkdir proj
 cd proj
-awayto
+awayto install <name> <environment> "<description>"
 ```
 
 Then follow the prompts.

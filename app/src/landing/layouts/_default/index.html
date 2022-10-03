@@ -1,0 +1,85 @@
+{{ define "main" }}
+
+<div class="wrap">
+
+  <div class="item">
+    <h1>Welcome to {{ site.Title }}</h1>
+    <a class="app-button" href="{{ site.Params.appURL }}">Go to app</a>
+  </div>
+  <div class="item">
+    <iframe class="video-frame" src="https://www.youtube.com/embed/GKsvr3KkF4E"
+      title="YouTube video player Awayto 2-Minute Introduction"
+      allow="accelerometer; fullscreen; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+  </div>
+
+</div>
+
+<!-- <h2>Inquiries: <a href="mailto:joe@keybittech.com" target="_blank">joe@keybittech.com</a></h2> -->
+
+<div class="landing-content">
+  <h2>Ready to start?</h2>
+  <p variant="body1">Check out the <a href="/posts/getting-started">Getting Started</a> and <a href="/posts/faq">FAQ</a> pages.</p>
+
+  <h2>Still have questions?</h2>
+  <p>
+    <a href="https://discord.gg/KzpcTrn5DQ" target="_blank">Join the discord!</a>
+  </p>
+
+  <h2>What is this?</h2>
+  <p>
+    Deploy a fully-featured application in about 10 minutes that is primed for quick development. Do business, impress a
+    client with a quick demo, finish your poc with time to spare; all easily achievable with Awayto. Managing the
+    infrastructure for web applications is often cumbersome and time consuming. Awayto can be thought of as a method for
+    working with web applications, laying out each step, should you care to change something.
+  </p>
+
+  <p>
+    There are a few tenets of Awayto:
+  </p>
+
+  <ul>
+    <li>
+      Enhance the developer experience
+    </li>
+    <li>
+      Provide opportunities for developers to learn
+    </li>
+    <li>
+      Minimal focus on deployment, managed centrally
+    </li>
+    <li>
+      Use conventions that compliment functionality
+    </li>
+  </ul>
+
+  <p>
+    The Awayto platform adheres to these tenets in part by being scalable, lightweight, and informative in its
+    formation.
+    The goal is to be a central platform that uses a precise and opinionated toolset to unite web, mobile, and IoT
+    technologies. Developers and businesses alike can enjoy the many tools offered by Awayto:
+  </p>
+
+  <ul>
+    <li>
+      Rapidly deployable environment using enterprise level technologies
+    </li>
+    <li>
+      Full scale business application built with business owners in mind
+    </li>
+    <li>
+      Robust user management system allowing for self signup, federated IdP, SAML, or admin generated memberships
+    </li>
+    <li>
+      Baked in group and role authorization framework
+    </li>
+    <li>
+      Fully-typed development environment using Typescript; use the same types on the full stack
+    </li>
+    <li>
+      Database schema designed for auditing and reporting
+    </li>
+  </ul>
+
+</div>
+
+{{ end }}

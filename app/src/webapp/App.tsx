@@ -44,17 +44,6 @@ const App = (props: IProps): JSX.Element => {
   const { hasSignUpCode } = useRedux(state => state.profile);
   const { snackOn, snackType, isLoading, loadingMessage, theme } = useRedux(state => state.util);
 
-  useEffect(() => {    
-    const { search } = props.location;
-    if (search) {
-      const { scrollTo } = parse(search.substring(1, search.length)) as { [prop: string]: string };
-      setTimeout(() => {
-        document.getElementById(scrollTo)?.scrollIntoView();
-        props.history.replace({ pathname: props.location.pathname });
-      }, 250);
-    }
-  }, [props.location]);
-
   const hideSnack = (): void => {
     act(SET_SNACK, { snackOn: '' });
   }
@@ -123,27 +112,6 @@ const App = (props: IProps): JSX.Element => {
                 </Grid>
               </Typography>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Grid container justifyContent="space-evenly">
-                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://github.com/keybittech/awayto" }} target="_blank">View on GitHub</Typography>
-                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://awayto.dev/docs/index.html" }} target="_blank">Typedoc</Typography>
-                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://keybittech.com" }} target="_blank">KeyBit Tech</Typography>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Grid container justifyContent="space-evenly">
-                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://discord.gg/KzpcTrn5DQ" }} target="_blank">Discord</Typography>
-                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://twitch.tv/awayto" }} target="_blank">Twitch</Typography>
-                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "https://twitter.com/awaytodev" }} target="_blank">Twitter</Typography>
-                <Typography className={classes.link} color="primary" component={Link} to={{ pathname: "mailto:joe@keybittech.com" }} target="_blank">Contact</Typography>
-              </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Grid container justifyContent="space-evenly">
-                <Typography className={classes.link} color="secondary" component={Link} to="/start">Getting Started</Typography>
-                <Typography className={classes.link} color="secondary" component={Link} to="/faq">FAQ</Typography>
-              </Grid>
-            </Grid>
           </Grid>
           <Grid container className={classes.loginWrap} justifyContent="center" direction="row">
             <Grid item xs={10} style={{ paddingBottom: '50px' }}>
@@ -165,8 +133,6 @@ const App = (props: IProps): JSX.Element => {
                 <Switch>
                   <Route exact path="/" render={() => login.challengeName ? <ChangeNewPassword {...props} /> : <Login {...props} />} />
                   <Route exact path="/signup" render={() => hasSignUpCode ? <CompleteSignUp {...props} /> : <SignUp {...props} />} />
-                  <Route exact path="/start" render={() => <GettingStarted {...props} />} />
-                  <Route exact path="/faq" render={() => <FAQ {...props} />} />
                 </Switch>
               </Suspense>
             </Grid>

@@ -1,0 +1,36 @@
+/*------------ wrap ---------------- */
+.wrap {
+  display: flex;
+  flex-direction: row;
+}
+
+.wrap .item {
+  flex: 1;
+  align-self: center;
+  text-align: center;
+}
+
+.app-button {
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 32px;
+  background-color: rgb(92, 142, 192);
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.video-frame {
+  border: none;
+  width: 100%;
+  max-width: 560px;
+  height: 315px;
+}
+
+.landing-content li {
+  margin-left: 4rem;
+}
+
+.landing-content p,
+.landing-content ul {
+  margin-bottom: 20px;
+}

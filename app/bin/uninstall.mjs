@@ -53,18 +53,18 @@ export default async function () {
       console.log('Failed to delete db', error);
     }
 
-    if (seed.distributionId) {
+    if (seed.webDistributionId) {
       try {
-        const getDist = await clClient.send(new GetDistributionCommand({ Id: seed.distributionId }));
+        const getDist = await clClient.send(new GetDistributionCommand({ Id: seed.webDistributionId }));
         getDist.Distribution.DistributionConfig.Enabled = false;
         const disableDist = await clClient.send(new UpdateDistributionCommand({
           IfMatch: getDist.ETag,
-          Id: seed.distributionId,
+          Id: seed.webDistributionId,
           DistributionConfig: getDist.Distribution.DistributionConfig
         }));
         console.log('Disabling CloudFront distribution (~5-10 mins).');
-        await waitUntilDistributionDeployed({ client: clClient, maxWaitTime: 600 }, { Id: seed.distributionId });
-        const delDist = await clClient.send(new DeleteDistributionCommand({ Id: seed.distributionId, IfMatch: disableDist.ETag }));
+        await waitUntilDistributionDeployed({ client: clClient, maxWaitTime: 600 }, { Id: seed.webDistributionId });
+        const delDist = await clClient.send(new DeleteDistributionCommand({ Id: seed.webDistributionId, IfMatch: disableDist.ETag }));
         console.log('Dist deletion request-id: ' + delDist.$metadata.requestId);
       } catch (error) {
         console.log('Failed to delete distribution', error);

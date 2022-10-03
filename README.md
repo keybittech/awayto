@@ -21,7 +21,7 @@ npm i -g @keybittech/awayto
 
 mkdir proj
 cd proj
-awayto
+awayto install <name> <environment> "<description>"
 ```
 
 ## What is Awayto?

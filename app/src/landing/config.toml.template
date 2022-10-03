@@ -1,0 +1,7 @@
+title = '##name##'
+baseURL = '##landing##'
+languageCode = 'en-us'
+
+[params]
+  appURL = '##website##'
+  description = '##description##'

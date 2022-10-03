@@ -30,7 +30,19 @@ const release = async function (props = {}) {
       console.log('Deploying updated webapp.');
       
       child_process.execSync(`aws s3 sync ./build s3://${awaytoConfig.awaytoId}-webapp`, { stdio: 'inherit' });
-      child_process.execSync(`aws cloudfront create-invalidation --distribution-id  ${awaytoConfig.distributionId} --paths "/index.html"`, { stdio: 'inherit' });
+      child_process.execSync(`aws cloudfront create-invalidation --distribution-id  ${awaytoConfig.webDistributionId} --paths "/index.html"`, { stdio: 'inherit' });
+      await fs.writeFile(seedPath, JSON.stringify(awaytoConfig));
+    }
+    
+    const landingSha = crypto.createHash('sha1').update(Buffer.from(await fs.readFile(path.join(__dirname, '../landing_public/index.html')))).digest('base64');
+        
+    if (landingSha != awaytoConfig.landingSha) {
+      awaytoConfig.landingSha = landingSha;
+      
+      console.log('Deploying updated landing.');
+      
+      child_process.execSync(`aws s3 sync ./build s3://${awaytoConfig.awaytoId}-landing`, { stdio: 'inherit' });
+      child_process.execSync(`aws cloudfront create-invalidation --distribution-id  ${awaytoConfig.landingDistributionId} --paths "*"`, { stdio: 'inherit' });
       await fs.writeFile(seedPath, JSON.stringify(awaytoConfig));
     }
 

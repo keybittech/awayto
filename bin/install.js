@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import fse from 'fs-extra';
 import child_process from 'child_process';
-import { asyncForEach, replaceText } from './tool.mjs';
+import { asyncForEach, replaceText } from './tool.js';
 
 export default async function (id) {
 
@@ -36,7 +36,8 @@ export default async function (id) {
     'public/index.html',
     'settings.local.env',
     'settings.development.env',
-    'settings.production.env'
+    'settings.production.env',
+    'src/landing/config.toml'
   ];
 
   tmplFiles.forEach(file => {

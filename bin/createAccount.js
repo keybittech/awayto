@@ -1,5 +1,5 @@
 import { CognitoIdentityProviderClient, SignUpCommand, AdminConfirmSignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
-import { ask } from './tool.mjs'
+import { ask } from './tool.js'
 
 export default async function(props = {}) {
 

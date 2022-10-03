@@ -14,3 +14,6 @@ env.json
 dist
 
 template.sam.yaml
+
+landing_public
+src/landing/resources

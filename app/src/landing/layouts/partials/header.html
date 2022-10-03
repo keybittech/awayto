@@ -1,0 +1,48 @@
+<header class="header">
+  <p class="logo">
+    <a class="site-name" href="{{ `` | absURL }}">{{ site.Title }}</a>
+    {{ with .Site.GetPage "faq" }}<a href="{{.RelPermalink}}">{{.Title}}</a>{{ end }}
+    {{ with .Site.GetPage "getting-started" }}<a href="{{.RelPermalink}}">{{.Title}}</a>{{ end }}
+    <a class="btn-dark"></a>
+  </p>
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  {{ $url := .RelPermalink }}<!---->
+  {{ with site.Menus.main }}
+  <nav class="menu">
+    {{ range . }}
+    <a class="{{ if eq .URL $url }}active{{ end }}" href="{{ .URL }}">{{ .Name }}</a>
+    {{ end }}
+  </nav>
+  {{ end }}<!---->
+
+  {{ with $.Scratch.Get "social-list" }}
+  <nav class="social">
+    {{ range . }}
+    <a
+      class="{{ . }}"
+      style="--url: url(./{{ . }}.svg)"
+      href="https://{{ . }}.com/{{ site.Params.Get . }}"
+      target="_blank"
+    ></a>
+    {{ end }}
+  </nav>
+  {{ end }}
+</header>

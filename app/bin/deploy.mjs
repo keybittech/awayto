@@ -57,7 +57,7 @@ const config = {
     password: await ask('Admin/DB Password [8 char min] (\'Tester1!\'):\n> ', /[@"\/]/) || 'Tester1!',
     email: await ask('Admin Email (\'install@keybittech.com\'):\n> ') || 'install@keybittech.com',
     localTesting: (await ask(`Setup local testing? (WARNING! This will make your DB "public", create an ingress rule in the security group to allow this computer's public IP in AWS, and store the (gitignored) db credentials file in plaintext in this folder. Only enable if you know what you're doing! (0. No):\n0.No\n1.Yes\n> `) || '0') == '1',
-    regionId: await ask(`${regions.map((r, i) => `${i}. ${r}`).join('\n')}\nChoose a number (0. us-east-1):\n> `) || '0',
+    regionId: await ask(`${regions.map((r, i) => `${i}. ${r}`).join('\n')}\nChoose a number (0. us-east-1):\n> `) || '0'
   }
 };
 
@@ -76,6 +76,7 @@ const { ZoneName } = AvailabilityZones[await ask(`${AvailabilityZones.map((r, i)
 const id = config.awaytoId;
 const username = config.username;
 const password = config.password;
+const landingBucket = id + '-landing';
 const webBucket = id + '-webapp';
 const lambdaBucket = id + '-lambda';
 const fileBucket = id + '-files';
@@ -83,7 +84,8 @@ const fileBucket = id + '-files';
 console.log('== Beginning Awayto Install (~5 - 10 minutes): ' + id);
 
 try {
-  // Create Bucket to store files and webapp
+  // Create Bucket to store files, webapp, and landing
+  await s3Client.send(new CreateBucketCommand({ Bucket: landingBucket }));
   await s3Client.send(new CreateBucketCommand({ Bucket: fileBucket }));
   await s3Client.send(new CreateBucketCommand({ Bucket: webBucket }));
 
@@ -104,9 +106,6 @@ try {
     }
   }));
 
-  // Begin Distribution generation
-  await waitUntilBucketExists({ client: s3Client, maxWaitTime: 30 }, { Bucket: webBucket });
-
   const oai = await clClient.send(new CreateCloudFrontOriginAccessIdentityCommand({
     CloudFrontOriginAccessIdentityConfig: {
       CallerReference: 'AwaytoOAI',
@@ -114,9 +113,12 @@ try {
     }
   }));
 
-  const distributionCmd = await clClient.send(new CreateDistributionCommand({
+  // Begin Distribution generation
+  await waitUntilBucketExists({ client: s3Client, maxWaitTime: 30 }, { Bucket: webBucket });
+
+  const webDistributionCmd = await clClient.send(new CreateDistributionCommand({
     DistributionConfig: {
-      CallerReference: id,
+      CallerReference: `${id}_webapp`,
       Comment: 'Created by system for ' + id,
       Enabled: true,
       Origins: {
@@ -156,7 +158,44 @@ try {
     }
   }));
 
-  fs.writeFileSync(seedPath, JSON.stringify({ ...config, distributionId: distributionCmd.Distribution.Id }));
+  await waitUntilBucketExists({ client: s3Client, maxWaitTime: 30 }, { Bucket: landingBucket });
+
+  const landingDistributionCmd = await clClient.send(new CreateDistributionCommand({
+    DistributionConfig: {
+      CallerReference: `${id}_landing`,
+      Comment: 'Created by system for ' + id,
+      Enabled: true,
+      Origins: {
+        Items: [
+          {
+            Id: 'S3-' + landingBucket,
+            DomainName: landingBucket + '.s3.amazonaws.com',
+            S3OriginConfig: {
+              OriginAccessIdentity: `origin-access-identity/cloudfront/${oai.CloudFrontOriginAccessIdentity.Id}`,
+            }
+          }
+        ],
+        Quantity: 1
+      },
+      DefaultCacheBehavior: {
+        AllowedMethods: {
+          Items: ['GET', 'HEAD'],
+          Quantity: 2
+        },
+        CachePolicyId: '658327ea-f89d-4fab-a63d-7e88639e58f6', // CachingOptimized ID
+        TargetOriginId: 'S3-' + landingBucket,
+        TrustedSigners: { Enabled: false, Quantity: 0 },
+        ViewerProtocolPolicy: "redirect-to-https"
+      },
+      DefaultRootObject: "index.html",
+    }
+  }));
+
+  fs.writeFileSync(seedPath, JSON.stringify({
+    ...config,
+    webDistributionId: webDistributionCmd.Distribution.Id,
+    landingDistributionId: landingDistributionCmd.Distribution.Id
+  }));
 
   const awaytoDb = `${id}_db`;
 
@@ -382,6 +421,24 @@ try {
     }`
   }))
 
+  await s3Client.send(new PutBucketPolicyCommand({
+    Bucket: landingBucket,
+    Policy: `{
+      "Version": "2012-10-17",
+      "Id": "PolicyForCloudFrontPrivateContent",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${oai.CloudFrontOriginAccessIdentity.Id}"
+          },
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::${landingBucket}/*"
+        }
+      ]
+    }`
+  }))
+
   await cfClient.send(new CreateStackCommand({
     StackName: id,
     TemplateURL: 'https://' + id + '-lambda.s3.amazonaws.com/template.yaml',
@@ -420,11 +477,13 @@ try {
     cognitoUserPoolId: resources['CognitoUserPool'],
     cognitoClientId: resources['CognitoUserPoolClient'],
     cognitoIdentityPoolId: resources['CognitoIdPool'],
-    distributionId: distributionCmd.Distribution.Id,
+    webDistributionId: webDistributionCmd.Distribution.Id,
+    landingDistributionId: landingDistributionCmd.Distribution.Id,
     oaiId: oai.CloudFrontOriginAccessIdentity.Id,
     apiGatewayEndpoint: `https://${resources[id + 'ResourceApi']}.execute-api.${region}.amazonaws.com/${resources[id + 'ResourceApiStage']}/`,
-    website: `https://${distributionCmd.Distribution.DomainName}/` //`http://${id + '-webapp'}.s3-website.${region}.amazonaws.com`
-  }
+    landing: `https://${landingDistributionCmd.Distribution.DomainName}/`,
+    website: `https://${webDistributionCmd.Distribution.DomainName}/` //`http://${id + '-webapp'}.s3-website.${region}.amazonaws.com`
+  };
 
   console.log('Adding role attribute to Cognito.');
   await cipClient.send(new AddCustomAttributesCommand({
@@ -445,22 +504,29 @@ try {
     'public/manifest.json',
     'settings.local.env',
     'settings.development.env',
-    'settings.production.env'
+    'settings.production.env',
+    'src/landing/config.toml'
   ];
 
   await asyncForEach(varFiles, async file => {
     await asyncForEach(Object.keys(awaytoConfig), async cfg => {
       await replaceText(path.resolve(process.cwd(), file), cfg, awaytoConfig[cfg]);
-    })
+    });
   });
 
   if (!debug) {
-
     try {
       console.log('Building webapp and api.')
       child_process.execSync(`npm run build-deploy`, { stdio: 'inherit' });
     } catch (error) {
       console.log('webapp build failed')
+    }
+
+    try {
+      console.log('Syncing landing to S3.')
+      child_process.execSync(`aws s3 sync ./landing_public s3://${landingBucket}`, { stdio: 'inherit' });
+    } catch (error) {
+      console.log('landing sync failed')
     }
 
     try {
@@ -574,17 +640,17 @@ try {
           "CognitoClientId": awaytoConfig.cognitoClientId,
           "CognitoIdentityPoolId": awaytoConfig.cognitoIdentityPoolId,
           "CognitoRegion": region
-        }
+        };
 
         await asyncForEach(Object.keys(envJson), async k => {
           await replaceText(path.resolve(process.cwd(), 'env.json'), k, envJson[k]);
-        })
+        });
       }
 
       console.log('Deploying DB scripts.');
       await dbUpdate({ awaytoId: awaytoConfig.awaytoId });
 
-      console.log('Creating admin account.')
+      console.log('Creating admin account.');
       await createAccount({
         poolId: awaytoConfig.cognitoUserPoolId,
         clientId: awaytoConfig.cognitoClientId,
@@ -594,19 +660,21 @@ try {
       });
 
       console.log('Waiting for CloudFront deployment to be available.');
-      await waitUntilDistributionDeployed({ client: clClient, maxWaitTime: 600 }, { Id: distributionCmd.Distribution.Id });
+      await waitUntilDistributionDeployed({ client: clClient, maxWaitTime: 600 }, { Id: webDistributionCmd.Distribution.Id });
+      await waitUntilDistributionDeployed({ client: clClient, maxWaitTime: 600 }, { Id: landingDistributionCmd.Distribution.Id });
 
-      console.log(`Site available at ${awaytoConfig.website}. Login with the credentials you provided.`);
-      console.log(`Your Awayto ID is ${awaytoConfig.awaytoId}. This is stored in bin/data/seeds, but you may want to note it elsewhere. It is needed to use the uninstaller.`);
-      console.log('You may also run the project locally with "npm run start". See the package.json for more options.');
-      console.log('Resources are available at https://awayto.dev/docs/index.html, https://awayto.dev/start, https://awayto.dev/faq and on Discord https://discord.gg/KzpcTrn5DQ');
+      console.log(`Landing site available at ${awaytoConfig.landing}.`);
+      console.log(`Webapp available at ${awaytoConfig.website}. Login with the credentials you provided.`);
+      console.log(`Installation Awayto ID is ${awaytoConfig.awaytoId}. This is stored in bin/data/seeds, but you may want to note it elsewhere. It is needed to use the uninstaller. For example, "awayto uninstall ${awaytoConfig.awaytoId}"`);
+      console.log('Run the project locally with "npm run start". See the package.json for more options.');
+      console.log('Resources are available at https://awayto.dev/docs/index.html, https://awayto.dev/ and on Discord https://discord.gg/KzpcTrn5DQ');
 
       process.exit();
     });
 
     await archive.finalize();
   } catch (error) {
-    console.log('api deploy failed', error)
+    console.log('api deploy failed', error);
   }
 
 } catch (error) {

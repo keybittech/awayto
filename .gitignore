@@ -1,3 +1,4 @@
 node_modules
 bin/data/seeds/*.json
 bin/data/template.yaml
+app/src/landing/config.toml

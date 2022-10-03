@@ -1,6 +1,6 @@
 {
   "name": "@keybittech/awayto",
-  "version": "1.0.46",
+  "version": "1.0.47",
   "description": "Deploy a fully-featured application in about 10 minutes that is primed for quick development. Do business, impress a client with a quick demo, finish your poc with time to spare; all easily achievable with Awayto.",
   "homepage": "https://awayto.dev/",
   "repository": {
@@ -25,9 +25,9 @@
   ],
   "private": false,
   "bin": {
-    "awayto": "bin/index.mjs",
-    "awaytots": "bin/index2.mjs"
+    "awayto": "bin/index.js"
   },
+  "type": "module",
   "dependencies": {
     "@aws-sdk/client-cloudformation": "^3.36.0",
     "@aws-sdk/client-cloudfront": "^3.38.0",
@@ -38,7 +38,9 @@
     "@aws-sdk/client-rds": "^3.21.0",
     "@aws-sdk/client-s3": "^3.13.1",
     "@aws-sdk/client-ssm": "^3.36.0",
+    "@tauri-apps/cli": "^1.1.1",
     "@types/node": "^16.11.12",
-    "fs-extra": "^10.0.0"
+    "commander": "^9.4.0",
+    "fs-extra": "^10.1.0"
   }
 }
